@@ -263,9 +263,9 @@
   </div>
 
   <script src="script.js"></script>
-
 <script>
-  function showPage(pageId) {
+  // Paintboxed emergency UI controls
+  window.showPage = function(pageId) {
     document.querySelectorAll(".page").forEach(function(page) {
       page.classList.remove("active-page");
     });
@@ -277,13 +277,24 @@
     }
 
     window.scrollTo(0, 0);
-  }
+  };
 
-  document.addEventListener("DOMContentLoaded", function() {
-    var tagButtons = document.querySelectorAll(".tag-grid button");
+  window.setPaletteSize = function(size) {
+    window.paletteSize = size;
 
-    tagButtons.forEach(function(button) {
-      button.addEventListener("click", function() {
+    document.querySelectorAll(".segmented button").forEach(function(button) {
+      button.classList.remove("active");
+
+      if (button.textContent.includes(size.toString())) {
+        button.classList.add("active");
+      }
+    });
+  };
+
+  function setupPaintboxedButtons() {
+    // Inspiration buttons
+    document.querySelectorAll(".tag-grid button").forEach(function(button) {
+      button.onclick = function() {
         var activeTags = document.querySelectorAll(".tag-grid button.active");
 
         if (button.classList.contains("active")) {
@@ -297,7 +308,36 @@
         }
 
         button.classList.add("active");
-      });
+      };
     });
-  });
+
+    // Palette size buttons
+    document.querySelectorAll(".segmented button").forEach(function(button) {
+      button.onclick = function() {
+        document.querySelectorAll(".segmented button").forEach(function(btn) {
+          btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        if (button.textContent.includes("5")) {
+          window.paletteSize = 5;
+        }
+
+        if (button.textContent.includes("10")) {
+          window.paletteSize = 10;
+        }
+
+        if (button.textContent.includes("20")) {
+          window.paletteSize = 20;
+        }
+      };
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupPaintboxedButtons);
+  } else {
+    setupPaintboxedButtons();
+  }
 </script>
