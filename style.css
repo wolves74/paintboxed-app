@@ -63,14 +63,14 @@ button {
 }
 
 .app-cover {
-  width: 140px;
-  height: 140px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
   margin: 0 auto 28px;
   display: block;
-  border: 2px dashed rgba(47, 45, 42, 0.2);
-  border-radius: 20px;
-  padding: 8px;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .small-gold {
