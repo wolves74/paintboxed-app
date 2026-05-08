@@ -1,1 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paintboxed</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
+<body>
+  <div class="app-shell">
+
+    <!-- HOME PAGE -->
+    <section id="homePage" class="page active-page">
+      <div class="home-card">
+
+        <img src="paintboxed-app-cover.png" alt="Paintboxed app cover" class="app-cover" />
+
+        <p class="small-gold">Farm & Pumpkin presents</p>
+
+        <h1 class="hero-title">welcome to<br>Paintboxed</h1>
+
+        <p class="hero-copy">
+          Create thoughtful, balanced color palettes for artwork, patterns, branding, and creative projects.
+        </p>
+
+        <div class="button-row">
+          <button class="primary-btn" onclick="showPage('creatorPage')">Start Building</button>
+          <button class="outline-btn" onclick="showPage('libraryPage')">My Palette Library</button>
+        </div>
+
+        <div class="how-box">
+          <h2>How it works</h2>
+
+          <div class="how-grid">
+            <div>
+              <div class="doodle-icon">✎</div>
+              <p>Choose a color</p>
+            </div>
+
+            <div>
+              <div class="doodle-icon">✿</div>
+              <p>Build a palette</p>
+            </div>
+
+            <div>
+              <div class="doodle-icon">♡</div>
+              <p>Preview + save</p>
+            </div>
+          </div>
+        </div>
+
+        <img src="fp-logo.png" alt="Farm and Pumpkin fp logo" class="fp-logo" />
+
+      </div>
+    </section>
+
+    <!-- PALETTE CREATOR PAGE -->
+    <section id="creatorPage" class="page">
+      <header class="top-bar">
+        <button class="plain-btn" onclick="showPage('homePage')">←</button>
+        <h1>Palette Creator</h1>
+        <button class="plain-btn">☰</button>
+      </header>
+
+      <main class="panel">
+
+        <section class="section-block">
+          <h2>1. Start With</h2>
+
+          <div class="choice-grid three">
+            <button class="choice-card selected">
+              <span class="big-icon">◉</span>
+              <strong>Color Wheel</strong>
+              <small>Pick a color</small>
+            </button>
+
+            <button class="choice-card">
+              <span class="big-icon">#A67C52</span>
+              <strong>Hex Code</strong>
+              <small>Enter a hex</small>
+            </button>
+
+            <button class="choice-card">
+              <span class="big-icon">▧</span>
+              <strong>Upload Image</strong>
+              <small>Get inspired</small>
+            </button>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <h2>2. Palette Size</h2>
+
+          <div class="segmented">
+            <button onclick="setPaletteSize(5)">5 Colors</button>
+            <button class="active" onclick="setPaletteSize(10)">10 Colors</button>
+            <button onclick="setPaletteSize(20)">20 Colors</button>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <h2>3. Inspiration <span>choose up to 3</span></h2>
+
+          <div class="tag-grid">
+            <button>Earthy</button>
+            <button>Moody</button>
+            <button>Bright</button>
+            <button>Soft</button>
+            <button>Vintage</button>
+            <button>Playful</button>
+            <button>Warm</button>
+            <button>Cool</button>
+            <button>Whimsical</button>
+            <button>Minimal</button>
+            <button>Romantic</button>
+            <button>Seasonal</button>
+          </div>
+
+          <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
+
+          <button class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
+        </section>
+
+        <section class="section-block">
+          <div class="section-header">
+            <h2>4. Your Palette</h2>
+            <button class="text-btn">Lock / Unlock All 🔒</button>
+          </div>
+
+          <div id="paletteSwatches" class="swatch-row"></div>
+
+          <p class="tiny-note">Tap a color to lock it. Locked colors stay when you regenerate.</p>
+        </section>
+
+        <section class="two-column">
+          <div class="section-block">
+            <h2>5. Adjust Palette</h2>
+
+            <label>Hue <input type="range" min="-30" max="30" value="0"></label>
+            <label>Tone <input type="range" min="-30" max="30" value="0"></label>
+            <label>Saturation <input type="range" min="-30" max="30" value="0"></label>
+          </div>
+
+          <div class="section-block">
+            <h2>6. Actions</h2>
+
+            <button onclick="generatePalette()" class="action-btn">Regenerate</button>
+            <button onclick="showPage('patternPage')" class="action-btn">Preview Patterns</button>
+            <button class="action-btn">Export</button>
+            <button onclick="savePalette()" class="action-btn">Save to Library</button>
+          </div>
+        </section>
+
+      </main>
+
+      <nav class="bottom-nav">
+        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button class="active">✎<span>Create</span></button>
+        <button onclick="showPage('libraryPage')">▣<span>Library</span></button>
+      </nav>
+    </section>
+
+    <!-- PATTERN PREVIEW PAGE -->
+    <section id="patternPage" class="page">
+      <header class="top-bar">
+        <button class="plain-btn" onclick="showPage('creatorPage')">←</button>
+        <h1>Pattern Preview</h1>
+        <button class="plain-btn">☰</button>
+      </header>
+
+      <main class="panel">
+        <section class="section-block">
+          <h2>Current Palette</h2>
+          <div id="previewSwatches" class="swatch-row"></div>
+        </section>
+
+        <section class="section-block center-text">
+          <h2>Apply Palette</h2>
+          <p class="tiny-note">
+            This palette is applied with intention, not randomly.
+          </p>
+
+          <div class="role-notes">
+            <p>✿ Large petals use hero / accent colors</p>
+            <p>✿ Small flowers use supporting accents</p>
+            <p>● Centers use dark anchors</p>
+            <p>⌁ Twigs use muted neutrals</p>
+            <p>○ Dots add light, playful detail</p>
+          </div>
+        </section>
+
+        <section class="pattern-window">
+          <div id="floralPattern" class="floral-pattern"></div>
+        </section>
+
+        <section class="controls-bar">
+          <label>Scale <input type="range" min="60" max="160" value="100" id="scaleSlider"></label>
+          <button onclick="shufflePattern()">Shuffle Colors</button>
+          <label>Background
+            <select id="backgroundSelect">
+              <option value="#ffffff">White</option>
+              <option value="#faf7f1">Cream</option>
+              <option value="#f2efe8">Light Neutral</option>
+            </select>
+          </label>
+        </section>
+
+        <div class="button-row">
+          <button onclick="savePalette()" class="outline-btn">♡ Save to Library</button>
+          <button class="primary-btn">Export PNG / Hex Codes</button>
+        </div>
+      </main>
+
+      <nav class="bottom-nav">
+        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button onclick="showPage('creatorPage')" class="active">✎<span>Create</span></button>
+        <button onclick="showPage('libraryPage')">▣<span>Library</span></button>
+      </nav>
+    </section>
+
+    <!-- LIBRARY PAGE -->
+    <section id="libraryPage" class="page">
+      <header class="top-bar">
+        <button class="plain-btn">☰</button>
+        <h1>My Palette Library ♡</h1>
+        <button class="plain-btn" onclick="showPage('creatorPage')">＋</button>
+      </header>
+
+      <main class="panel">
+        <div class="library-tools">
+          <input type="text" placeholder="Search palettes..." />
+          <button>Filter</button>
+          <button>Sort: Newest</button>
+        </div>
+
+        <div class="library-tabs">
+          <button class="active">All Palettes</button>
+          <button>Favorites</button>
+          <button>Recent</button>
+        </div>
+
+        <div id="libraryList" class="library-list"></div>
+
+        <section class="section-block">
+          <h2>Quick Actions</h2>
+          <div class="choice-grid four">
+            <button class="choice-card">Share</button>
+            <button class="choice-card">Export PNG</button>
+            <button class="choice-card">Procreate Swatch</button>
+            <button class="choice-card">Hex Codes</button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav">
+        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button onclick="showPage('creatorPage')">✎<span>Create</span></button>
+        <button class="active">▣<span>Library</span></button>
+      </nav>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
