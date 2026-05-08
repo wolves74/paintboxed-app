@@ -278,7 +278,26 @@
 
     window.scrollTo(0, 0);
   }
-</script>
 
-</body>
-</html>
+  document.addEventListener("DOMContentLoaded", function() {
+    var tagButtons = document.querySelectorAll(".tag-grid button");
+
+    tagButtons.forEach(function(button) {
+      button.addEventListener("click", function() {
+        var activeTags = document.querySelectorAll(".tag-grid button.active");
+
+        if (button.classList.contains("active")) {
+          button.classList.remove("active");
+          return;
+        }
+
+        if (activeTags.length >= 3) {
+          alert("Choose up to 3 inspiration words.");
+          return;
+        }
+
+        button.classList.add("active");
+      });
+    });
+  });
+</script>
