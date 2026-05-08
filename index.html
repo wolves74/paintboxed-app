@@ -103,20 +103,19 @@
           <h2>3. Inspiration <span>choose up to 3</span></h2>
 
           <div class="tag-grid">
-            <button>Earthy</button>
-            <button>Moody</button>
-            <button>Bright</button>
-            <button>Soft</button>
-            <button>Vintage</button>
-            <button>Playful</button>
-            <button>Warm</button>
-            <button>Cool</button>
-            <button>Whimsical</button>
-            <button>Minimal</button>
-            <button>Romantic</button>
-            <button>Seasonal</button>
-          </div>
-
+  <button type="button" onclick="toggleTag(this)">Earthy</button>
+  <button type="button" onclick="toggleTag(this)">Moody</button>
+  <button type="button" onclick="toggleTag(this)">Bright</button>
+  <button type="button" onclick="toggleTag(this)">Soft</button>
+  <button type="button" onclick="toggleTag(this)">Vintage</button>
+  <button type="button" onclick="toggleTag(this)">Playful</button>
+  <button type="button" onclick="toggleTag(this)">Warm</button>
+  <button type="button" onclick="toggleTag(this)">Cool</button>
+  <button type="button" onclick="toggleTag(this)">Whimsical</button>
+  <button type="button" onclick="toggleTag(this)">Minimal</button>
+  <button type="button" onclick="toggleTag(this)">Romantic</button>
+  <button type="button" onclick="toggleTag(this)">Seasonal</button>
+</div>
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
 
           <button class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
@@ -290,7 +289,21 @@
       }
     });
   };
+window.toggleTag = function(button) {
+  var activeTags = document.querySelectorAll(".tag-grid button.active");
 
+  if (button.classList.contains("active")) {
+    button.classList.remove("active");
+    return;
+  }
+
+  if (activeTags.length >= 3) {
+    alert("Choose up to 3 inspiration words.");
+    return;
+  }
+
+  button.classList.add("active");
+};
   function setupPaintboxedButtons() {
    // Inspiration buttons - stronger click handler
 var tagGrid = document.querySelector(".tag-grid");
