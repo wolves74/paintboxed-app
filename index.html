@@ -116,6 +116,7 @@
   <button type="button" onclick="toggleTag(this)">Romantic</button>
   <button type="button" onclick="toggleTag(this)">Seasonal</button>
 </div>
+</div>
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
 
           <button class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
@@ -290,6 +291,41 @@
     });
   };
 window.toggleTag = function(button) {
+  var activeTags = document.querySelectorAll(".tag-grid button.active");
+
+  if (button.classList.contains("active")) {
+    button.classList.remove("active");
+    return;
+  }
+
+  if (activeTags.length >= 3) {
+    alert("Choose up to 3 inspiration words.");
+    return;
+  }
+
+  button.classList.add("active");
+};
+  window.toggleTag = function(button) {
+  var activeTags = document.querySelectorAll(".tag-grid button.active");
+
+  if (button.classList.contains("active")) {
+    button.classList.remove("active");
+    return;
+  }
+
+  if (activeTags.length >= 3) {
+    alert("Choose up to 3 inspiration words.");
+    return;
+  }
+
+  button.classList.add("active");
+};
+
+window.paintboxedTagClick = function(event) {
+  window.paintboxedTagClick = function(event) {
+  var button = event.target.closest("button");
+  if (!button) return;
+
   var activeTags = document.querySelectorAll(".tag-grid button.active");
 
   if (button.classList.contains("active")) {
