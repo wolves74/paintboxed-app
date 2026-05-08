@@ -452,17 +452,28 @@
     }
 
     function toggleTag(button) {
-      const activeTags = document.querySelectorAll(".tag-grid button.active");
+  const activeTags = document.querySelectorAll(".tag-grid button.active");
 
-      if (button.classList.contains("active")) {
-        button.classList.remove("active");
-        return;
-      }
+  if (button.classList.contains("active")) {
+    button.classList.remove("active");
+    button.style.background = "";
+    button.style.color = "";
+    button.style.borderColor = "";
+    button.style.boxShadow = "";
+    return;
+  }
 
-      if (activeTags.length >= 3) {
-        alert("Choose up to 3 inspiration words.");
-        return;
-      }
+  if (activeTags.length >= 3) {
+    alert("Choose up to 3 inspiration words.");
+    return;
+  }
+
+  button.classList.add("active");
+  button.style.background = "#2f2d2a";
+  button.style.color = "#fbfaf7";
+  button.style.borderColor = "#2f2d2a";
+  button.style.boxShadow = "4px 5px 0 rgba(176, 138, 60, 0.28)";
+}
 
       button.classList.add("active");
     }
