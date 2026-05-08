@@ -25,8 +25,8 @@
         </p>
 
         <div class="button-row">
-          <button class="primary-btn" onclick="showPage('creatorPage')">Start Building</button>
-          <button class="outline-btn" onclick="showPage('libraryPage')">My Palette Library</button>
+          <button type="button" class="primary-btn" onclick="showPage('creatorPage')">Start Building</button>
+          <button type="button" class="outline-btn" onclick="showPage('libraryPage')">My Palette Library</button>
         </div>
 
         <div class="how-box">
@@ -58,9 +58,9 @@
     <!-- PALETTE CREATOR PAGE -->
     <section id="creatorPage" class="page">
       <header class="top-bar">
-        <button class="plain-btn" onclick="showPage('homePage')">←</button>
+        <button type="button" class="plain-btn" onclick="showPage('homePage')">←</button>
         <h1>Palette Creator</h1>
-        <button class="plain-btn">☰</button>
+        <button type="button" class="plain-btn">☰</button>
       </header>
 
       <main class="panel">
@@ -69,19 +69,19 @@
           <h2>1. Start With</h2>
 
           <div class="choice-grid three">
-            <button class="choice-card selected">
+            <button type="button" class="choice-card selected">
               <span class="big-icon">◉</span>
               <strong>Color Wheel</strong>
               <small>Pick a color</small>
             </button>
 
-            <button class="choice-card">
+            <button type="button" class="choice-card">
               <span class="big-icon">#A67C52</span>
               <strong>Hex Code</strong>
               <small>Enter a hex</small>
             </button>
 
-            <button class="choice-card">
+            <button type="button" class="choice-card">
               <span class="big-icon">▧</span>
               <strong>Upload Image</strong>
               <small>Get inspired</small>
@@ -93,9 +93,9 @@
           <h2>2. Palette Size</h2>
 
           <div class="segmented">
-            <button onclick="setPaletteSize(5)">5 Colors</button>
-            <button class="active" onclick="setPaletteSize(10)">10 Colors</button>
-            <button onclick="setPaletteSize(20)">20 Colors</button>
+            <button type="button" onclick="setPaletteSize(5)">5 Colors</button>
+            <button type="button" class="active" onclick="setPaletteSize(10)">10 Colors</button>
+            <button type="button" onclick="setPaletteSize(20)">20 Colors</button>
           </div>
         </section>
 
@@ -103,29 +103,29 @@
           <h2>3. Inspiration <span>choose up to 3</span></h2>
 
           <div class="tag-grid">
-  <button type="button" onclick="toggleTag(this)">Earthy</button>
-  <button type="button" onclick="toggleTag(this)">Moody</button>
-  <button type="button" onclick="toggleTag(this)">Bright</button>
-  <button type="button" onclick="toggleTag(this)">Soft</button>
-  <button type="button" onclick="toggleTag(this)">Vintage</button>
-  <button type="button" onclick="toggleTag(this)">Playful</button>
-  <button type="button" onclick="toggleTag(this)">Warm</button>
-  <button type="button" onclick="toggleTag(this)">Cool</button>
-  <button type="button" onclick="toggleTag(this)">Whimsical</button>
-  <button type="button" onclick="toggleTag(this)">Minimal</button>
-  <button type="button" onclick="toggleTag(this)">Romantic</button>
-  <button type="button" onclick="toggleTag(this)">Seasonal</button>
-</div>
-</div>
+            <button type="button" onclick="toggleTag(this)">Earthy</button>
+            <button type="button" onclick="toggleTag(this)">Moody</button>
+            <button type="button" onclick="toggleTag(this)">Bright</button>
+            <button type="button" onclick="toggleTag(this)">Soft</button>
+            <button type="button" onclick="toggleTag(this)">Vintage</button>
+            <button type="button" onclick="toggleTag(this)">Playful</button>
+            <button type="button" onclick="toggleTag(this)">Warm</button>
+            <button type="button" onclick="toggleTag(this)">Cool</button>
+            <button type="button" onclick="toggleTag(this)">Whimsical</button>
+            <button type="button" onclick="toggleTag(this)">Minimal</button>
+            <button type="button" onclick="toggleTag(this)">Romantic</button>
+            <button type="button" onclick="toggleTag(this)">Seasonal</button>
+          </div>
+
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
 
-          <button class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
+          <button type="button" class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
         </section>
 
         <section class="section-block">
           <div class="section-header">
             <h2>4. Your Palette</h2>
-            <button class="text-btn">Lock / Unlock All 🔒</button>
+            <button type="button" class="text-btn">Lock / Unlock All 🔒</button>
           </div>
 
           <div id="paletteSwatches" class="swatch-row"></div>
@@ -145,28 +145,28 @@
           <div class="section-block">
             <h2>6. Actions</h2>
 
-            <button onclick="generatePalette()" class="action-btn">Regenerate</button>
-            <button onclick="showPage('patternPage')" class="action-btn">Preview Patterns</button>
-            <button class="action-btn">Export</button>
-            <button onclick="savePalette()" class="action-btn">Save to Library</button>
+            <button type="button" onclick="generatePalette()" class="action-btn">Regenerate</button>
+            <button type="button" onclick="showPage('patternPage')" class="action-btn">Preview Patterns</button>
+            <button type="button" class="action-btn">Export</button>
+            <button type="button" onclick="savePalette()" class="action-btn">Save to Library</button>
           </div>
         </section>
 
       </main>
 
       <nav class="bottom-nav">
-        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
-        <button class="active">✎<span>Create</span></button>
-        <button onclick="showPage('libraryPage')">▣<span>Library</span></button>
+        <button type="button" onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button type="button" class="active">✎<span>Create</span></button>
+        <button type="button" onclick="showPage('libraryPage')">▣<span>Library</span></button>
       </nav>
     </section>
 
     <!-- PATTERN PREVIEW PAGE -->
     <section id="patternPage" class="page">
       <header class="top-bar">
-        <button class="plain-btn" onclick="showPage('creatorPage')">←</button>
+        <button type="button" class="plain-btn" onclick="showPage('creatorPage')">←</button>
         <h1>Pattern Preview</h1>
-        <button class="plain-btn">☰</button>
+        <button type="button" class="plain-btn">☰</button>
       </header>
 
       <main class="panel">
@@ -196,48 +196,51 @@
 
         <section class="controls-bar">
           <label>Scale <input type="range" min="60" max="160" value="100" id="scaleSlider"></label>
-          <button onclick="shufflePattern()">Shuffle Colors</button>
+
+          <button type="button" onclick="shufflePattern()">Shuffle Colors</button>
+
           <label>Background
             <select id="backgroundSelect">
+              <option value="#fbfaf7">Off White</option>
               <option value="#ffffff">White</option>
-              <option value="#faf7f1">Cream</option>
+              <option value="#f7f2ea">Cream</option>
               <option value="#f2efe8">Light Neutral</option>
             </select>
           </label>
         </section>
 
         <div class="button-row">
-          <button onclick="savePalette()" class="outline-btn">♡ Save to Library</button>
-          <button class="primary-btn">Export PNG / Hex Codes</button>
+          <button type="button" onclick="savePalette()" class="outline-btn">♡ Save to Library</button>
+          <button type="button" class="primary-btn">Export PNG / Hex Codes</button>
         </div>
       </main>
 
       <nav class="bottom-nav">
-        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
-        <button onclick="showPage('creatorPage')" class="active">✎<span>Create</span></button>
-        <button onclick="showPage('libraryPage')">▣<span>Library</span></button>
+        <button type="button" onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button type="button" onclick="showPage('creatorPage')" class="active">✎<span>Create</span></button>
+        <button type="button" onclick="showPage('libraryPage')">▣<span>Library</span></button>
       </nav>
     </section>
 
     <!-- LIBRARY PAGE -->
     <section id="libraryPage" class="page">
       <header class="top-bar">
-        <button class="plain-btn">☰</button>
+        <button type="button" class="plain-btn">☰</button>
         <h1>My Palette Library ♡</h1>
-        <button class="plain-btn" onclick="showPage('creatorPage')">＋</button>
+        <button type="button" class="plain-btn" onclick="showPage('creatorPage')">＋</button>
       </header>
 
       <main class="panel">
         <div class="library-tools">
           <input type="text" placeholder="Search palettes..." />
-          <button>Filter</button>
-          <button>Sort: Newest</button>
+          <button type="button">Filter</button>
+          <button type="button">Sort: Newest</button>
         </div>
 
         <div class="library-tabs">
-          <button class="active">All Palettes</button>
-          <button>Favorites</button>
-          <button>Recent</button>
+          <button type="button" class="active">All Palettes</button>
+          <button type="button">Favorites</button>
+          <button type="button">Recent</button>
         </div>
 
         <div id="libraryList" class="library-list"></div>
@@ -245,123 +248,79 @@
         <section class="section-block">
           <h2>Quick Actions</h2>
           <div class="choice-grid four">
-            <button class="choice-card">Share</button>
-            <button class="choice-card">Export PNG</button>
-            <button class="choice-card">Procreate Swatch</button>
-            <button class="choice-card">Hex Codes</button>
+            <button type="button" class="choice-card">Share</button>
+            <button type="button" class="choice-card">Export PNG</button>
+            <button type="button" class="choice-card">Procreate Swatch</button>
+            <button type="button" class="choice-card">Hex Codes</button>
           </div>
         </section>
       </main>
 
       <nav class="bottom-nav">
-        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
-        <button onclick="showPage('creatorPage')">✎<span>Create</span></button>
-        <button class="active">▣<span>Library</span></button>
+        <button type="button" onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button type="button" onclick="showPage('creatorPage')">✎<span>Create</span></button>
+        <button type="button" class="active">▣<span>Library</span></button>
       </nav>
     </section>
 
   </div>
 
   <script src="script.js"></script>
-<script>
-  // Paintboxed emergency UI controls
-  window.showPage = function(pageId) {
-    document.querySelectorAll(".page").forEach(function(page) {
-      page.classList.remove("active-page");
-    });
 
-    var nextPage = document.getElementById(pageId);
+  <script>
+    window.showPage = function(pageId) {
+      document.querySelectorAll(".page").forEach(function(page) {
+        page.classList.remove("active-page");
+      });
 
-    if (nextPage) {
-      nextPage.classList.add("active-page");
-    }
+      var nextPage = document.getElementById(pageId);
 
-    window.scrollTo(0, 0);
-  };
-
-  window.setPaletteSize = function(size) {
-    window.paletteSize = size;
-
-    document.querySelectorAll(".segmented button").forEach(function(button) {
-      button.classList.remove("active");
-
-      if (button.textContent.includes(size.toString())) {
-        button.classList.add("active");
+      if (nextPage) {
+        nextPage.classList.add("active-page");
       }
-    });
-  };
-window.toggleTag = function(button) {
-  var activeTags = document.querySelectorAll(".tag-grid button.active");
 
-  if (button.classList.contains("active")) {
-    button.classList.remove("active");
-    return;
-  }
+      if (pageId === "patternPage") {
+        if (typeof renderPreviewPalette === "function") renderPreviewPalette();
+        if (typeof renderPattern === "function") renderPattern();
+      }
 
-  if (activeTags.length >= 3) {
-    alert("Choose up to 3 inspiration words.");
-    return;
-  }
+      if (pageId === "libraryPage") {
+        if (typeof renderLibrary === "function") renderLibrary();
+      }
 
-  button.classList.add("active");
-};
-  window.toggleTag = function(button) {
-  var activeTags = document.querySelectorAll(".tag-grid button.active");
+      window.scrollTo(0, 0);
+    };
 
-  if (button.classList.contains("active")) {
-    button.classList.remove("active");
-    return;
-  }
+    window.toggleTag = function(button) {
+      var activeTags = document.querySelectorAll(".tag-grid button.active");
 
-  if (activeTags.length >= 3) {
-    alert("Choose up to 3 inspiration words.");
-    return;
-  }
+      if (button.classList.contains("active")) {
+        button.classList.remove("active");
+        return;
+      }
 
-  button.classList.add("active");
-};
+      if (activeTags.length >= 3) {
+        alert("Choose up to 3 inspiration words.");
+        return;
+      }
 
-window.paintboxedTagClick = function(event) {
-  window.paintboxedTagClick = function(event) {
-  var button = event.target.closest("button");
-  if (!button) return;
+      button.classList.add("active");
+    };
 
-  var activeTags = document.querySelectorAll(".tag-grid button.active");
+    window.setPaletteSize = function(size) {
+      if (typeof paletteSize !== "undefined") {
+        paletteSize = size;
+      }
 
-  if (button.classList.contains("active")) {
-    button.classList.remove("active");
-    return;
-  }
+      document.querySelectorAll(".segmented button").forEach(function(button) {
+        button.classList.remove("active");
 
-  if (activeTags.length >= 3) {
-    alert("Choose up to 3 inspiration words.");
-    return;
-  }
+        if (button.textContent.includes(size.toString())) {
+          button.classList.add("active");
+        }
+      });
+    };
+  </script>
 
-  button.classList.add("active");
-};
-  function setupPaintboxedButtons() {
-   // Inspiration buttons - stronger click handler
-var tagGrid = document.querySelector(".tag-grid");
-
-if (tagGrid) {
-  tagGrid.addEventListener("click", function(event) {
-    var button = event.target.closest("button");
-
-    if (!button) return;
-
-    var activeTags = document.querySelectorAll(".tag-grid button.active");
-
-    if (button.classList.contains("active")) {
-      button.classList.remove("active");
-      return;
-    }
-
-    if (activeTags.length >= 3) {
-      alert("Choose up to 3 inspiration words.");
-      return;
-    }
-
-    button.classList.add("active");
-  });
-} 
+</body>
+</html>
