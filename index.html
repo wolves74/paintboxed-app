@@ -292,52 +292,27 @@
   };
 
   function setupPaintboxedButtons() {
-    // Inspiration buttons
-    document.querySelectorAll(".tag-grid button").forEach(function(button) {
-      button.onclick = function() {
-        var activeTags = document.querySelectorAll(".tag-grid button.active");
+   // Inspiration buttons - stronger click handler
+var tagGrid = document.querySelector(".tag-grid");
 
-        if (button.classList.contains("active")) {
-          button.classList.remove("active");
-          return;
-        }
+if (tagGrid) {
+  tagGrid.addEventListener("click", function(event) {
+    var button = event.target.closest("button");
 
-        if (activeTags.length >= 3) {
-          alert("Choose up to 3 inspiration words.");
-          return;
-        }
+    if (!button) return;
 
-        button.classList.add("active");
-      };
-    });
+    var activeTags = document.querySelectorAll(".tag-grid button.active");
 
-    // Palette size buttons
-    document.querySelectorAll(".segmented button").forEach(function(button) {
-      button.onclick = function() {
-        document.querySelectorAll(".segmented button").forEach(function(btn) {
-          btn.classList.remove("active");
-        });
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+      return;
+    }
 
-        button.classList.add("active");
+    if (activeTags.length >= 3) {
+      alert("Choose up to 3 inspiration words.");
+      return;
+    }
 
-        if (button.textContent.includes("5")) {
-          window.paletteSize = 5;
-        }
-
-        if (button.textContent.includes("10")) {
-          window.paletteSize = 10;
-        }
-
-        if (button.textContent.includes("20")) {
-          window.paletteSize = 20;
-        }
-      };
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setupPaintboxedButtons);
-  } else {
-    setupPaintboxedButtons();
-  }
-</script>
+    button.classList.add("active");
+  });
+} 
