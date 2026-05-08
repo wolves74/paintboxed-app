@@ -25,8 +25,8 @@
         </p>
 
         <div class="button-row">
-          <button class="primary-btn" onclick="showPage('creatorPage')">Start Building</button>
-          <button class="outline-btn" onclick="showPage('libraryPage')">My Palette Library</button>
+          <button type="button" class="primary-btn" onclick="showPage('creatorPage')">Start Building</button>
+          <button type="button" class="outline-btn" onclick="showPage('libraryPage')">My Palette Library</button>
         </div>
 
         <div class="how-box">
@@ -58,74 +58,107 @@
     <!-- PALETTE CREATOR PAGE -->
     <section id="creatorPage" class="page">
       <header class="top-bar">
-        <button class="plain-btn" onclick="showPage('homePage')">←</button>
+        <button type="button" class="plain-btn" onclick="showPage('homePage')">←</button>
         <h1>Palette Creator</h1>
-        <button class="plain-btn">☰</button>
+        <button type="button" class="plain-btn">☰</button>
       </header>
 
       <main class="panel">
 
+        <!-- START WITH -->
         <section class="section-block">
           <h2>1. Start With</h2>
 
           <div class="choice-grid three">
-            <button class="choice-card selected">
+            <button type="button" id="colorWheelCard" class="choice-card selected" onclick="setStartMethod('color')">
               <span class="big-icon">◉</span>
               <strong>Color Wheel</strong>
               <small>Pick a color</small>
             </button>
 
-            <button class="choice-card">
+            <button type="button" id="hexCard" class="choice-card" onclick="setStartMethod('hex')">
               <span class="big-icon">#A67C52</span>
               <strong>Hex Code</strong>
               <small>Enter a hex</small>
             </button>
 
-            <button class="choice-card">
+            <button type="button" id="uploadCard" class="choice-card" onclick="setStartMethod('upload')">
               <span class="big-icon">▧</span>
               <strong>Upload Image</strong>
               <small>Get inspired</small>
             </button>
           </div>
+
+          <div id="startControls" style="margin-top: 24px;">
+            <div id="colorControl">
+              <label>
+                Pick your starting color
+                <input type="color" id="seedColorPicker" value="#A67C52" />
+              </label>
+            </div>
+
+            <div id="hexControl" style="display: none;">
+              <label>
+                Enter a hex code
+                <input type="text" id="hexInput" value="#A67C52" maxlength="7" />
+              </label>
+              <p id="hexMessage" class="tiny-note"></p>
+            </div>
+
+            <div id="uploadControl" style="display: none;">
+              <label>
+                Upload an inspiration image
+                <input type="file" id="imageUpload" accept="image/*" />
+              </label>
+
+              <div id="imagePreviewWrap" style="display: none; margin-top: 16px;">
+                <p class="tiny-note">Image uploaded for inspiration:</p>
+                <img id="imagePreview" alt="Uploaded inspiration preview" style="max-width: 220px; border: 2px solid #2f2d2a; border-radius: 14px;" />
+              </div>
+            </div>
+          </div>
         </section>
 
+        <!-- PALETTE SIZE -->
         <section class="section-block">
           <h2>2. Palette Size</h2>
 
           <div class="segmented">
-            <button onclick="setPaletteSize(5)">5 Colors</button>
-            <button class="active" onclick="setPaletteSize(10)">10 Colors</button>
-            <button onclick="setPaletteSize(20)">20 Colors</button>
+            <button type="button" onclick="setPaletteSize(5)">5 Colors</button>
+            <button type="button" class="active" onclick="setPaletteSize(10)">10 Colors</button>
+            <button type="button" onclick="setPaletteSize(20)">20 Colors</button>
           </div>
         </section>
 
+        <!-- INSPIRATION -->
         <section class="section-block">
           <h2>3. Inspiration <span>choose up to 3</span></h2>
 
           <div class="tag-grid">
-            <button>Earthy</button>
-            <button>Moody</button>
-            <button>Bright</button>
-            <button>Soft</button>
-            <button>Vintage</button>
-            <button>Playful</button>
-            <button>Warm</button>
-            <button>Cool</button>
-            <button>Whimsical</button>
-            <button>Minimal</button>
-            <button>Romantic</button>
-            <button>Seasonal</button>
+            <button type="button" onclick="toggleTag(this)">Earthy</button>
+            <button type="button" onclick="toggleTag(this)">Moody</button>
+            <button type="button" onclick="toggleTag(this)">Bright</button>
+            <button type="button" onclick="toggleTag(this)">Soft</button>
+            <button type="button" onclick="toggleTag(this)">Vintage</button>
+            <button type="button" onclick="toggleTag(this)">Playful</button>
+            <button type="button" onclick="toggleTag(this)">Warm</button>
+            <button type="button" onclick="toggleTag(this)">Cool</button>
+            <button type="button" onclick="toggleTag(this)">Whimsical</button>
+            <button type="button" onclick="toggleTag(this)">Minimal</button>
+            <button type="button" onclick="toggleTag(this)">Romantic</button>
+            <button type="button" onclick="toggleTag(this)">Seasonal</button>
           </div>
 
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
 
-          <button class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
+          <button type="button" class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
         </section>
 
+        <!-- PALETTE OUTPUT -->
         <section class="section-block">
           <div class="section-header">
             <h2>4. Your Palette</h2>
-            <button class="text-btn">Lock / Unlock All 🔒</button>
+            <button type="button" class="text-btn" onclick="unlockAll()">Unlock All ♡</button>
           </div>
 
           <div id="paletteSwatches" class="swatch-row"></div>
@@ -133,40 +166,41 @@
           <p class="tiny-note">Tap a color to lock it. Locked colors stay when you regenerate.</p>
         </section>
 
+        <!-- ADJUST + ACTIONS -->
         <section class="two-column">
           <div class="section-block">
             <h2>5. Adjust Palette</h2>
 
-            <label>Hue <input type="range" min="-30" max="30" value="0"></label>
-            <label>Tone <input type="range" min="-30" max="30" value="0"></label>
-            <label>Saturation <input type="range" min="-30" max="30" value="0"></label>
+            <label>Hue <input type="range" min="-30" max="30" value="0" id="hueSlider"></label>
+            <label>Tone <input type="range" min="-30" max="30" value="0" id="toneSlider"></label>
+            <label>Saturation <input type="range" min="-30" max="30" value="0" id="satSlider"></label>
           </div>
 
           <div class="section-block">
             <h2>6. Actions</h2>
 
-            <button onclick="generatePalette()" class="action-btn">Regenerate</button>
-            <button onclick="showPage('patternPage')" class="action-btn">Preview Patterns</button>
-            <button class="action-btn">Export</button>
-            <button onclick="savePalette()" class="action-btn">Save to Library</button>
+            <button type="button" onclick="generatePalette()" class="action-btn">Regenerate</button>
+            <button type="button" onclick="showPage('patternPage')" class="action-btn">Preview Patterns</button>
+            <button type="button" onclick="exportHexCodes()" class="action-btn">Export Hex Codes</button>
+            <button type="button" onclick="savePalette()" class="action-btn">Save to Library</button>
           </div>
         </section>
 
       </main>
 
       <nav class="bottom-nav">
-        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
-        <button class="active">✎<span>Create</span></button>
-        <button onclick="showPage('libraryPage')">▣<span>Library</span></button>
+        <button type="button" onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button type="button" class="active">✎<span>Create</span></button>
+        <button type="button" onclick="showPage('libraryPage')">▣<span>Library</span></button>
       </nav>
     </section>
 
     <!-- PATTERN PREVIEW PAGE -->
     <section id="patternPage" class="page">
       <header class="top-bar">
-        <button class="plain-btn" onclick="showPage('creatorPage')">←</button>
+        <button type="button" class="plain-btn" onclick="showPage('creatorPage')">←</button>
         <h1>Pattern Preview</h1>
-        <button class="plain-btn">☰</button>
+        <button type="button" class="plain-btn">☰</button>
       </header>
 
       <main class="panel">
@@ -178,16 +212,8 @@
         <section class="section-block center-text">
           <h2>Apply Palette</h2>
           <p class="tiny-note">
-            This palette is applied with intention, not randomly.
+            This preview uses your floral pattern as a repeat tile. Smart SVG color placement comes later.
           </p>
-
-          <div class="role-notes">
-            <p>✿ Large petals use hero / accent colors</p>
-            <p>✿ Small flowers use supporting accents</p>
-            <p>● Centers use dark anchors</p>
-            <p>⌁ Twigs use muted neutrals</p>
-            <p>○ Dots add light, playful detail</p>
-          </div>
         </section>
 
         <section class="pattern-window">
@@ -195,90 +221,633 @@
         </section>
 
         <section class="controls-bar">
-          <label>Scale <input type="range" min="60" max="160" value="100" id="scaleSlider"></label>
-          <button onclick="shufflePattern()">Shuffle Colors</button>
+          <label>Scale <input type="range" min="60" max="160" value="100" id="scaleSlider" oninput="renderPattern()"></label>
+
+          <button type="button" onclick="shufflePalette()">Shuffle Colors</button>
+
           <label>Background
-            <select id="backgroundSelect">
+            <select id="backgroundSelect" onchange="renderPattern()">
+              <option value="#fbfaf7">Off White</option>
               <option value="#ffffff">White</option>
-              <option value="#faf7f1">Cream</option>
+              <option value="#f7f2ea">Cream</option>
               <option value="#f2efe8">Light Neutral</option>
             </select>
           </label>
         </section>
 
         <div class="button-row">
-          <button onclick="savePalette()" class="outline-btn">♡ Save to Library</button>
-          <button class="primary-btn">Export PNG / Hex Codes</button>
+          <button type="button" onclick="savePalette()" class="outline-btn">♡ Save to Library</button>
+          <button type="button" onclick="exportHexCodes()" class="primary-btn">Export Hex Codes</button>
         </div>
       </main>
 
       <nav class="bottom-nav">
-        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
-        <button onclick="showPage('creatorPage')" class="active">✎<span>Create</span></button>
-        <button onclick="showPage('libraryPage')">▣<span>Library</span></button>
+        <button type="button" onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button type="button" onclick="showPage('creatorPage')" class="active">✎<span>Create</span></button>
+        <button type="button" onclick="showPage('libraryPage')">▣<span>Library</span></button>
       </nav>
     </section>
 
     <!-- LIBRARY PAGE -->
     <section id="libraryPage" class="page">
       <header class="top-bar">
-        <button class="plain-btn">☰</button>
+        <button type="button" class="plain-btn">☰</button>
         <h1>My Palette Library ♡</h1>
-        <button class="plain-btn" onclick="showPage('creatorPage')">＋</button>
+        <button type="button" class="plain-btn" onclick="showPage('creatorPage')">＋</button>
       </header>
 
       <main class="panel">
         <div class="library-tools">
           <input type="text" placeholder="Search palettes..." />
-          <button>Filter</button>
-          <button>Sort: Newest</button>
+          <button type="button">Filter</button>
+          <button type="button">Sort: Newest</button>
         </div>
 
         <div class="library-tabs">
-          <button class="active">All Palettes</button>
-          <button>Favorites</button>
-          <button>Recent</button>
+          <button type="button" class="active">All Palettes</button>
+          <button type="button">Favorites</button>
+          <button type="button">Recent</button>
         </div>
 
         <div id="libraryList" class="library-list"></div>
-
-        <section class="section-block">
-          <h2>Quick Actions</h2>
-          <div class="choice-grid four">
-            <button class="choice-card">Share</button>
-            <button class="choice-card">Export PNG</button>
-            <button class="choice-card">Procreate Swatch</button>
-            <button class="choice-card">Hex Codes</button>
-          </div>
-        </section>
       </main>
 
       <nav class="bottom-nav">
-        <button onclick="showPage('homePage')">⌂<span>Home</span></button>
-        <button onclick="showPage('creatorPage')">✎<span>Create</span></button>
-        <button class="active">▣<span>Library</span></button>
+        <button type="button" onclick="showPage('homePage')">⌂<span>Home</span></button>
+        <button type="button" onclick="showPage('creatorPage')">✎<span>Create</span></button>
+        <button type="button" class="active">▣<span>Library</span></button>
       </nav>
     </section>
 
   </div>
 
-  <script src="script.js"></script>
+  <!-- SELF-CONTAINED CHECKPOINT SCRIPT -->
+  <script>
+    let startMethod = "color";
+    let paletteSize = 10;
+    let currentPalette = [];
+    let lockedColors = [];
+    let savedPalettes = JSON.parse(localStorage.getItem("paintboxedPalettes")) || [];
 
-<script>
-  function showPage(pageId) {
-    document.querySelectorAll(".page").forEach(function(page) {
-      page.classList.remove("active-page");
+    const colorBanks = {
+      earthy: {
+        lights: ["#FAF4EA", "#F5EBDD", "#EFE2CE", "#F8F0E3"],
+        neutrals: ["#D8C7B0", "#C7B59D", "#B8A58C", "#A9947C"],
+        supports: ["#A7A88A", "#8F9B73", "#7E8B64", "#9B9272"],
+        accents: ["#C77750", "#B96745", "#D08A61", "#B8843D"],
+        darks: ["#3E4738", "#4E3B2F", "#5B3A2E", "#2F352B"]
+      },
+      soft: {
+        lights: ["#FFF7F2", "#F8EEE8", "#F7F1E9", "#F1E9DF"],
+        neutrals: ["#E0D2C8", "#D8C8BE", "#CDBBB0", "#BFAEA4"],
+        supports: ["#C9D6C5", "#B9CAD6", "#D9CFE2", "#D8BDB7"],
+        accents: ["#E5A99F", "#D99991", "#E8B79D", "#C88D92"],
+        darks: ["#776C62", "#6E6259", "#5D5851", "#4D4945"]
+      },
+      vintage: {
+        lights: ["#F7F0E3", "#EFE3CF", "#F3E8D8", "#EADBC5"],
+        neutrals: ["#D8C7A8", "#C9B899", "#BDA98C", "#AA957A"],
+        supports: ["#7B805B", "#6E7652", "#7E8B7A", "#6E7E88"],
+        accents: ["#B58A5A", "#B46E57", "#A65E4F", "#C08A3E"],
+        darks: ["#4B573F", "#4C3A31", "#5B4038", "#2F2A25"]
+      },
+      moody: {
+        lights: ["#F3EEE7", "#E8E0D4", "#DED4C8", "#DAD2C6"],
+        neutrals: ["#B5A99B", "#9C9186", "#847B72", "#706A63"],
+        supports: ["#6F7C73", "#6B7480", "#7A6C72", "#7E715E"],
+        accents: ["#9C6A54", "#884F47", "#A27A3E", "#8C5D68"],
+        darks: ["#243038", "#2E3A40", "#2F332B", "#3B2E2C"]
+      },
+      bright: {
+        lights: ["#FFF8E7", "#FFF4D9", "#FCEDE5", "#F4FAF2"],
+        neutrals: ["#EADCC7", "#DCC9B8", "#C9B8A3", "#F0E3D3"],
+        supports: ["#A8DCC4", "#83B6D9", "#B7D96F", "#D9C4F2"],
+        accents: ["#F06A45", "#E889B9", "#E04D3F", "#F5A43B"],
+        darks: ["#2F2D2A", "#243A4A", "#314433", "#4E2C2B"]
+      },
+      playful: {
+        lights: ["#FFF7E8", "#FFF2F0", "#FFF5CF", "#F2FBF7"],
+        neutrals: ["#E8D8C5", "#D7C6B6", "#CDBCAA", "#F0DFCD"],
+        supports: ["#A9D7C2", "#90BCE0", "#CDB8E8", "#F6D36E"],
+        accents: ["#EA6B4D", "#E58AB5", "#F2A23C", "#E45A6A"],
+        darks: ["#2D2B28", "#31505D", "#3C4732", "#5B3434"]
+      },
+      warm: {
+        lights: ["#FFF4E4", "#FAE6D0", "#F6DDC2", "#FFEEDB"],
+        neutrals: ["#E9C8A4", "#D7B58F", "#C6A17B", "#B8906C"],
+        supports: ["#B9A26B", "#A88F5C", "#A87052", "#C18757"],
+        accents: ["#C99263", "#A86A47", "#D6A23F", "#C76F3D"],
+        darks: ["#7A4734", "#5D4636", "#4A352A", "#2C2520"]
+      },
+      cool: {
+        lights: ["#F5F7F4", "#EEF5F5", "#E8F0EE", "#EDF4FA"],
+        neutrals: ["#D7E0D9", "#C6D1CA", "#B8C7BF", "#AAB6B0"],
+        supports: ["#91A99F", "#6F8B84", "#A5B7D1", "#7B9CB0"],
+        accents: ["#526F74", "#5A7E95", "#6C83B2", "#4F927A"],
+        darks: ["#385760", "#2A3A42", "#303E50", "#243731"]
+      },
+      whimsical: {
+        lights: ["#FFF9EF", "#FFF2E8", "#FFF7D8", "#F1FAEF"],
+        neutrals: ["#E8D7C8", "#D8C8B8", "#CBB9A8", "#E9DEC9"],
+        supports: ["#BFE3C3", "#A6CDE8", "#DCC8F0", "#F5C3B4"],
+        accents: ["#D98263", "#F0A6C8", "#F6D36F", "#9AA6E8"],
+        darks: ["#302C2A", "#38505A", "#4B4730", "#613A38"]
+      },
+      minimal: {
+        lights: ["#FFFFFF", "#FBFAF7", "#F7F2EA", "#F2EFE8"],
+        neutrals: ["#E0D8CC", "#D6CFC4", "#C8BCAE", "#B8AEA2"],
+        supports: ["#B08A3C", "#A89E8B", "#918C80", "#B7B2A7"],
+        accents: ["#B08A3C", "#8E7345", "#A56D4E", "#6F7A6A"],
+        darks: ["#83796F", "#5E5750", "#3B3834", "#262421"]
+      },
+      romantic: {
+        lights: ["#FFF7F2", "#FAEDE9", "#F6E2DF", "#F8F0E9"],
+        neutrals: ["#EFD5CF", "#D8C4BB", "#CBB2AA", "#A88D83"],
+        supports: ["#DFAEA7", "#D6A7BE", "#C98784", "#B99AA3"],
+        accents: ["#C98784", "#A7605C", "#B25C76", "#C0799A"],
+        darks: ["#7A3E3F", "#6D5650", "#563F43", "#2E2927"]
+      },
+      seasonal: {
+        lights: ["#FFF8E9", "#F6EBD5", "#FFF2DB", "#F0F4E4"],
+        neutrals: ["#D9C2A5", "#C9B08E", "#B9A483", "#D7CBB9"],
+        supports: ["#A7A47A", "#6E7A58", "#7D9AAA", "#9E8C68"],
+        accents: ["#F1C46D", "#D9824B", "#A6533D", "#C95D4A"],
+        darks: ["#7C3E32", "#302B26", "#4A5638", "#344957"]
+      }
+    };
+
+    const recipes = {
+      5: { lights: 1, neutrals: 1, supports: 1, accents: 1, darks: 1 },
+      10: { lights: 2, neutrals: 2, supports: 2, accents: 2, darks: 2 },
+      20: { lights: 4, neutrals: 4, supports: 4, accents: 4, darks: 4 }
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+      setupUploadPreview();
+      generatePalette();
+      renderLibrary();
     });
 
-    var nextPage = document.getElementById(pageId);
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(function(page) {
+        page.classList.remove("active-page");
+      });
 
-    if (nextPage) {
-      nextPage.classList.add("active-page");
+      const nextPage = document.getElementById(pageId);
+
+      if (nextPage) {
+        nextPage.classList.add("active-page");
+      }
+
+      if (pageId === "patternPage") {
+        renderPreviewPalette();
+        renderPattern();
+      }
+
+      if (pageId === "libraryPage") {
+        renderLibrary();
+      }
+
+      window.scrollTo(0, 0);
     }
 
-    window.scrollTo(0, 0);
-  }
-</script>
+    function setStartMethod(method) {
+      startMethod = method;
+
+      document.querySelectorAll(".choice-card").forEach(function(card) {
+        card.classList.remove("selected");
+      });
+
+      document.getElementById("colorControl").style.display = "none";
+      document.getElementById("hexControl").style.display = "none";
+      document.getElementById("uploadControl").style.display = "none";
+
+      if (method === "color") {
+        document.getElementById("colorWheelCard").classList.add("selected");
+        document.getElementById("colorControl").style.display = "block";
+      }
+
+      if (method === "hex") {
+        document.getElementById("hexCard").classList.add("selected");
+        document.getElementById("hexControl").style.display = "block";
+      }
+
+      if (method === "upload") {
+        document.getElementById("uploadCard").classList.add("selected");
+        document.getElementById("uploadControl").style.display = "block";
+      }
+    }
+
+    function setPaletteSize(size) {
+      paletteSize = size;
+      lockedColors = new Array(size).fill(false);
+
+      document.querySelectorAll(".segmented button").forEach(function(button) {
+        button.classList.remove("active");
+
+        if (button.textContent.includes(String(size))) {
+          button.classList.add("active");
+        }
+      });
+    }
+
+    function toggleTag(button) {
+      const activeTags = document.querySelectorAll(".tag-grid button.active");
+
+      if (button.classList.contains("active")) {
+        button.classList.remove("active");
+        return;
+      }
+
+      if (activeTags.length >= 3) {
+        alert("Choose up to 3 inspiration words.");
+        return;
+      }
+
+      button.classList.add("active");
+    }
+
+    function getSelectedTags() {
+      const selected = Array.from(document.querySelectorAll(".tag-grid button.active"))
+        .map(function(button) {
+          return button.textContent.trim().toLowerCase();
+        });
+
+      return selected.length ? selected : ["earthy", "soft", "vintage"];
+    }
+
+    function getSeedColor() {
+      if (startMethod === "color") {
+        return document.getElementById("seedColorPicker").value;
+      }
+
+      if (startMethod === "hex") {
+        const raw = document.getElementById("hexInput").value.trim();
+        const message = document.getElementById("hexMessage");
+
+        if (/^#[0-9A-Fa-f]{6}$/.test(raw)) {
+          message.textContent = "Hex code accepted.";
+          return raw;
+        }
+
+        message.textContent = "Please enter a valid hex code like #A67C52.";
+        return "#A67C52";
+      }
+
+      return "#A67C52";
+    }
+
+    function generatePalette() {
+      const tags = getSelectedTags();
+      const seedColor = getSeedColor();
+      const recipe = recipes[paletteSize] || recipes[10];
+
+      let generated = [];
+
+      Object.keys(recipe).forEach(function(role) {
+        for (let i = 0; i < recipe[role]; i++) {
+          generated.push(pickRoleColor(tags, role, generated, seedColor, i));
+        }
+      });
+
+      generated = generated.slice(0, paletteSize);
+
+      if (currentPalette.length && lockedColors.length) {
+        generated = generated.map(function(color, index) {
+          if (lockedColors[index] && currentPalette[index]) {
+            return currentPalette[index];
+          }
+          return color;
+        });
+      }
+
+      currentPalette = generated;
+      lockedColors = new Array(currentPalette.length).fill(false).map(function(_, index) {
+        return lockedColors[index] || false;
+      });
+
+      renderPalette();
+      renderPreviewPalette();
+      renderPattern();
+    }
+
+    function pickRoleColor(tags, role, existing, seedColor, index) {
+      let bank = [];
+
+      tags.forEach(function(tag) {
+        if (colorBanks[tag] && colorBanks[tag][role]) {
+          bank = bank.concat(colorBanks[tag][role]);
+        }
+      });
+
+      if (!bank.length) {
+        bank = colorBanks.earthy[role].concat(colorBanks.soft[role], colorBanks.vintage[role]);
+      }
+
+      for (let attempt = 0; attempt < 80; attempt++) {
+        const base = bank[Math.floor(Math.random() * bank.length)];
+        const candidate = varyColorForRole(base, role, attempt, index, seedColor);
+
+        if (isDistinct(candidate, existing)) {
+          return candidate;
+        }
+      }
+
+      return bank[index % bank.length];
+    }
+
+    function varyColorForRole(hex, role, attempt, index, seedColor) {
+      const hsl = hexToHsl(hex);
+      const seed = hexToHsl(seedColor);
+
+      const settings = {
+        lights: { sMin: 8, sMax: 34, lMin: 82, lMax: 96, hue: 10 },
+        neutrals: { sMin: 8, sMax: 30, lMin: 50, lMax: 78, hue: 12 },
+        supports: { sMin: 18, sMax: 50, lMin: 42, lMax: 72, hue: 18 },
+        accents: { sMin: 42, sMax: 78, lMin: 42, lMax: 70, hue: 28 },
+        darks: { sMin: 18, sMax: 52, lMin: 16, lMax: 36, hue: 14 }
+      }[role];
+
+      const seedInfluence = role === "accents" ? 0.35 : 0.18;
+      const blendedHue = hsl.h * (1 - seedInfluence) + seed.h * seedInfluence;
+      const hueShift = ((attempt * 9) + (index * 17)) % (settings.hue * 2) - settings.hue;
+
+      return hslToHex(
+        clampHue(blendedHue + hueShift),
+        clamp(hsl.s + ((attempt % 5) - 2) * 4, settings.sMin, settings.sMax),
+        clamp(hsl.l + ((attempt % 7) - 3) * 3, settings.lMin, settings.lMax)
+      );
+    }
+
+    function isDistinct(candidate, existing) {
+      if (!existing.length) return true;
+
+      const c = hexToHsl(candidate);
+
+      return !existing.some(function(color) {
+        const e = hexToHsl(color);
+
+        let hueDistance = Math.abs(c.h - e.h);
+        hueDistance = Math.min(hueDistance, 360 - hueDistance);
+
+        const lightDistance = Math.abs(c.l - e.l);
+        const satDistance = Math.abs(c.s - e.s);
+
+        return hueDistance < 18 && lightDistance < 16 && satDistance < 20;
+      });
+    }
+
+    function renderPalette() {
+      const container = document.getElementById("paletteSwatches");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      currentPalette.forEach(function(color, index) {
+        const swatch = document.createElement("div");
+        swatch.className = "swatch" + (lockedColors[index] ? " locked" : "");
+        swatch.innerHTML = `
+          <div class="swatch-square" style="background:${color}"></div>
+          <div class="swatch-code">${color}</div>
+          <div class="swatch-lock">${lockedColors[index] ? "🔒" : "♡"}</div>
+        `;
+
+        swatch.addEventListener("click", function() {
+          lockedColors[index] = !lockedColors[index];
+          renderPalette();
+        });
+
+        container.appendChild(swatch);
+      });
+    }
+
+    function renderPreviewPalette() {
+      const container = document.getElementById("previewSwatches");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      currentPalette.forEach(function(color) {
+        const swatch = document.createElement("div");
+        swatch.className = "swatch";
+        swatch.innerHTML = `
+          <div class="swatch-square" style="background:${color}"></div>
+          <div class="swatch-code">${color}</div>
+        `;
+        container.appendChild(swatch);
+      });
+    }
+
+    function renderPattern() {
+      const pattern = document.getElementById("floralPattern");
+      if (!pattern) return;
+
+      const backgroundSelect = document.getElementById("backgroundSelect");
+      const scaleSlider = document.getElementById("scaleSlider");
+
+      const background = backgroundSelect ? backgroundSelect.value : "#fbfaf7";
+      const scale = scaleSlider ? scaleSlider.value : 100;
+
+      pattern.style.backgroundColor = background;
+      pattern.style.backgroundImage = 'url("paintboxed-floral-pattern.png")';
+      pattern.style.backgroundRepeat = "repeat";
+      pattern.style.backgroundSize = `${scale * 2.6}px ${scale * 2.6}px`;
+      pattern.style.backgroundPosition = "center";
+    }
+
+    function shufflePalette() {
+      currentPalette = currentPalette.slice().sort(function() {
+        return Math.random() - 0.5;
+      });
+
+      renderPalette();
+      renderPreviewPalette();
+    }
+
+    function savePalette() {
+      const name = prompt("Name your palette:", "Untitled Palette");
+      if (!name) return;
+
+      const paletteObject = {
+        id: Date.now(),
+        name: name,
+        colors: currentPalette.slice(),
+        size: currentPalette.length,
+        date: new Date().toLocaleDateString(),
+        favorite: false
+      };
+
+      savedPalettes.unshift(paletteObject);
+      localStorage.setItem("paintboxedPalettes", JSON.stringify(savedPalettes));
+
+      alert("Palette saved to your library.");
+      renderLibrary();
+    }
+
+    function renderLibrary() {
+      const list = document.getElementById("libraryList");
+      if (!list) return;
+
+      list.innerHTML = "";
+
+      if (!savedPalettes.length) {
+        list.innerHTML = `
+          <div class="empty-library">
+            <p>No palettes saved yet.</p>
+            <button type="button" class="primary-btn" onclick="showPage('creatorPage')">Create Your First Palette</button>
+          </div>
+        `;
+        return;
+      }
+
+      savedPalettes.forEach(function(palette, index) {
+        const card = document.createElement("div");
+        card.className = "library-card";
+
+        const swatches = palette.colors.map(function(color) {
+          return `<span class="mini-swatch" style="background:${color}"></span>`;
+        }).join("");
+
+        card.innerHTML = `
+          <div class="library-card-left">
+            <div class="mini-swatch-row">${swatches}</div>
+            <h3>${palette.name} <button type="button" class="heart-btn" onclick="toggleFavorite(${index})">${palette.favorite ? "♥" : "♡"}</button></h3>
+            <p>${palette.size} colors • Created ${palette.date}</p>
+          </div>
+
+          <div class="library-card-actions">
+            <button type="button" onclick="openPalette(${index})">Open / Edit</button>
+            <button type="button" onclick="exportSavedPalette(${index})">Hex Codes</button>
+          </div>
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function openPalette(index) {
+      const palette = savedPalettes[index];
+      currentPalette = palette.colors.slice();
+      paletteSize = currentPalette.length;
+      lockedColors = new Array(currentPalette.length).fill(false);
+
+      renderPalette();
+      renderPreviewPalette();
+      showPage("creatorPage");
+    }
+
+    function toggleFavorite(index) {
+      savedPalettes[index].favorite = !savedPalettes[index].favorite;
+      localStorage.setItem("paintboxedPalettes", JSON.stringify(savedPalettes));
+      renderLibrary();
+    }
+
+    function exportHexCodes() {
+      alert(currentPalette.join("\n"));
+    }
+
+    function exportSavedPalette(index) {
+      alert(savedPalettes[index].colors.join("\n"));
+    }
+
+    function unlockAll() {
+      lockedColors = new Array(currentPalette.length).fill(false);
+      renderPalette();
+    }
+
+    function setupUploadPreview() {
+      const upload = document.getElementById("imageUpload");
+      if (!upload) return;
+
+      upload.addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          document.getElementById("imagePreview").src = e.target.result;
+          document.getElementById("imagePreviewWrap").style.display = "block";
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function hexToHsl(hex) {
+      hex = hex.replace("#", "");
+
+      let r = parseInt(hex.substring(0, 2), 16) / 255;
+      let g = parseInt(hex.substring(2, 4), 16) / 255;
+      let b = parseInt(hex.substring(4, 6), 16) / 255;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+
+      let h = 0;
+      let s = 0;
+      let l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        if (max === g) h = (b - r) / d + 2;
+        if (max === b) h = (r - g) / d + 4;
+
+        h *= 60;
+      }
+
+      return { h: h, s: s * 100, l: l * 100 };
+    }
+
+    function hslToHex(h, s, l) {
+      s /= 100;
+      l /= 100;
+
+      const c = (1 - Math.abs(2 * l - 1)) * s;
+      const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+      const m = l - c / 2;
+
+      let r = 0;
+      let g = 0;
+      let b = 0;
+
+      if (0 <= h && h < 60) {
+        r = c; g = x; b = 0;
+      } else if (60 <= h && h < 120) {
+        r = x; g = c; b = 0;
+      } else if (120 <= h && h < 180) {
+        r = 0; g = c; b = x;
+      } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = c;
+      } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = c;
+      } else {
+        r = c; g = 0; b = x;
+      }
+
+      r = Math.round((r + m) * 255);
+      g = Math.round((g + m) * 255);
+      b = Math.round((b + m) * 255);
+
+      return "#" + [r, g, b].map(function(value) {
+        const hex = value.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      }).join("").toUpperCase();
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function clampHue(value) {
+      while (value < 0) value += 360;
+      while (value >= 360) value -= 360;
+      return value;
+    }
+  </script>
 
 </body>
 </html>
