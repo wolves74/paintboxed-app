@@ -263,5 +263,22 @@
   </div>
 
   <script src="script.js"></script>
+
+<script>
+  function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(function(page) {
+      page.classList.remove("active-page");
+    });
+
+    var nextPage = document.getElementById(pageId);
+
+    if (nextPage) {
+      nextPage.classList.add("active-page");
+    }
+
+    window.scrollTo(0, 0);
+  }
+</script>
+
 </body>
 </html>
