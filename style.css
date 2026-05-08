@@ -452,8 +452,9 @@ input[type="range"] {
   background: transparent !important;
   border-radius: 0 !important;
 
-/* Inspiration tag selected state */
-.tag-grid button.active {
+/* Inspiration + palette size selected state */
+.tag-grid button.active,
+.segmented button.active {
   background: var(--ink) !important;
   color: var(--paper) !important;
   box-shadow: 4px 5px 0 rgba(176, 138, 60, 0.28) !important;
