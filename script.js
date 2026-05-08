@@ -186,6 +186,117 @@ function varyColor(hex, index) {
 }
 
 function balancePaletteRoles(colors, size) {
+  const baseColors = [...colors];
+
+  let roleCounts = {
+    light: 1,
+    neutral: 2,
+    accent: 1,
+    dark: 1
+  };
+
+  if (size === 10) {
+    roleCounts = {
+      light: 2,
+      neutral: 3,
+      accent: 3,
+      dark: 2
+    };
+  }
+
+  if (size === 20) {
+    roleCounts = {
+      light: 4,
+      neutral: 6,
+      accent: 6,
+      dark: 4
+    };
+  }
+
+  const bySaturationHigh = [...baseColors].sort((a, b) => hexToHsl(b).s - hexToHsl(a).s);
+  const bySaturationLow = [...baseColors].sort((a, b) => hexToHsl(a).s - hexToHsl(b).s);
+  const byLightness = [...baseColors].sort((a, b) => hexToHsl(a).l - hexToHsl(b).l);
+
+  const lights = [];
+  const neutrals = [];
+  const accents = [];
+  const darks = [];
+
+  for (let i = 0; i < roleCounts.light; i++) {
+    const color = byLightness[byLightness.length - 1 - (i % byLightness.length)];
+    const hsl = hexToHsl(color);
+    lights.push(hslToHex(
+      clampHue(hsl.h + i * 8),
+      clamp(hsl.s * 0.55, 8, 35),
+      clamp(86 - i * 5, 72, 92)
+    ));
+  }
+
+  for (let i = 0; i < roleCounts.neutral; i++) {
+    const color = bySaturationLow[i % bySaturationLow.length];
+    const hsl = hexToHsl(color);
+    neutrals.push(hslToHex(
+      clampHue(hsl.h + i * 10),
+      clamp(14 + i * 4, 10, 32),
+      clamp(72 - i * 8, 42, 78)
+    ));
+  }
+
+  for (let i = 0; i < roleCounts.accent; i++) {
+    const color = bySaturationHigh[i % bySaturationHigh.length];
+    const hsl = hexToHsl(color);
+    accents.push(hslToHex(
+      clampHue(hsl.h + i * 18),
+      clamp(48 + i * 5, 42, 78),
+      clamp(62 - i * 4, 42, 68)
+    ));
+  }
+
+  for (let i = 0; i < roleCounts.dark; i++) {
+    const color = byLightness[i % byLightness.length];
+    const hsl = hexToHsl(color);
+    darks.push(hslToHex(
+      clampHue(hsl.h + i * 14),
+      clamp(24 + i * 8, 20, 50),
+      clamp(24 + i * 7, 18, 38)
+    ));
+  }
+
+  let balanced = [...lights, ...neutrals, ...accents, ...darks];
+
+  balanced = removeTooSimilarColors(balanced);
+
+  while (balanced.length < size) {
+    const color = varyColor(baseColors[Math.floor(Math.random() * baseColors.length)], balanced.length);
+    balanced.push(color);
+    balanced = removeTooSimilarColors(balanced);
+  }
+
+  return balanced.slice(0, size);
+}
+
+function removeTooSimilarColors(colors) {
+  const finalColors = [];
+
+  colors.forEach(color => {
+    const hsl = hexToHsl(color);
+
+    const tooSimilar = finalColors.some(existing => {
+      const existingHsl = hexToHsl(existing);
+      const hueDistance = Math.abs(hsl.h - existingHsl.h);
+      const lightDistance = Math.abs(hsl.l - existingHsl.l);
+      const satDistance = Math.abs(hsl.s - existingHsl.s);
+
+      return hueDistance < 8 && lightDistance < 8 && satDistance < 8;
+    });
+
+    if (!tooSimilar) {
+      finalColors.push(color);
+    }
+  });
+
+  return finalColors;
+}
   const sorted = [...colors].sort((a, b) => hexToHsl(b).l - hexToHsl(a).l);
 
   let lightCount = 1;
