@@ -432,3 +432,11 @@ input[type="range"] {
   background-image:
     radial-gradient(circle at 20% 25%, var(--dot-color, #c8b7a1) 0 4px, transparent 5px),
     radial-gradient
+
+.app-cover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
