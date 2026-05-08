@@ -440,3 +440,15 @@ input[type="range"] {
   padding: 0 !important;
   background: transparent !important;
 }
+/* Paintboxed app cover cleanup */
+.app-cover {
+  width: 220px !important;
+  height: 220px !important;
+  object-fit: contain !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
