@@ -5,6 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paintboxed</title>
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    body {
+      background: #fbfaf7 !important;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active-page {
+      display: block;
+    }
+
+    .app-cover {
+      width: 220px !important;
+      height: 220px !important;
+      object-fit: contain !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      background: transparent !important;
+    }
+
+    .choice-card.selected,
+    .segmented button.active {
+      background: #2f2d2a !important;
+      color: #fbfaf7 !important;
+      border-color: #2f2d2a !important;
+      box-shadow: 4px 5px 0 rgba(176, 138, 60, 0.28) !important;
+    }
+
+    .tag-check-grid {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 12px !important;
+    }
+
+    .tag-pill {
+      display: inline-block !important;
+      margin: 0 !important;
+    }
+
+    .tag-pill input {
+      position: absolute !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .tag-pill span {
+      display: inline-block !important;
+      border: 2px solid #2f2d2a !important;
+      border-radius: 999px !important;
+      background: #fbfaf7 !important;
+      color: #2f2d2a !important;
+      padding: 12px 18px !important;
+      min-width: 110px !important;
+      text-align: center !important;
+      font-size: 1.05rem !important;
+      cursor: pointer !important;
+    }
+
+    .tag-pill input:checked + span {
+      background: #2f2d2a !important;
+      color: #fbfaf7 !important;
+      border-color: #2f2d2a !important;
+      box-shadow: 4px 5px 0 rgba(176, 138, 60, 0.28) !important;
+    }
+
+    .start-control-box {
+      margin-top: 22px;
+      padding: 18px;
+      border: 2px solid #2f2d2a;
+      border-radius: 18px;
+      background: #fbfaf7;
+    }
+
+    .start-control-box input[type="text"],
+    .start-control-box input[type="file"] {
+      width: 100%;
+      border: 2px solid #2f2d2a;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1.1rem;
+      background: #fff;
+    }
+
+    .start-control-box input[type="color"] {
+      width: 100%;
+      height: 70px;
+      border: 2px solid #2f2d2a;
+      border-radius: 12px;
+      background: #fff;
+      padding: 6px;
+    }
+
+    .image-preview {
+      max-width: 230px;
+      margin-top: 16px;
+      border: 2px solid #2f2d2a;
+      border-radius: 14px;
+      display: none;
+    }
+
+    .floral-pattern {
+      min-height: 420px !important;
+      background-image: url("paintboxed-floral-pattern.png") !important;
+      background-repeat: repeat !important;
+      background-size: 260px 260px !important;
+      background-position: center !important;
+      background-color: #fbfaf7 !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -13,7 +127,6 @@
     <!-- HOME PAGE -->
     <section id="homePage" class="page active-page">
       <div class="home-card">
-
         <img src="paintboxed-app-cover.png" alt="Paintboxed app cover" class="app-cover" />
 
         <p class="small-gold">Farm & Pumpkin presents</p>
@@ -51,11 +164,10 @@
         </div>
 
         <img src="fp-logo.png" alt="Farm and Pumpkin fp logo" class="fp-logo" />
-
       </div>
     </section>
 
-    <!-- PALETTE CREATOR PAGE -->
+    <!-- CREATOR PAGE -->
     <section id="creatorPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn" onclick="showPage('homePage')">←</button>
@@ -65,12 +177,11 @@
 
       <main class="panel">
 
-        <!-- START WITH -->
         <section class="section-block">
           <h2>1. Start With</h2>
 
           <div class="choice-grid three">
-            <button type="button" id="colorWheelCard" class="choice-card selected" onclick="setStartMethod('color')">
+            <button type="button" id="colorCard" class="choice-card selected" onclick="setStartMethod('color')">
               <span class="big-icon">◉</span>
               <strong>Color Wheel</strong>
               <small>Pick a color</small>
@@ -89,7 +200,7 @@
             </button>
           </div>
 
-          <div id="startControls" style="margin-top: 24px;">
+          <div class="start-control-box">
             <div id="colorControl">
               <label>
                 Pick your starting color
@@ -97,7 +208,7 @@
               </label>
             </div>
 
-            <div id="hexControl" style="display: none;">
+            <div id="hexControl" style="display:none;">
               <label>
                 Enter a hex code
                 <input type="text" id="hexInput" value="#A67C52" maxlength="7" />
@@ -105,21 +216,17 @@
               <p id="hexMessage" class="tiny-note"></p>
             </div>
 
-            <div id="uploadControl" style="display: none;">
+            <div id="uploadControl" style="display:none;">
               <label>
                 Upload an inspiration image
                 <input type="file" id="imageUpload" accept="image/*" />
               </label>
-
-              <div id="imagePreviewWrap" style="display: none; margin-top: 16px;">
-                <p class="tiny-note">Image uploaded for inspiration:</p>
-                <img id="imagePreview" alt="Uploaded inspiration preview" style="max-width: 220px; border: 2px solid #2f2d2a; border-radius: 14px;" />
-              </div>
+              <img id="imagePreview" class="image-preview" alt="Uploaded inspiration preview" />
+              <p class="tiny-note">Image color extraction comes later. For now, this confirms upload works.</p>
             </div>
           </div>
         </section>
 
-        <!-- PALETTE SIZE -->
         <section class="section-block">
           <h2>2. Palette Size</h2>
 
@@ -130,23 +237,22 @@
           </div>
         </section>
 
-        <!-- INSPIRATION -->
         <section class="section-block">
           <h2>3. Inspiration <span>choose up to 3</span></h2>
 
-          <div class="tag-grid">
-            <button type="button" onclick="toggleTag(this)">Earthy</button>
-            <button type="button" onclick="toggleTag(this)">Moody</button>
-            <button type="button" onclick="toggleTag(this)">Bright</button>
-            <button type="button" onclick="toggleTag(this)">Soft</button>
-            <button type="button" onclick="toggleTag(this)">Vintage</button>
-            <button type="button" onclick="toggleTag(this)">Playful</button>
-            <button type="button" onclick="toggleTag(this)">Warm</button>
-            <button type="button" onclick="toggleTag(this)">Cool</button>
-            <button type="button" onclick="toggleTag(this)">Whimsical</button>
-            <button type="button" onclick="toggleTag(this)">Minimal</button>
-            <button type="button" onclick="toggleTag(this)">Romantic</button>
-            <button type="button" onclick="toggleTag(this)">Seasonal</button>
+          <div class="tag-check-grid">
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="earthy" onchange="limitTags(this)"><span>Earthy</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="moody" onchange="limitTags(this)"><span>Moody</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="bright" onchange="limitTags(this)"><span>Bright</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="soft" onchange="limitTags(this)"><span>Soft</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="vintage" onchange="limitTags(this)"><span>Vintage</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="playful" onchange="limitTags(this)"><span>Playful</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="warm" onchange="limitTags(this)"><span>Warm</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="cool" onchange="limitTags(this)"><span>Cool</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="whimsical" onchange="limitTags(this)"><span>Whimsical</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="minimal" onchange="limitTags(this)"><span>Minimal</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="romantic" onchange="limitTags(this)"><span>Romantic</span></label>
+            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="seasonal" onchange="limitTags(this)"><span>Seasonal</span></label>
           </div>
 
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
@@ -154,7 +260,6 @@
           <button type="button" class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
         </section>
 
-        <!-- PALETTE OUTPUT -->
         <section class="section-block">
           <div class="section-header">
             <h2>4. Your Palette</h2>
@@ -166,7 +271,6 @@
           <p class="tiny-note">Tap a color to lock it. Locked colors stay when you regenerate.</p>
         </section>
 
-        <!-- ADJUST + ACTIONS -->
         <section class="two-column">
           <div class="section-block">
             <h2>5. Adjust Palette</h2>
@@ -195,7 +299,7 @@
       </nav>
     </section>
 
-    <!-- PATTERN PREVIEW PAGE -->
+    <!-- PATTERN PAGE -->
     <section id="patternPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn" onclick="showPage('creatorPage')">←</button>
@@ -212,7 +316,7 @@
         <section class="section-block center-text">
           <h2>Apply Palette</h2>
           <p class="tiny-note">
-            This preview uses your floral pattern as a repeat tile. Smart SVG color placement comes later.
+            This preview uses your floral PNG as a repeat tile. SVG role-based recoloring comes later.
           </p>
         </section>
 
@@ -281,7 +385,6 @@
 
   </div>
 
-  <!-- SELF-CONTAINED CHECKPOINT SCRIPT -->
   <script>
     let startMethod = "color";
     let paletteSize = 10;
@@ -386,6 +489,7 @@
       setupUploadPreview();
       generatePalette();
       renderLibrary();
+      renderPattern();
     });
 
     function showPage(pageId) {
@@ -394,10 +498,7 @@
       });
 
       const nextPage = document.getElementById(pageId);
-
-      if (nextPage) {
-        nextPage.classList.add("active-page");
-      }
+      if (nextPage) nextPage.classList.add("active-page");
 
       if (pageId === "patternPage") {
         renderPreviewPalette();
@@ -423,7 +524,7 @@
       document.getElementById("uploadControl").style.display = "none";
 
       if (method === "color") {
-        document.getElementById("colorWheelCard").classList.add("selected");
+        document.getElementById("colorCard").classList.add("selected");
         document.getElementById("colorControl").style.display = "block";
       }
 
@@ -444,44 +545,23 @@
 
       document.querySelectorAll(".segmented button").forEach(function(button) {
         button.classList.remove("active");
-
-        if (button.textContent.includes(String(size))) {
-          button.classList.add("active");
-        }
+        if (button.textContent.includes(String(size))) button.classList.add("active");
       });
     }
 
-    function toggleTag(button) {
-  const activeTags = document.querySelectorAll(".tag-grid button.active");
+    function limitTags(clickedInput) {
+      const checked = document.querySelectorAll('input[name="inspirationTag"]:checked');
 
-  if (button.classList.contains("active")) {
-    button.classList.remove("active");
-    button.style.background = "";
-    button.style.color = "";
-    button.style.borderColor = "";
-    button.style.boxShadow = "";
-    return;
-  }
-
-  if (activeTags.length >= 3) {
-    alert("Choose up to 3 inspiration words.");
-    return;
-  }
-
-  button.classList.add("active");
-  button.style.background = "#2f2d2a";
-  button.style.color = "#fbfaf7";
-  button.style.borderColor = "#2f2d2a";
-  button.style.boxShadow = "4px 5px 0 rgba(176, 138, 60, 0.28)";
-}
-
-      button.classList.add("active");
+      if (checked.length > 3) {
+        clickedInput.checked = false;
+        alert("Choose up to 3 inspiration words.");
+      }
     }
 
     function getSelectedTags() {
-      const selected = Array.from(document.querySelectorAll(".tag-grid button.active"))
-        .map(function(button) {
-          return button.textContent.trim().toLowerCase();
+      const selected = Array.from(document.querySelectorAll('input[name="inspirationTag"]:checked'))
+        .map(function(input) {
+          return input.value;
         });
 
       return selected.length ? selected : ["earthy", "soft", "vintage"];
@@ -525,10 +605,7 @@
 
       if (currentPalette.length && lockedColors.length) {
         generated = generated.map(function(color, index) {
-          if (lockedColors[index] && currentPalette[index]) {
-            return currentPalette[index];
-          }
-          return color;
+          return lockedColors[index] && currentPalette[index] ? currentPalette[index] : color;
         });
       }
 
@@ -559,9 +636,7 @@
         const base = bank[Math.floor(Math.random() * bank.length)];
         const candidate = varyColorForRole(base, role, attempt, index, seedColor);
 
-        if (isDistinct(candidate, existing)) {
-          return candidate;
-        }
+        if (isDistinct(candidate, existing)) return candidate;
       }
 
       return bank[index % bank.length];
@@ -778,7 +853,7 @@
 
         reader.onload = function(e) {
           document.getElementById("imagePreview").src = e.target.result;
-          document.getElementById("imagePreviewWrap").style.display = "block";
+          document.getElementById("imagePreview").style.display = "block";
         };
 
         reader.readAsDataURL(file);
