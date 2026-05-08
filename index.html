@@ -102,19 +102,19 @@
         <section class="section-block">
           <h2>3. Inspiration <span>choose up to 3</span></h2>
 
-          <div class="tag-grid">
-            <button type="button" onclick="toggleTag(this)">Earthy</button>
-            <button type="button" onclick="toggleTag(this)">Moody</button>
-            <button type="button" onclick="toggleTag(this)">Bright</button>
-            <button type="button" onclick="toggleTag(this)">Soft</button>
-            <button type="button" onclick="toggleTag(this)">Vintage</button>
-            <button type="button" onclick="toggleTag(this)">Playful</button>
-            <button type="button" onclick="toggleTag(this)">Warm</button>
-            <button type="button" onclick="toggleTag(this)">Cool</button>
-            <button type="button" onclick="toggleTag(this)">Whimsical</button>
-            <button type="button" onclick="toggleTag(this)">Minimal</button>
-            <button type="button" onclick="toggleTag(this)">Romantic</button>
-            <button type="button" onclick="toggleTag(this)">Seasonal</button>
+          <div class="tag-grid" onclick="handleTagClick(event)">
+            <button type="button">Earthy</button>
+            <button type="button">Moody</button>
+            <button type="button">Bright</button>
+            <button type="button">Soft</button>
+            <button type="button">Vintage</button>
+            <button type="button">Playful</button>
+            <button type="button">Warm</button>
+            <button type="button">Cool</button>
+            <button type="button">Whimsical</button>
+            <button type="button">Minimal</button>
+            <button type="button">Romantic</button>
+            <button type="button">Seasonal</button>
           </div>
 
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
@@ -291,13 +291,19 @@
       window.scrollTo(0, 0);
     };
 
-    window.toggleTag = function(button) {
-      var activeTags = document.querySelectorAll(".tag-grid button.active");
+    window.handleTagClick = function(event) {
+      var button = event.target.closest("button");
+      if (!button) return;
 
       if (button.classList.contains("active")) {
         button.classList.remove("active");
+        button.style.background = "";
+        button.style.color = "";
+        button.style.boxShadow = "";
         return;
       }
+
+      var activeTags = document.querySelectorAll(".tag-grid button.active");
 
       if (activeTags.length >= 3) {
         alert("Choose up to 3 inspiration words.");
@@ -305,6 +311,33 @@
       }
 
       button.classList.add("active");
+      button.style.background = "#2f2d2a";
+      button.style.color = "#fbfaf7";
+      button.style.boxShadow = "4px 5px 0 rgba(176, 138, 60, 0.28)";
+    };
+
+    window.toggleTag = function(button) {
+      if (!button) return;
+
+      if (button.classList.contains("active")) {
+        button.classList.remove("active");
+        button.style.background = "";
+        button.style.color = "";
+        button.style.boxShadow = "";
+        return;
+      }
+
+      var activeTags = document.querySelectorAll(".tag-grid button.active");
+
+      if (activeTags.length >= 3) {
+        alert("Choose up to 3 inspiration words.");
+        return;
+      }
+
+      button.classList.add("active");
+      button.style.background = "#2f2d2a";
+      button.style.color = "#fbfaf7";
+      button.style.boxShadow = "4px 5px 0 rgba(176, 138, 60, 0.28)";
     };
 
     window.setPaletteSize = function(size) {
