@@ -346,905 +346,1021 @@
   </div>
 
   <script>
-    let startMethod = "color";
-    let paletteSize = 10;
-    let selectedVibe = "cozy";
-    let currentPalette = [];
-    let lockedColors = [];
-    let savedPalettes = JSON.parse(localStorage.getItem("paintboxedPalettes")) || [];
+  let startMethod = "color";
+  let paletteSize = 10;
+  let selectedVibe = "cozy";
+  let currentPalette = [];
+  let lockedColors = [];
+  let savedPalettes = JSON.parse(localStorage.getItem("paintboxedPalettes")) || [];
 
-    const paletteRecipes = {
-      5: ["light", "warm", "interest", "balance", "dark"],
-      10: ["light", "light", "warm", "warm", "interest", "interest", "balance", "balance", "dark", "dark"],
-      20: ["light", "light", "light", "light", "warm", "warm", "warm", "warm", "interest", "interest", "interest", "interest", "balance", "balance", "balance", "balance", "dark", "dark", "dark", "dark"]
-    };
+  const paletteRecipes = {
+    5: ["light", "soft", "interest", "balance", "dark"],
+    10: ["light", "light", "soft", "soft", "interest", "interest", "balance", "balance", "dark", "dark"],
+    20: ["light", "light", "light", "light", "soft", "soft", "soft", "soft", "interest", "interest", "interest", "interest", "balance", "balance", "balance", "balance", "dark", "dark", "dark", "dark"]
+  };
 
-    const vibeFamilies = {
-      cozy: [
-        {
-          name: "Soft Knit Contrast",
-          minContrast: 62,
-          roles: {
-            light: [{ h:[32,52], s:[4,16], l:[91,99] }],
-            warm: [{ h:[26,42], s:[24,42], l:[58,74] }],
-            interest: [{ h:[205,225], s:[20,38], l:[42,62] }],
-            balance: [{ h:[78,112], s:[16,34], l:[38,58] }],
-            dark: [{ h:[100,140], s:[22,42], l:[10,26] }, { h:[210,240], s:[16,34], l:[10,26] }, { h:[18,34], s:[20,34], l:[10,24] }]
-          }
-        },
-        {
-          name: "Autumn Glow",
-          minContrast: 64,
-          roles: {
-            light: [{ h:[30,52], s:[6,18], l:[90,99] }],
-            warm: [{ h:[26,42], s:[28,46], l:[58,74] }],
-            interest: [{ h:[8,24], s:[42,64], l:[38,58] }, { h:[340,360], s:[28,48], l:[36,56] }],
-            balance: [{ h:[70,105], s:[22,42], l:[32,54] }],
-            dark: [{ h:[95,135], s:[24,44], l:[10,26] }, { h:[18,34], s:[24,38], l:[10,24] }]
-          }
-        },
-        {
-          name: "Fireside Deep",
-          minContrast: 66,
-          roles: {
-            light: [{ h:[30,48], s:[6,16], l:[90,98] }],
-            warm: [{ h:[18,34], s:[32,50], l:[50,68] }],
-            interest: [{ h:[6,18], s:[44,66], l:[34,52] }],
-            balance: [{ h:[205,230], s:[14,34], l:[34,56] }, { h:[80,115], s:[16,34], l:[32,54] }],
-            dark: [{ h:[18,32], s:[24,38], l:[8,22] }, { h:[220,250], s:[16,32], l:[8,22] }]
-          }
-        },
-        {
-          name: "Café With Lift",
-          minContrast: 62,
-          roles: {
-            light: [{ h:[28,48], s:[6,16], l:[91,99] }],
-            warm: [{ h:[24,40], s:[24,42], l:[58,74] }],
-            interest: [{ h:[28,42], s:[44,62], l:[38,56] }, { h:[330,350], s:[24,42], l:[36,54] }],
-            balance: [{ h:[185,210], s:[16,36], l:[36,58] }, { h:[80,118], s:[14,32], l:[34,56] }],
-            dark: [{ h:[18,34], s:[20,36], l:[8,24] }, { h:[95,130], s:[20,40], l:[10,26] }]
-          }
+  const vibeFamilies = {
+    cozy: [
+      {
+        name: "Clay + Sage Cozy",
+        minContrast: 64,
+        minSatSpread: 28,
+        roles: {
+          light: [{ h:[32,52], s:[4,14], l:[92,99] }],
+          soft: [{ h:[28,42], s:[12,28], l:[62,78] }],
+          interest: [
+            { h:[8,20], s:[44,66], l:[38,58] },
+            { h:[350,10], s:[34,56], l:[42,62] }
+          ],
+          balance: [{ h:[78,112], s:[22,42], l:[36,60] }],
+          dark: [
+            { h:[18,34], s:[24,40], l:[8,24] },
+            { h:[95,130], s:[22,42], l:[9,26] }
+          ]
         }
-      ],
-
-      playful: [
-        {
-          name: "Candy Party",
-          minContrast: 58,
-          roles: {
-            light: [{ h:[0,60], s:[5,18], l:[93,99] }],
-            warm: [{ h:[345,360], s:[50,78], l:[58,80] }, { h:[8,22], s:[50,78], l:[58,80] }],
-            interest: [{ h:[185,205], s:[52,80], l:[48,72] }, { h:[38,58], s:[56,82], l:[54,78] }],
-            balance: [{ h:[130,165], s:[40,68], l:[46,70] }, { h:[230,260], s:[36,64], l:[50,74] }],
-            dark: [{ h:[210,250], s:[34,60], l:[14,32] }, { h:[300,340], s:[34,60], l:[16,34] }]
-          }
-        },
-        {
-          name: "Pastel With Contrast",
-          minContrast: 52,
-          roles: {
-            light: [{ h:[20,60], s:[5,16], l:[94,99] }],
-            warm: [{ h:[350,15], s:[28,52], l:[70,88] }, { h:[35,55], s:[28,52], l:[72,90] }],
-            interest: [{ h:[185,215], s:[34,58], l:[62,82] }, { h:[235,265], s:[28,52], l:[64,84] }],
-            balance: [{ h:[95,150], s:[28,52], l:[58,78] }],
-            dark: [{ h:[210,250], s:[22,46], l:[18,36] }]
-          }
+      },
+      {
+        name: "Dusty Rose + Olive Cozy",
+        minContrast: 64,
+        minSatSpread: 26,
+        roles: {
+          light: [{ h:[30,50], s:[4,14], l:[92,99] }],
+          soft: [{ h:[24,40], s:[12,28], l:[62,78] }],
+          interest: [
+            { h:[350,8], s:[34,58], l:[42,64] },
+            { h:[0,16], s:[34,58], l:[42,62] }
+          ],
+          balance: [{ h:[82,118], s:[18,38], l:[34,58] }],
+          dark: [
+            { h:[16,32], s:[24,40], l:[8,24] },
+            { h:[100,135], s:[20,40], l:[10,26] }
+          ]
         }
-      ],
-
-      moody: [
-        {
-          name: "Dark Botanical Lift",
-          minContrast: 58,
-          roles: {
-            light: [{ h:[28,45], s:[5,16], l:[62,82] }],
-            warm: [{ h:[18,32], s:[22,40], l:[32,50] }],
-            interest: [{ h:[305,330], s:[24,44], l:[34,54] }, { h:[35,48], s:[30,48], l:[38,56] }],
-            balance: [{ h:[88,130], s:[22,44], l:[20,42] }, { h:[180,205], s:[22,44], l:[24,46] }],
-            dark: [{ h:[85,135], s:[20,38], l:[8,22] }, { h:[210,250], s:[18,36], l:[8,22] }]
-          }
-        },
-        {
-          name: "Stormy Lift",
-          minContrast: 58,
-          roles: {
-            light: [{ h:[25,42], s:[5,16], l:[60,80] }],
-            warm: [{ h:[14,28], s:[22,38], l:[32,50] }],
-            interest: [{ h:[200,225], s:[30,50], l:[32,52] }, { h:[300,325], s:[22,40], l:[34,54] }],
-            balance: [{ h:[70,110], s:[18,36], l:[22,44] }],
-            dark: [{ h:[210,245], s:[20,38], l:[8,22] }]
-          }
-        },
-        {
-          name: "Earthy Shadow Lift",
-          minContrast: 58,
-          roles: {
-            light: [{ h:[28,44], s:[5,16], l:[60,80] }],
-            warm: [{ h:[16,30], s:[24,42], l:[34,52] }],
-            interest: [{ h:[12,24], s:[32,50], l:[36,54] }, { h:[300,320], s:[22,38], l:[36,54] }],
-            balance: [{ h:[75,115], s:[20,38], l:[22,44] }, { h:[180,205], s:[20,38], l:[24,46] }],
-            dark: [{ h:[20,36], s:[18,34], l:[8,22] }, { h:[85,130], s:[18,34], l:[8,22] }]
-          }
+      },
+      {
+        name: "Terracotta + Moss Cozy",
+        minContrast: 66,
+        minSatSpread: 30,
+        roles: {
+          light: [{ h:[32,52], s:[5,16], l:[91,99] }],
+          soft: [{ h:[30,45], s:[14,30], l:[60,76] }],
+          interest: [{ h:[10,24], s:[48,70], l:[36,56] }],
+          balance: [{ h:[72,105], s:[24,44], l:[32,56] }],
+          dark: [
+            { h:[20,36], s:[24,42], l:[8,24] },
+            { h:[88,125], s:[24,44], l:[8,24] }
+          ]
         }
-      ],
-
-      nature: [
-        {
-          name: "Fresh Garden",
-          minContrast: 60,
-          roles: {
-            light: [{ h:[35,58], s:[6,18], l:[91,99] }],
-            warm: [{ h:[35,55], s:[30,52], l:[60,82] }, { h:[0,18], s:[28,50], l:[58,80] }],
-            interest: [{ h:[95,140], s:[38,62], l:[38,66] }],
-            balance: [{ h:[195,220], s:[28,50], l:[48,72] }],
-            dark: [{ h:[95,140], s:[26,48], l:[10,28] }]
-          }
-        },
-        {
-          name: "Wildflower",
-          minContrast: 60,
-          roles: {
-            light: [{ h:[35,58], s:[6,18], l:[90,99] }],
-            warm: [{ h:[340,360], s:[32,56], l:[54,78] }, { h:[34,54], s:[32,56], l:[58,82] }],
-            interest: [{ h:[240,270], s:[26,48], l:[50,72] }, { h:[85,135], s:[32,56], l:[38,66] }],
-            balance: [{ h:[195,220], s:[24,46], l:[48,72] }],
-            dark: [{ h:[88,135], s:[24,46], l:[10,28] }]
-          }
-        },
-        {
-          name: "Forest Trail",
-          minContrast: 64,
-          roles: {
-            light: [{ h:[28,50], s:[6,18], l:[86,98] }],
-            warm: [{ h:[18,35], s:[24,46], l:[42,66] }],
-            interest: [{ h:[80,140], s:[30,58], l:[26,56] }],
-            balance: [{ h:[185,215], s:[18,42], l:[34,60] }],
-            dark: [{ h:[85,140], s:[26,52], l:[8,24] }, { h:[20,40], s:[20,40], l:[10,26] }]
-          }
+      },
+      {
+        name: "Apricot Clay + Slate Cozy",
+        minContrast: 64,
+        minSatSpread: 26,
+        roles: {
+          light: [{ h:[30,50], s:[5,16], l:[92,99] }],
+          soft: [{ h:[26,42], s:[12,28], l:[62,78] }],
+          interest: [
+            { h:[12,26], s:[38,62], l:[42,62] },
+            { h:[18,32], s:[40,62], l:[44,64] }
+          ],
+          balance: [
+            { h:[80,115], s:[18,36], l:[36,60] },
+            { h:[200,220], s:[18,38], l:[38,62] }
+          ],
+          dark: [
+            { h:[18,34], s:[24,40], l:[8,24] },
+            { h:[210,240], s:[18,36], l:[9,26] }
+          ]
         }
-      ],
+      }
+    ],
 
-      coastal: [
-        {
-          name: "Soft Beach",
-          minContrast: 58,
-          roles: {
-            light: [{ h:[35,55], s:[5,16], l:[93,99] }],
-            warm: [{ h:[25,40], s:[18,34], l:[64,84] }],
-            interest: [{ h:[185,205], s:[30,52], l:[52,76] }],
-            balance: [{ h:[198,220], s:[24,44], l:[48,72] }, { h:[90,130], s:[14,30], l:[42,64] }],
-            dark: [{ h:[195,230], s:[22,42], l:[14,32] }]
-          }
-        },
-        {
-          name: "Seaside Cottage",
-          minContrast: 62,
-          roles: {
-            light: [{ h:[0,55], s:[4,14], l:[93,99] }],
-            warm: [{ h:[10,22], s:[22,40], l:[58,78] }, { h:[28,42], s:[20,38], l:[58,80] }],
-            interest: [{ h:[205,225], s:[34,56], l:[42,68] }],
-            balance: [{ h:[178,198], s:[26,48], l:[48,72] }, { h:[85,125], s:[14,30], l:[40,62] }],
-            dark: [{ h:[210,240], s:[28,50], l:[12,30] }]
-          }
-        },
-        {
-          name: "Bright Aqua Coast",
-          minContrast: 62,
-          roles: {
-            light: [{ h:[35,60], s:[5,18], l:[91,99] }],
-            warm: [{ h:[5,18], s:[38,66], l:[58,80] }, { h:[38,52], s:[38,66], l:[60,84] }],
-            interest: [{ h:[175,198], s:[50,78], l:[46,76] }],
-            balance: [{ h:[198,218], s:[42,72], l:[42,72] }],
-            dark: [{ h:[190,230], s:[34,66], l:[12,32] }]
-          }
+    playful: [
+      {
+        name: "Candy Party",
+        minContrast: 62,
+        minSatSpread: 42,
+        roles: {
+          light: [{ h:[0,60], s:[4,16], l:[94,99] }],
+          soft: [
+            { h:[345,15], s:[26,46], l:[70,88] },
+            { h:[35,55], s:[24,44], l:[72,90] }
+          ],
+          interest: [
+            { h:[345,10], s:[62,86], l:[48,72] },
+            { h:[35,55], s:[64,88], l:[52,76] },
+            { h:[178,202], s:[62,86], l:[48,72] }
+          ],
+          balance: [
+            { h:[125,165], s:[42,70], l:[42,68] },
+            { h:[205,240], s:[44,72], l:[42,68] },
+            { h:[245,270], s:[38,66], l:[48,72] }
+          ],
+          dark: [
+            { h:[210,250], s:[36,64], l:[12,30] },
+            { h:[300,340], s:[36,64], l:[14,32] }
+          ]
         }
-      ],
-
-      vintage: [
-        {
-          name: "Faded Cottage",
-          minContrast: 56,
-          roles: {
-            light: [{ h:[30,50], s:[8,20], l:[88,98] }],
-            warm: [{ h:[345,360], s:[20,42], l:[54,76] }, { h:[8,22], s:[22,44], l:[52,74] }],
-            interest: [{ h:[190,220], s:[20,38], l:[42,66] }, { h:[80,115], s:[18,36], l:[38,62] }],
-            balance: [{ h:[75,110], s:[16,34], l:[34,58] }],
-            dark: [{ h:[18,34], s:[20,34], l:[10,28] }, { h:[320,350], s:[18,32], l:[12,30] }]
-          }
-        },
-        {
-          name: "Retro Kitchen",
-          minContrast: 62,
-          roles: {
-            light: [{ h:[35,55], s:[6,18], l:[91,99] }],
-            warm: [{ h:[2,18], s:[36,60], l:[46,70] }, { h:[38,55], s:[36,60], l:[54,78] }],
-            interest: [{ h:[175,195], s:[34,56], l:[46,72] }],
-            balance: [{ h:[95,145], s:[24,46], l:[42,68] }],
-            dark: [{ h:[18,34], s:[20,38], l:[12,30] }]
-          }
-        },
-        {
-          name: "Old Book",
-          minContrast: 58,
-          roles: {
-            light: [{ h:[30,50], s:[10,24], l:[86,98] }],
-            warm: [{ h:[24,42], s:[24,44], l:[46,68] }],
-            interest: [{ h:[200,225], s:[20,38], l:[36,60] }, { h:[330,350], s:[20,36], l:[34,56] }],
-            balance: [{ h:[55,95], s:[18,34], l:[34,58] }],
-            dark: [{ h:[18,35], s:[22,38], l:[10,28] }]
-          }
+      },
+      {
+        name: "Confetti Bright",
+        minContrast: 64,
+        minSatSpread: 46,
+        roles: {
+          light: [{ h:[0,60], s:[4,14], l:[94,99] }],
+          soft: [
+            { h:[350,20], s:[24,44], l:[70,88] },
+            { h:[180,205], s:[24,44], l:[72,88] }
+          ],
+          interest: [
+            { h:[5,18], s:[66,90], l:[46,70] },
+            { h:[42,58], s:[66,90], l:[50,74] },
+            { h:[185,205], s:[66,90], l:[44,70] }
+          ],
+          balance: [
+            { h:[90,145], s:[48,76], l:[40,68] },
+            { h:[225,255], s:[48,76], l:[38,66] }
+          ],
+          dark: [
+            { h:[215,250], s:[40,70], l:[10,30] },
+            { h:[300,335], s:[40,70], l:[12,32] }
+          ]
         }
-      ]
-    };
+      },
+      {
+        name: "Pastel Play With Pop",
+        minContrast: 56,
+        minSatSpread: 38,
+        roles: {
+          light: [{ h:[20,60], s:[4,16], l:[94,99] }],
+          soft: [
+            { h:[350,15], s:[24,44], l:[74,90] },
+            { h:[35,55], s:[24,44], l:[76,92] }
+          ],
+          interest: [
+            { h:[340,5], s:[58,82], l:[54,76] },
+            { h:[180,205], s:[58,82], l:[52,76] },
+            { h:[38,55], s:[58,82], l:[56,80] }
+          ],
+          balance: [
+            { h:[95,150], s:[36,64], l:[58,80] },
+            { h:[225,260], s:[34,62], l:[56,78] }
+          ],
+          dark: [{ h:[215,250], s:[28,54], l:[16,34] }]
+        }
+      }
+    ],
 
-    document.addEventListener("DOMContentLoaded", function() {
-      setupUploadPreview();
-      generatePalette();
-      renderLibrary();
-      renderPattern();
+    moody: [
+      {
+        name: "Dark Botanical Lift",
+        minContrast: 58,
+        minSatSpread: 22,
+        roles: {
+          light: [{ h:[28,45], s:[5,16], l:[62,82] }],
+          soft: [{ h:[18,32], s:[16,32], l:[34,52] }],
+          interest: [
+            { h:[305,330], s:[24,44], l:[34,54] },
+            { h:[35,48], s:[30,48], l:[38,56] }
+          ],
+          balance: [
+            { h:[88,130], s:[22,44], l:[20,42] },
+            { h:[180,205], s:[22,44], l:[24,46] }
+          ],
+          dark: [
+            { h:[85,135], s:[20,38], l:[8,22] },
+            { h:[210,250], s:[18,36], l:[8,22] }
+          ]
+        }
+      },
+      {
+        name: "Stormy Lift",
+        minContrast: 58,
+        minSatSpread: 22,
+        roles: {
+          light: [{ h:[25,42], s:[5,16], l:[60,80] }],
+          soft: [{ h:[14,28], s:[16,30], l:[32,50] }],
+          interest: [
+            { h:[200,225], s:[30,50], l:[32,52] },
+            { h:[300,325], s:[22,40], l:[34,54] }
+          ],
+          balance: [{ h:[70,110], s:[18,36], l:[22,44] }],
+          dark: [{ h:[210,245], s:[20,38], l:[8,22] }]
+        }
+      }
+    ],
+
+    nature: [
+      {
+        name: "Fresh Garden",
+        minContrast: 60,
+        minSatSpread: 34,
+        roles: {
+          light: [{ h:[35,58], s:[6,18], l:[91,99] }],
+          soft: [
+            { h:[35,55], s:[22,40], l:[66,84] },
+            { h:[0,18], s:[20,38], l:[62,82] }
+          ],
+          interest: [{ h:[95,140], s:[42,68], l:[38,66] }],
+          balance: [{ h:[195,220], s:[28,50], l:[48,72] }],
+          dark: [{ h:[95,140], s:[26,48], l:[10,28] }]
+        }
+      },
+      {
+        name: "Wildflower",
+        minContrast: 60,
+        minSatSpread: 34,
+        roles: {
+          light: [{ h:[35,58], s:[6,18], l:[90,99] }],
+          soft: [{ h:[34,54], s:[20,38], l:[66,84] }],
+          interest: [
+            { h:[330,360], s:[38,66], l:[48,74] },
+            { h:[240,270], s:[32,56], l:[48,72] },
+            { h:[85,135], s:[38,64], l:[38,66] }
+          ],
+          balance: [{ h:[195,220], s:[24,46], l:[48,72] }],
+          dark: [{ h:[88,135], s:[24,46], l:[10,28] }]
+        }
+      }
+    ],
+
+    coastal: [
+      {
+        name: "Soft Beach",
+        minContrast: 58,
+        minSatSpread: 28,
+        roles: {
+          light: [{ h:[35,55], s:[5,16], l:[93,99] }],
+          soft: [{ h:[25,40], s:[14,30], l:[66,84] }],
+          interest: [{ h:[185,205], s:[36,62], l:[50,76] }],
+          balance: [
+            { h:[198,220], s:[24,44], l:[48,72] },
+            { h:[90,130], s:[14,30], l:[42,64] }
+          ],
+          dark: [{ h:[195,230], s:[22,42], l:[14,32] }]
+        }
+      },
+      {
+        name: "Bright Aqua Coast",
+        minContrast: 62,
+        minSatSpread: 42,
+        roles: {
+          light: [{ h:[35,60], s:[5,18], l:[91,99] }],
+          soft: [{ h:[25,42], s:[16,34], l:[64,84] }],
+          interest: [{ h:[175,198], s:[56,82], l:[44,74] }],
+          balance: [{ h:[198,218], s:[42,72], l:[42,72] }],
+          dark: [{ h:[190,230], s:[34,66], l:[12,32] }]
+        }
+      }
+    ],
+
+    vintage: [
+      {
+        name: "Faded Cottage",
+        minContrast: 56,
+        minSatSpread: 26,
+        roles: {
+          light: [{ h:[30,50], s:[8,20], l:[88,98] }],
+          soft: [
+            { h:[345,360], s:[18,36], l:[58,78] },
+            { h:[8,22], s:[18,36], l:[56,76] }
+          ],
+          interest: [
+            { h:[190,220], s:[24,42], l:[42,66] },
+            { h:[80,115], s:[22,40], l:[38,62] }
+          ],
+          balance: [{ h:[75,110], s:[16,34], l:[34,58] }],
+          dark: [
+            { h:[18,34], s:[20,34], l:[10,28] },
+            { h:[320,350], s:[18,32], l:[12,30] }
+          ]
+        }
+      },
+      {
+        name: "Retro Kitchen",
+        minContrast: 62,
+        minSatSpread: 34,
+        roles: {
+          light: [{ h:[35,55], s:[6,18], l:[91,99] }],
+          soft: [{ h:[38,55], s:[20,38], l:[62,82] }],
+          interest: [
+            { h:[2,18], s:[42,66], l:[44,68] },
+            { h:[175,195], s:[38,62], l:[44,70] }
+          ],
+          balance: [{ h:[95,145], s:[24,46], l:[42,68] }],
+          dark: [{ h:[18,34], s:[20,38], l:[12,30] }]
+        }
+      }
+    ]
+  };
+
+  document.addEventListener("DOMContentLoaded", function() {
+    setupUploadPreview();
+    generatePalette();
+    renderLibrary();
+    renderPattern();
+  });
+
+  function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(function(page) {
+      page.classList.remove("active-page");
     });
 
-    function showPage(pageId) {
-      document.querySelectorAll(".page").forEach(function(page) {
-        page.classList.remove("active-page");
-      });
+    const nextPage = document.getElementById(pageId);
+    if (nextPage) nextPage.classList.add("active-page");
 
-      const nextPage = document.getElementById(pageId);
-      if (nextPage) nextPage.classList.add("active-page");
-
-      if (pageId === "patternPage") {
-        renderPreviewPalette();
-        renderPattern();
-      }
-
-      if (pageId === "libraryPage") {
-        renderLibrary();
-      }
-
-      window.scrollTo(0, 0);
+    if (pageId === "patternPage") {
+      renderPreviewPalette();
+      renderPattern();
     }
 
-    function setStartMethod(method) {
-      startMethod = method;
-
-      document.querySelectorAll(".choice-card").forEach(function(card) {
-        card.classList.remove("selected");
-      });
-
-      document.getElementById("colorControl").style.display = "none";
-      document.getElementById("hexControl").style.display = "none";
-      document.getElementById("uploadControl").style.display = "none";
-
-      if (method === "color") {
-        document.getElementById("colorCard").classList.add("selected");
-        document.getElementById("colorControl").style.display = "block";
-      }
-
-      if (method === "hex") {
-        document.getElementById("hexCard").classList.add("selected");
-        document.getElementById("hexControl").style.display = "block";
-      }
-
-      if (method === "upload") {
-        document.getElementById("uploadCard").classList.add("selected");
-        document.getElementById("uploadControl").style.display = "block";
-      }
+    if (pageId === "libraryPage") {
+      renderLibrary();
     }
 
-    function setPaletteSize(size) {
-      paletteSize = size;
-      lockedColors = new Array(size).fill(false);
+    window.scrollTo(0, 0);
+  }
 
-      document.querySelectorAll(".segmented button").forEach(function(button) {
-        button.classList.remove("active");
-        if (button.textContent.includes(String(size))) button.classList.add("active");
-      });
+  function setStartMethod(method) {
+    startMethod = method;
 
-      generatePalette();
+    document.querySelectorAll(".choice-card").forEach(function(card) {
+      card.classList.remove("selected");
+    });
+
+    document.getElementById("colorControl").style.display = "none";
+    document.getElementById("hexControl").style.display = "none";
+    document.getElementById("uploadControl").style.display = "none";
+
+    if (method === "color") {
+      document.getElementById("colorCard").classList.add("selected");
+      document.getElementById("colorControl").style.display = "block";
     }
 
-    function setVibe(vibe, button) {
-      selectedVibe = vibe;
-
-      document.querySelectorAll(".vibe-btn").forEach(function(btn) {
-        btn.classList.remove("active");
-      });
-
-      if (button) button.classList.add("active");
-
-      generatePalette();
+    if (method === "hex") {
+      document.getElementById("hexCard").classList.add("selected");
+      document.getElementById("hexControl").style.display = "block";
     }
 
-    function getSeedColor() {
-      if (startMethod === "color") {
-        return document.getElementById("seedColorPicker").value;
+    if (method === "upload") {
+      document.getElementById("uploadCard").classList.add("selected");
+      document.getElementById("uploadControl").style.display = "block";
+    }
+  }
+
+  function setPaletteSize(size) {
+    paletteSize = size;
+    lockedColors = new Array(size).fill(false);
+
+    document.querySelectorAll(".segmented button").forEach(function(button) {
+      button.classList.remove("active");
+      if (button.textContent.includes(String(size))) button.classList.add("active");
+    });
+
+    generatePalette();
+  }
+
+  function setVibe(vibe, button) {
+    selectedVibe = vibe;
+
+    document.querySelectorAll(".vibe-btn").forEach(function(btn) {
+      btn.classList.remove("active");
+    });
+
+    if (button) button.classList.add("active");
+
+    generatePalette();
+  }
+
+  function getSeedColor() {
+    if (startMethod === "color") {
+      return document.getElementById("seedColorPicker").value;
+    }
+
+    if (startMethod === "hex") {
+      const raw = document.getElementById("hexInput").value.trim();
+      const message = document.getElementById("hexMessage");
+
+      if (/^#[0-9A-Fa-f]{6}$/.test(raw)) {
+        message.textContent = "Hex code accepted.";
+        return raw;
       }
 
-      if (startMethod === "hex") {
-        const raw = document.getElementById("hexInput").value.trim();
-        const message = document.getElementById("hexMessage");
-
-        if (/^#[0-9A-Fa-f]{6}$/.test(raw)) {
-          message.textContent = "Hex code accepted.";
-          return raw;
-        }
-
-        message.textContent = "Please enter a valid hex code like #A67C52.";
-        return "#A67C52";
-      }
-
+      message.textContent = "Please enter a valid hex code like #A67C52.";
       return "#A67C52";
     }
 
-    function getFamily(vibe) {
-      const families = vibeFamilies[vibe] || vibeFamilies.cozy;
-      return families[Math.floor(Math.random() * families.length)];
-    }
+    return "#A67C52";
+  }
 
-    function generatePalette() {
-      const seedColor = getSeedColor();
-      const size = paletteSize || 10;
-      let generated = buildPalette(size, selectedVibe, seedColor);
+  function getFamily(vibe) {
+    const families = vibeFamilies[vibe] || vibeFamilies.cozy;
+    return families[Math.floor(Math.random() * families.length)];
+  }
 
-      if (currentPalette.length && lockedColors.length) {
-        generated = generated.map(function(color, index) {
-          return lockedColors[index] && currentPalette[index] ? currentPalette[index] : color;
-        });
-      }
+  function generatePalette() {
+    const seedColor = getSeedColor();
+    const size = paletteSize || 10;
+    let generated = buildPalette(size, selectedVibe, seedColor);
 
-      currentPalette = generated;
-      lockedColors = new Array(currentPalette.length).fill(false).map(function(_, index) {
-        return lockedColors[index] || false;
+    if (currentPalette.length && lockedColors.length) {
+      generated = generated.map(function(color, index) {
+        return lockedColors[index] && currentPalette[index] ? currentPalette[index] : color;
       });
-
-      renderPalette();
-      renderPreviewPalette();
-      renderPattern();
     }
 
-    function buildPalette(size, vibe, seedColor) {
-      const recipe = paletteRecipes[size] || paletteRecipes[10];
-      let best = [];
+    currentPalette = generated;
+    lockedColors = new Array(currentPalette.length).fill(false).map(function(_, index) {
+      return lockedColors[index] || false;
+    });
 
-      for (let attempt = 0; attempt < 220; attempt++) {
-        const family = getFamily(vibe);
-        const palette = [];
+    renderPalette();
+    renderPreviewPalette();
+    renderPattern();
+  }
 
-        for (let i = 0; i < recipe.length; i++) {
-          const role = recipe[i];
-          const color = pickRoleColor(role, family, palette, seedColor, size, vibe);
-          if (color) palette.push(color);
-        }
+  function buildPalette(size, vibe, seedColor) {
+    const recipe = paletteRecipes[size] || paletteRecipes[10];
+    let best = [];
 
-        if (palette.length > best.length) best = palette.slice();
+    for (let attempt = 0; attempt < 260; attempt++) {
+      const family = getFamily(vibe);
+      const palette = [];
 
-        if (palette.length === size && palettePassesRules(palette, family, vibe)) {
-          return palette;
-        }
+      for (let i = 0; i < recipe.length; i++) {
+        const role = recipe[i];
+        const color = pickRoleColor(role, family, palette, seedColor, size, vibe);
+        if (color) palette.push(color);
       }
 
-      return best.slice(0, size);
+      if (palette.length > best.length) best = palette.slice();
+
+      if (palette.length === size && palettePassesRules(palette, family, vibe)) {
+        return palette;
+      }
     }
 
-    function pickRoleColor(role, family, existingPalette, seedColor, size, vibe) {
-      const zones = family.roles[role] || family.roles.interest || [];
-      const minDistance = size === 20 ? 18 : size === 10 ? 22 : 27;
-      const shuffledZones = shuffleArray(zones);
+    return best.slice(0, size);
+  }
 
-      for (let z = 0; z < shuffledZones.length; z++) {
-        for (let attempt = 0; attempt < 140; attempt++) {
-          const color = generateColorFromZone(shuffledZones[z], role, seedColor, vibe);
+  function pickRoleColor(role, family, existingPalette, seedColor, size, vibe) {
+    const zones = family.roles[role] || family.roles.interest || [];
+    const minDistance = size === 20 ? 18 : size === 10 ? 22 : 27;
+    const shuffledZones = shuffleArray(zones);
 
-          if (passesColorRules(color, existingPalette, minDistance, role, vibe)) {
-            return color;
-          }
+    for (let z = 0; z < shuffledZones.length; z++) {
+      for (let attempt = 0; attempt < 160; attempt++) {
+        const color = generateColorFromZone(shuffledZones[z], role, seedColor, vibe);
+
+        if (passesColorRules(color, existingPalette, minDistance, role, vibe)) {
+          return color;
         }
       }
-
-      return null;
     }
 
-    function generateColorFromZone(zone, role, seedColor, vibe) {
-      const seed = hexToHsl(seedColor || "#A67C52");
+    return null;
+  }
 
-      let hue = randomHue(zone.h);
-      let sat = randomNumber(zone.s[0], zone.s[1]);
-      let light = randomNumber(zone.l[0], zone.l[1]);
+  function generateColorFromZone(zone, role, seedColor, vibe) {
+    const seed = hexToHsl(seedColor || "#A67C52");
 
-      const seedStrengthMap = {
-        light: 0.01,
-        warm: 0.05,
-        interest: 0.03,
-        balance: 0.02,
-        dark: 0.01
-      };
+    let hue = randomHue(zone.h);
+    let sat = randomNumber(zone.s[0], zone.s[1]);
+    let light = randomNumber(zone.l[0], zone.l[1]);
 
-      hue = blendHue(hue, seed.h, seedStrengthMap[role] || 0.02);
+    const seedStrengthMap = {
+      light: 0.01,
+      soft: 0.03,
+      interest: 0.02,
+      balance: 0.02,
+      dark: 0.01
+    };
 
-      if (role === "light") {
-        light = Math.max(light, 90);
-        sat = Math.min(sat, 18);
+    hue = blendHue(hue, seed.h, seedStrengthMap[role] || 0.02);
+
+    if (role === "light") {
+      light = Math.max(light, 91);
+      sat = Math.min(sat, 18);
+    }
+
+    if (role === "dark") {
+      light = Math.min(light, 28);
+    }
+
+    if (role === "interest") {
+      if (vibe === "moody") {
+        sat = clamp(sat, 20, 50);
+        light = clamp(light, 32, 58);
+      } else if (vibe === "cozy") {
+        sat = clamp(sat, 32, 70);
+        light = clamp(light, 34, 64);
+      } else if (vibe === "playful") {
+        sat = clamp(sat, 58, 90);
+        light = clamp(light, 44, 78);
+      } else if (vibe === "vintage") {
+        sat = clamp(sat, 20, 62);
+        light = clamp(light, 34, 72);
+      } else {
+        sat = clamp(sat, 30, 84);
       }
+    }
+
+    return hslToHex(clampHue(hue), sat, light);
+  }
+
+  function passesColorRules(color, existingPalette, minDistance, role, vibe) {
+    const hsl = hexToHsl(color);
+
+    for (let i = 0; i < existingPalette.length; i++) {
+      const existing = existingPalette[i];
+      const existingHsl = hexToHsl(existing);
+
+      if (isNearTwin(color, existing)) return false;
+      if (colorDistance(color, existing) < minDistance) return false;
 
       if (role === "dark") {
-        light = Math.min(light, 26);
+        const hueGap = hueDistance(hsl.h, existingHsl.h);
+        const lightGap = Math.abs(hsl.l - existingHsl.l);
+        if (hueGap < 18 && lightGap < 42) return false;
       }
 
       if (role === "interest") {
-        if (vibe === "moody") {
-          sat = clamp(sat, 20, 48);
-          light = clamp(light, 34, 56);
-        } else if (vibe === "cozy") {
-          sat = clamp(sat, 30, 64);
-          light = clamp(light, 34, 62);
-        } else if (vibe === "vintage") {
-          sat = clamp(sat, 20, 54);
-          light = clamp(light, 36, 70);
-        } else {
-          sat = clamp(sat, 28, 82);
-        }
+        const hueGap = hueDistance(hsl.h, existingHsl.h);
+        if (hueGap < 16 && Math.abs(hsl.s - existingHsl.s) < 18) return false;
       }
-
-      return hslToHex(clampHue(hue), sat, light);
     }
 
-    function passesColorRules(color, existingPalette, minDistance, role, vibe) {
-      const hsl = hexToHsl(color);
-
-      for (let i = 0; i < existingPalette.length; i++) {
-        const existing = existingPalette[i];
-
-        if (isNearTwin(color, existing)) return false;
-        if (colorDistance(color, existing) < minDistance) return false;
-
-        const existingHsl = hexToHsl(existing);
-
-        if (role === "dark") {
-          const hueGap = hueDistance(hsl.h, existingHsl.h);
-          const lightGap = Math.abs(hsl.l - existingHsl.l);
-
-          if (hueGap < 18 && lightGap < 42) return false;
-        }
-
-        if (role === "interest") {
-          const hueGap = hueDistance(hsl.h, existingHsl.h);
-          if (hueGap < 16 && Math.abs(hsl.s - existingHsl.s) < 16) return false;
-        }
-      }
-
-      if (vibe === "moody" && role === "interest") {
-        if (hsl.s > 52) return false;
-        if (hsl.l > 60) return false;
-      }
-
-      return true;
+    if (vibe === "moody" && role === "interest") {
+      if (hsl.s > 52) return false;
+      if (hsl.l > 60) return false;
     }
 
-    function palettePassesRules(palette, family, vibe) {
-      const hsls = palette.map(hexToHsl);
-
-      const lights = hsls.filter(c => c.l >= 86).length;
-      const darks = hsls.filter(c => c.l <= 28).length;
-      const mids = hsls.filter(c => c.l > 30 && c.l < 82).length;
-
-      if (lights < 1) return false;
-      if (darks < 1) return false;
-      if (mids < 2) return false;
-
-      const lightest = Math.max(...hsls.map(c => c.l));
-      const darkest = Math.min(...hsls.map(c => c.l));
-      const valueContrast = lightest - darkest;
-
-      if (valueContrast < family.minContrast) return false;
-      if (!hasTemperatureContrast(hsls, vibe)) return false;
-      if (!hasPointOfInterest(hsls, vibe)) return false;
-      if (!hasHueSpread(hsls)) return false;
-      if (!darkAnchorStretchesAway(hsls)) return false;
-
-      for (let i = 0; i < palette.length; i++) {
-        for (let j = i + 1; j < palette.length; j++) {
-          if (isNearTwin(palette[i], palette[j])) return false;
-        }
-      }
-
-      return true;
+    if (vibe === "playful" && role === "interest") {
+      if (hsl.s < 58) return false;
+      if (hsl.l < 42 || hsl.l > 82) return false;
     }
 
-    function hasTemperatureContrast(hsls, vibe) {
-      const warmish = hsls.some(c => isWarmHue(c.h));
-      const coolish = hsls.some(c => isCoolHue(c.h) || isGreenHue(c.h));
+    return true;
+  }
 
-      if (vibe === "moody") {
-        const lift = hsls.some(c => {
-          const liftHue = c.h >= 290 || c.h <= 24 || (c.h >= 34 && c.h <= 50) || (c.h >= 190 && c.h <= 225);
-          return liftHue && c.s >= 20 && c.l >= 34 && c.l <= 58;
-        });
+  function palettePassesRules(palette, family, vibe) {
+    const hsls = palette.map(hexToHsl);
 
-        return lift && coolish && warmish;
-      }
+    const lights = hsls.filter(c => c.l >= 86).length;
+    const darks = hsls.filter(c => c.l <= 30).length;
+    const mids = hsls.filter(c => c.l > 30 && c.l < 84).length;
 
-      return warmish && coolish;
+    if (lights < 1) return false;
+    if (darks < 1) return false;
+    if (mids < 2) return false;
+
+    const lightest = Math.max(...hsls.map(c => c.l));
+    const darkest = Math.min(...hsls.map(c => c.l));
+    const valueContrast = lightest - darkest;
+
+    if (valueContrast < family.minContrast) return false;
+    if (!hasSaturationContrast(hsls, family, vibe)) return false;
+    if (!hasTemperatureContrast(hsls, vibe)) return false;
+    if (!hasPointOfInterest(hsls, vibe)) return false;
+    if (!hasHueSpread(hsls)) return false;
+    if (!darkAnchorStretchesAway(hsls)) return false;
+
+    return true;
+  }
+
+  function hasSaturationContrast(hsls, family, vibe) {
+    const highest = Math.max(...hsls.map(c => c.s));
+    const lowest = Math.min(...hsls.map(c => c.s));
+    const spread = highest - lowest;
+
+    if (spread < family.minSatSpread) return false;
+
+    if (vibe === "playful") {
+      const brightCount = hsls.filter(c => c.s >= 55 && c.l >= 40 && c.l <= 82).length;
+      const softCount = hsls.filter(c => c.s <= 26 || c.l >= 88).length;
+      return brightCount >= 1 && softCount >= 1;
     }
 
-    function hasPointOfInterest(hsls, vibe) {
-      if (vibe === "moody") {
-        return hsls.some(c => {
-          const goodHue =
-            (c.h >= 295 || c.h <= 24) ||
-            (c.h >= 34 && c.h <= 50) ||
-            (c.h >= 190 && c.h <= 225);
-
-          return goodHue && c.s >= 20 && c.s <= 50 && c.l >= 34 && c.l <= 58;
-        });
-      }
-
-      if (vibe === "cozy") {
-        return hsls.some(c => c.s >= 32 && c.l >= 34 && c.l <= 62);
-      }
-
-      if (vibe === "vintage") {
-        return hsls.some(c => c.s >= 20 && c.s <= 56 && c.l >= 36 && c.l <= 72);
-      }
-
-      return hsls.some(c => c.s >= 30 && c.l >= 36 && c.l <= 82);
+    if (vibe === "cozy") {
+      const glowCount = hsls.filter(c => c.s >= 32 && c.l >= 34 && c.l <= 64).length;
+      const quietCount = hsls.filter(c => c.s <= 22 || c.l >= 88).length;
+      return glowCount >= 1 && quietCount >= 1;
     }
 
-    function hasHueSpread(hsls) {
-      let strongPairs = 0;
-
-      for (let i = 0; i < hsls.length; i++) {
-        for (let j = i + 1; j < hsls.length; j++) {
-          if (hueDistance(hsls[i].h, hsls[j].h) >= 42) strongPairs++;
-        }
-      }
-
-      return strongPairs >= 4;
+    if (vibe === "moody") {
+      const liftCount = hsls.filter(c => c.s >= 20 && c.s <= 52 && c.l >= 32 && c.l <= 60).length;
+      return liftCount >= 1;
     }
 
-    function darkAnchorStretchesAway(hsls) {
-      const dark = hsls.reduce((lowest, color) => color.l < lowest.l ? color : lowest, hsls[0]);
+    return true;
+  }
 
-      let farEnough = 0;
+  function hasTemperatureContrast(hsls, vibe) {
+    const warmish = hsls.some(c => isWarmHue(c.h));
+    const coolish = hsls.some(c => isCoolHue(c.h) || isGreenHue(c.h));
 
-      hsls.forEach(function(color) {
-        if (color === dark) return;
-
-        const hueGap = hueDistance(dark.h, color.h);
-        const valueGap = Math.abs(dark.l - color.l);
-
-        if (hueGap >= 24 || valueGap >= 48) farEnough++;
+    if (vibe === "moody") {
+      const lift = hsls.some(c => {
+        const liftHue = c.h >= 290 || c.h <= 24 || (c.h >= 34 && c.h <= 50) || (c.h >= 190 && c.h <= 225);
+        return liftHue && c.s >= 20 && c.l >= 32 && c.l <= 60;
       });
 
-      return farEnough >= 3;
+      return lift && coolish && warmish;
     }
 
-    function isNearTwin(a, b) {
-      const ah = hexToHsl(a);
-      const bh = hexToHsl(b);
+    return warmish && coolish;
+  }
 
-      const hue = hueDistance(ah.h, bh.h);
-      const sat = Math.abs(ah.s - bh.s);
-      const light = Math.abs(ah.l - bh.l);
-
-      return hue < 14 && sat < 12 && light < 12;
+  function hasPointOfInterest(hsls, vibe) {
+    if (vibe === "playful") {
+      return hsls.some(c => c.s >= 58 && c.l >= 42 && c.l <= 82);
     }
 
-    function colorDistance(a, b) {
-      const ah = hexToHsl(a);
-      const bh = hexToHsl(b);
+    if (vibe === "moody") {
+      return hsls.some(c => {
+        const goodHue =
+          (c.h >= 295 || c.h <= 24) ||
+          (c.h >= 34 && c.h <= 50) ||
+          (c.h >= 190 && c.h <= 225);
 
-      const hue = hueDistance(ah.h, bh.h);
-      const sat = Math.abs(ah.s - bh.s);
-      const light = Math.abs(ah.l - bh.l);
-
-      return hue * 1.25 + sat * 0.85 + light * 1.7;
-    }
-
-    function hueDistance(a, b) {
-      let diff = Math.abs(a - b);
-      return Math.min(diff, 360 - diff);
-    }
-
-    function isWarmHue(h) {
-      return h >= 350 || h <= 55;
-    }
-
-    function isCoolHue(h) {
-      return h >= 185 && h <= 260;
-    }
-
-    function isGreenHue(h) {
-      return h >= 70 && h <= 150;
-    }
-
-    function randomNumber(min, max) {
-      return min + Math.random() * (max - min);
-    }
-
-    function randomHue(range) {
-      const start = range[0];
-      const end = range[1];
-
-      if (start <= end) {
-        return randomNumber(start, end);
-      }
-
-      const span = (360 - start) + end;
-      const value = start + Math.random() * span;
-      return value >= 360 ? value - 360 : value;
-    }
-
-    function blendHue(h1, h2, amount) {
-      let diff = ((h2 - h1 + 540) % 360) - 180;
-      return clampHue(h1 + diff * amount);
-    }
-
-    function shuffleArray(array) {
-      const copy = array.slice();
-
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const temp = copy[i];
-        copy[i] = copy[j];
-        copy[j] = temp;
-      }
-
-      return copy;
-    }
-
-    function renderPalette() {
-      const container = document.getElementById("paletteSwatches");
-      if (!container) return;
-
-      container.innerHTML = "";
-
-      currentPalette.forEach(function(color, index) {
-        const swatch = document.createElement("div");
-        swatch.className = "swatch" + (lockedColors[index] ? " locked" : "");
-        swatch.innerHTML = `
-          <div class="swatch-square" style="background:${color}"></div>
-          <div class="swatch-code">${color}</div>
-          <div class="swatch-lock">${lockedColors[index] ? "🔒" : "♡"}</div>
-        `;
-
-        swatch.addEventListener("click", function() {
-          lockedColors[index] = !lockedColors[index];
-          renderPalette();
-        });
-
-        container.appendChild(swatch);
+        return goodHue && c.s >= 20 && c.s <= 52 && c.l >= 32 && c.l <= 60;
       });
     }
 
-    function renderPreviewPalette() {
-      const container = document.getElementById("previewSwatches");
-      if (!container) return;
+    if (vibe === "cozy") {
+      return hsls.some(c => {
+        const isClayRoseRust =
+          c.h <= 26 ||
+          c.h >= 340 ||
+          (c.h >= 28 && c.h <= 48);
 
-      container.innerHTML = "";
-
-      currentPalette.forEach(function(color) {
-        const swatch = document.createElement("div");
-        swatch.className = "swatch";
-        swatch.innerHTML = `
-          <div class="swatch-square" style="background:${color}"></div>
-          <div class="swatch-code">${color}</div>
-        `;
-        container.appendChild(swatch);
+        return isClayRoseRust && c.s >= 32 && c.l >= 34 && c.l <= 64;
       });
     }
 
-    function renderPattern() {
-      const pattern = document.getElementById("floralPattern");
-      if (!pattern) return;
-
-      const backgroundSelect = document.getElementById("backgroundSelect");
-      const scaleSlider = document.getElementById("scaleSlider");
-
-      const background = backgroundSelect ? backgroundSelect.value : "#fbfaf7";
-      const scale = scaleSlider ? Number(scaleSlider.value) : 100;
-      const tileSize = scale * 2.6;
-
-      pattern.style.setProperty("background-color", background, "important");
-      pattern.style.setProperty("background-image", 'url("floral-pattern-new.png")', "important");
-      pattern.style.setProperty("background-repeat", "repeat", "important");
-      pattern.style.setProperty("background-size", tileSize + "px " + tileSize + "px", "important");
-      pattern.style.setProperty("background-position", "center", "important");
+    if (vibe === "vintage") {
+      return hsls.some(c => c.s >= 20 && c.s <= 62 && c.l >= 34 && c.l <= 72);
     }
 
-    function shufflePalette() {
-      currentPalette = currentPalette.slice().sort(function() {
-        return Math.random() - 0.5;
+    return hsls.some(c => c.s >= 30 && c.l >= 36 && c.l <= 82);
+  }
+
+  function hasHueSpread(hsls) {
+    let strongPairs = 0;
+
+    for (let i = 0; i < hsls.length; i++) {
+      for (let j = i + 1; j < hsls.length; j++) {
+        if (hueDistance(hsls[i].h, hsls[j].h) >= 42) strongPairs++;
+      }
+    }
+
+    return strongPairs >= 4;
+  }
+
+  function darkAnchorStretchesAway(hsls) {
+    const dark = hsls.reduce((lowest, color) => color.l < lowest.l ? color : lowest, hsls[0]);
+
+    let farEnough = 0;
+
+    hsls.forEach(function(color) {
+      if (color === dark) return;
+
+      const hueGap = hueDistance(dark.h, color.h);
+      const valueGap = Math.abs(dark.l - color.l);
+
+      if (hueGap >= 24 || valueGap >= 48) farEnough++;
+    });
+
+    return farEnough >= 3;
+  }
+
+  function isNearTwin(a, b) {
+    const ah = hexToHsl(a);
+    const bh = hexToHsl(b);
+
+    const hue = hueDistance(ah.h, bh.h);
+    const sat = Math.abs(ah.s - bh.s);
+    const light = Math.abs(ah.l - bh.l);
+
+    return hue < 14 && sat < 12 && light < 12;
+  }
+
+  function colorDistance(a, b) {
+    const ah = hexToHsl(a);
+    const bh = hexToHsl(b);
+
+    const hue = hueDistance(ah.h, bh.h);
+    const sat = Math.abs(ah.s - bh.s);
+    const light = Math.abs(ah.l - bh.l);
+
+    return hue * 1.25 + sat * 0.85 + light * 1.7;
+  }
+
+  function hueDistance(a, b) {
+    let diff = Math.abs(a - b);
+    return Math.min(diff, 360 - diff);
+  }
+
+  function isWarmHue(h) {
+    return h >= 340 || h <= 58;
+  }
+
+  function isCoolHue(h) {
+    return h >= 185 && h <= 270;
+  }
+
+  function isGreenHue(h) {
+    return h >= 70 && h <= 150;
+  }
+
+  function randomNumber(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function randomHue(range) {
+    const start = range[0];
+    const end = range[1];
+
+    if (start <= end) {
+      return randomNumber(start, end);
+    }
+
+    const span = (360 - start) + end;
+    const value = start + Math.random() * span;
+    return value >= 360 ? value - 360 : value;
+  }
+
+  function blendHue(h1, h2, amount) {
+    let diff = ((h2 - h1 + 540) % 360) - 180;
+    return clampHue(h1 + diff * amount);
+  }
+
+  function shuffleArray(array) {
+    const copy = array.slice();
+
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = temp;
+    }
+
+    return copy;
+  }
+
+  function renderPalette() {
+    const container = document.getElementById("paletteSwatches");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    currentPalette.forEach(function(color, index) {
+      const swatch = document.createElement("div");
+      swatch.className = "swatch" + (lockedColors[index] ? " locked" : "");
+      swatch.innerHTML = `
+        <div class="swatch-square" style="background:${color}"></div>
+        <div class="swatch-code">${color}</div>
+        <div class="swatch-lock">${lockedColors[index] ? "🔒" : "♡"}</div>
+      `;
+
+      swatch.addEventListener("click", function() {
+        lockedColors[index] = !lockedColors[index];
+        renderPalette();
       });
 
-      renderPalette();
-      renderPreviewPalette();
+      container.appendChild(swatch);
+    });
+  }
+
+  function renderPreviewPalette() {
+    const container = document.getElementById("previewSwatches");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    currentPalette.forEach(function(color) {
+      const swatch = document.createElement("div");
+      swatch.className = "swatch";
+      swatch.innerHTML = `
+        <div class="swatch-square" style="background:${color}"></div>
+        <div class="swatch-code">${color}</div>
+      `;
+      container.appendChild(swatch);
+    });
+  }
+
+  function renderPattern() {
+    const pattern = document.getElementById("floralPattern");
+    if (!pattern) return;
+
+    const backgroundSelect = document.getElementById("backgroundSelect");
+    const scaleSlider = document.getElementById("scaleSlider");
+
+    const background = backgroundSelect ? backgroundSelect.value : "#fbfaf7";
+    const scale = scaleSlider ? Number(scaleSlider.value) : 100;
+    const tileSize = scale * 2.6;
+
+    pattern.style.setProperty("background-color", background, "important");
+    pattern.style.setProperty("background-image", 'url("floral-pattern-new.png")', "important");
+    pattern.style.setProperty("background-repeat", "repeat", "important");
+    pattern.style.setProperty("background-size", tileSize + "px " + tileSize + "px", "important");
+    pattern.style.setProperty("background-position", "center", "important");
+  }
+
+  function shufflePalette() {
+    currentPalette = currentPalette.slice().sort(function() {
+      return Math.random() - 0.5;
+    });
+
+    renderPalette();
+    renderPreviewPalette();
+  }
+
+  function savePalette() {
+    const name = prompt("Name your palette:", "Untitled Palette");
+    if (!name) return;
+
+    const paletteObject = {
+      id: Date.now(),
+      name: name,
+      colors: currentPalette.slice(),
+      size: currentPalette.length,
+      vibe: selectedVibe,
+      date: new Date().toLocaleDateString(),
+      favorite: false
+    };
+
+    savedPalettes.unshift(paletteObject);
+    localStorage.setItem("paintboxedPalettes", JSON.stringify(savedPalettes));
+
+    alert("Palette saved to your library.");
+    renderLibrary();
+  }
+
+  function renderLibrary() {
+    const list = document.getElementById("libraryList");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    if (!savedPalettes.length) {
+      list.innerHTML = `
+        <div class="empty-library">
+          <p>No palettes saved yet.</p>
+          <button type="button" class="primary-btn" onclick="showPage('creatorPage')">Create Your First Palette</button>
+        </div>
+      `;
+      return;
     }
 
-    function savePalette() {
-      const name = prompt("Name your palette:", "Untitled Palette");
-      if (!name) return;
+    savedPalettes.forEach(function(palette, index) {
+      const card = document.createElement("div");
+      card.className = "library-card";
 
-      const paletteObject = {
-        id: Date.now(),
-        name: name,
-        colors: currentPalette.slice(),
-        size: currentPalette.length,
-        vibe: selectedVibe,
-        date: new Date().toLocaleDateString(),
-        favorite: false
+      const swatches = palette.colors.map(function(color) {
+        return `<span class="mini-swatch" style="background:${color}"></span>`;
+      }).join("");
+
+      card.innerHTML = `
+        <div class="library-card-left">
+          <div class="mini-swatch-row">${swatches}</div>
+          <h3>${palette.name} <button type="button" class="heart-btn" onclick="toggleFavorite(${index})">${palette.favorite ? "♥" : "♡"}</button></h3>
+          <p>${palette.size} colors • ${palette.vibe || "custom"} • Created ${palette.date}</p>
+        </div>
+
+        <div class="library-card-actions">
+          <button type="button" onclick="openPalette(${index})">Open / Edit</button>
+          <button type="button" onclick="exportSavedPalette(${index})">Hex Codes</button>
+        </div>
+      `;
+
+      list.appendChild(card);
+    });
+  }
+
+  function openPalette(index) {
+    const palette = savedPalettes[index];
+    currentPalette = palette.colors.slice();
+    paletteSize = currentPalette.length;
+    lockedColors = new Array(currentPalette.length).fill(false);
+
+    renderPalette();
+    renderPreviewPalette();
+    showPage("creatorPage");
+  }
+
+  function toggleFavorite(index) {
+    savedPalettes[index].favorite = !savedPalettes[index].favorite;
+    localStorage.setItem("paintboxedPalettes", JSON.stringify(savedPalettes));
+    renderLibrary();
+  }
+
+  function exportHexCodes() {
+    alert(currentPalette.join("\n"));
+  }
+
+  function exportSavedPalette(index) {
+    alert(savedPalettes[index].colors.join("\n"));
+  }
+
+  function unlockAll() {
+    lockedColors = new Array(currentPalette.length).fill(false);
+    renderPalette();
+  }
+
+  function setupUploadPreview() {
+    const upload = document.getElementById("imageUpload");
+    if (!upload) return;
+
+    upload.addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        document.getElementById("imagePreview").src = e.target.result;
+        document.getElementById("imagePreview").style.display = "block";
       };
 
-      savedPalettes.unshift(paletteObject);
-      localStorage.setItem("paintboxedPalettes", JSON.stringify(savedPalettes));
+      reader.readAsDataURL(file);
+    });
+  }
 
-      alert("Palette saved to your library.");
-      renderLibrary();
+  function hexToHsl(hex) {
+    hex = hex.replace("#", "");
+
+    let r = parseInt(hex.substring(0, 2), 16) / 255;
+    let g = parseInt(hex.substring(2, 4), 16) / 255;
+    let b = parseInt(hex.substring(4, 6), 16) / 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+
+    let h = 0;
+    let s = 0;
+    let l = (max + min) / 2;
+
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      if (max === g) h = (b - r) / d + 2;
+      if (max === b) h = (r - g) / d + 4;
+
+      h *= 60;
     }
 
-    function renderLibrary() {
-      const list = document.getElementById("libraryList");
-      if (!list) return;
+    return { h: h, s: s * 100, l: l * 100 };
+  }
 
-      list.innerHTML = "";
+  function hslToHex(h, s, l) {
+    s /= 100;
+    l /= 100;
 
-      if (!savedPalettes.length) {
-        list.innerHTML = `
-          <div class="empty-library">
-            <p>No palettes saved yet.</p>
-            <button type="button" class="primary-btn" onclick="showPage('creatorPage')">Create Your First Palette</button>
-          </div>
-        `;
-        return;
-      }
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = l - c / 2;
 
-      savedPalettes.forEach(function(palette, index) {
-        const card = document.createElement("div");
-        card.className = "library-card";
+    let r = 0;
+    let g = 0;
+    let b = 0;
 
-        const swatches = palette.colors.map(function(color) {
-          return `<span class="mini-swatch" style="background:${color}"></span>`;
-        }).join("");
-
-        card.innerHTML = `
-          <div class="library-card-left">
-            <div class="mini-swatch-row">${swatches}</div>
-            <h3>${palette.name} <button type="button" class="heart-btn" onclick="toggleFavorite(${index})">${palette.favorite ? "♥" : "♡"}</button></h3>
-            <p>${palette.size} colors • ${palette.vibe || "custom"} • Created ${palette.date}</p>
-          </div>
-
-          <div class="library-card-actions">
-            <button type="button" onclick="openPalette(${index})">Open / Edit</button>
-            <button type="button" onclick="exportSavedPalette(${index})">Hex Codes</button>
-          </div>
-        `;
-
-        list.appendChild(card);
-      });
+    if (0 <= h && h < 60) {
+      r = c; g = x; b = 0;
+    } else if (60 <= h && h < 120) {
+      r = x; g = c; b = 0;
+    } else if (120 <= h && h < 180) {
+      r = 0; g = c; b = x;
+    } else if (180 <= h && h < 240) {
+      r = 0; g = x; b = c;
+    } else if (240 <= h && h < 300) {
+      r = x; g = 0; b = c;
+    } else {
+      r = c; g = 0; b = x;
     }
 
-    function openPalette(index) {
-      const palette = savedPalettes[index];
-      currentPalette = palette.colors.slice();
-      paletteSize = currentPalette.length;
-      lockedColors = new Array(currentPalette.length).fill(false);
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
 
-      renderPalette();
-      renderPreviewPalette();
-      showPage("creatorPage");
-    }
+    return "#" + [r, g, b].map(function(value) {
+      const hex = value.toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    }).join("").toUpperCase();
+  }
 
-    function toggleFavorite(index) {
-      savedPalettes[index].favorite = !savedPalettes[index].favorite;
-      localStorage.setItem("paintboxedPalettes", JSON.stringify(savedPalettes));
-      renderLibrary();
-    }
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
 
-    function exportHexCodes() {
-      alert(currentPalette.join("\n"));
-    }
-
-    function exportSavedPalette(index) {
-      alert(savedPalettes[index].colors.join("\n"));
-    }
-
-    function unlockAll() {
-      lockedColors = new Array(currentPalette.length).fill(false);
-      renderPalette();
-    }
-
-    function setupUploadPreview() {
-      const upload = document.getElementById("imageUpload");
-      if (!upload) return;
-
-      upload.addEventListener("change", function(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-          document.getElementById("imagePreview").src = e.target.result;
-          document.getElementById("imagePreview").style.display = "block";
-        };
-
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function hexToHsl(hex) {
-      hex = hex.replace("#", "");
-
-      let r = parseInt(hex.substring(0, 2), 16) / 255;
-      let g = parseInt(hex.substring(2, 4), 16) / 255;
-      let b = parseInt(hex.substring(4, 6), 16) / 255;
-
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-
-      let h = 0;
-      let s = 0;
-      let l = (max + min) / 2;
-
-      if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-        if (max === g) h = (b - r) / d + 2;
-        if (max === b) h = (r - g) / d + 4;
-
-        h *= 60;
-      }
-
-      return { h: h, s: s * 100, l: l * 100 };
-    }
-
-    function hslToHex(h, s, l) {
-      s /= 100;
-      l /= 100;
-
-      const c = (1 - Math.abs(2 * l - 1)) * s;
-      const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-      const m = l - c / 2;
-
-      let r = 0;
-      let g = 0;
-      let b = 0;
-
-      if (0 <= h && h < 60) {
-        r = c; g = x; b = 0;
-      } else if (60 <= h && h < 120) {
-        r = x; g = c; b = 0;
-      } else if (120 <= h && h < 180) {
-        r = 0; g = c; b = x;
-      } else if (180 <= h && h < 240) {
-        r = 0; g = x; b = c;
-      } else if (240 <= h && h < 300) {
-        r = x; g = 0; b = c;
-      } else {
-        r = c; g = 0; b = x;
-      }
-
-      r = Math.round((r + m) * 255);
-      g = Math.round((g + m) * 255);
-      b = Math.round((b + m) * 255);
-
-      return "#" + [r, g, b].map(function(value) {
-        const hex = value.toString(16);
-        return hex.length === 1 ? "0" + hex : hex;
-      }).join("").toUpperCase();
-    }
-
-    function clamp(value, min, max) {
-      return Math.min(Math.max(value, min), max);
-    }
-
-    function clampHue(value) {
-      while (value < 0) value += 360;
-      while (value >= 360) value -= 360;
-      return value;
-    }
-  </script>
+  function clampHue(value) {
+    while (value < 0) value += 360;
+    while (value >= 360) value -= 360;
+    return value;
+  }
+</script>
 
 </body>
 </html>
