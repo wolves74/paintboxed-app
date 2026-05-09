@@ -227,16 +227,16 @@
 
           <div class="vibe-grid">
             <button type="button" class="vibe-btn active" data-vibe="cozy" onclick="setVibe('cozy', this)">Cozy</button>
-            <button type="button" class="vibe-btn" data-vibe="cheerful" onclick="setVibe('cheerful', this)">Cheerful</button>
-            <button type="button" class="vibe-btn" data-vibe="soft" onclick="setVibe('soft', this)">Soft</button>
+            <button type="button" class="vibe-btn" data-vibe="playful" onclick="setVibe('playful', this)">Playful</button>
+            <button type="button" class="vibe-btn" data-vibe="moody" onclick="setVibe('moody', this)">Moody</button>
+            <button type="button" class="vibe-btn" data-vibe="nature" onclick="setVibe('nature', this)">Nature</button>
+            <button type="button" class="vibe-btn" data-vibe="coastal" onclick="setVibe('coastal', this)">Coastal</button>
             <button type="button" class="vibe-btn" data-vibe="vintage" onclick="setVibe('vintage', this)">Vintage</button>
-            <button type="button" class="vibe-btn" data-vibe="earthy" onclick="setVibe('earthy', this)">Earthy</button>
+            <button type="button" class="vibe-btn" data-vibe="soft" onclick="setVibe('soft', this)">Soft</button>
             <button type="button" class="vibe-btn" data-vibe="fresh" onclick="setVibe('fresh', this)">Fresh</button>
             <button type="button" class="vibe-btn" data-vibe="romantic" onclick="setVibe('romantic', this)">Romantic</button>
-            <button type="button" class="vibe-btn" data-vibe="moody" onclick="setVibe('moody', this)">Moody</button>
-            <button type="button" class="vibe-btn" data-vibe="playful" onclick="setVibe('playful', this)">Playful</button>
+            <button type="button" class="vibe-btn" data-vibe="earthy" onclick="setVibe('earthy', this)">Earthy</button>
             <button type="button" class="vibe-btn" data-vibe="simple" onclick="setVibe('simple', this)">Simple</button>
-            <button type="button" class="vibe-btn" data-vibe="coastal" onclick="setVibe('coastal', this)">Coastal</button>
             <button type="button" class="vibe-btn" data-vibe="bold" onclick="setVibe('bold', this)">Bold</button>
           </div>
 
@@ -388,30 +388,294 @@
       20: { neutral: 4, warm: 4, organic: 4, cool: 4, dark: 4 }
     };
 
-    const vibeDNA = {
-      cozy: {
-        sat: [22, 55],
-        light: [25, 90],
+    const vibeSubfamilies = {
+      cozy: [
+        {
+          name: "Soft Knit Cozy",
+          sat: [18, 42],
+          light: [42, 96],
+          distance: 18,
+          lanes: {
+            neutral: { h:[28,48], s:[8,22], l:[84,98] },
+            warm:   { h:[28,42], s:[28,50], l:[58,80] },
+            organic:{ h:[78,115], s:[16,36], l:[42,72] },
+            cool:   { h:[200,220], s:[14,34], l:[50,78] },
+            dark:   { h:[18,38], s:[14,34], l:[20,42] }
+          }
+        },
+        {
+          name: "Autumn Cozy",
+          sat: [22, 55],
+          light: [28, 94],
+          distance: 19,
+          lanes: {
+            neutral: { h:[30,50], s:[10,28], l:[84,97] },
+            warm:   [{ h:[18,32], s:[35,58], l:[50,74] }, { h:[32,48], s:[35,58], l:[50,76] }],
+            organic:{ h:[58,95], s:[22,48], l:[34,68] },
+            cool:   { h:[200,220], s:[16,36], l:[38,68] },
+            dark:   [{ h:[18,38], s:[22,45], l:[16,38] }, { h:[80,120], s:[20,42], l:[16,36] }]
+          }
+        },
+        {
+          name: "Fireside Cozy",
+          sat: [24, 58],
+          light: [22, 92],
+          distance: 20,
+          lanes: {
+            neutral: { h:[28,45], s:[10,26], l:[82,96] },
+            warm:   [{ h:[12,28], s:[38,60], l:[45,70] }, { h:[35,48], s:[35,58], l:[45,70] }],
+            organic:{ h:[70,110], s:[18,40], l:[30,62] },
+            cool:   { h:[205,230], s:[12,32], l:[32,62] },
+            dark:   [{ h:[10,35], s:[20,44], l:[12,34] }, { h:[210,240], s:[12,30], l:[14,34] }]
+          }
+        },
+        {
+          name: "Warm Café",
+          sat: [20, 52],
+          light: [30, 96],
+          distance: 18,
+          lanes: {
+            neutral: { h:[30,48], s:[10,24], l:[86,98] },
+            warm:   [{ h:[24,42], s:[30,54], l:[56,78] }, { h:[12,26], s:[28,50], l:[54,76] }],
+            organic:{ h:[75,120], s:[16,36], l:[38,70] },
+            cool:   { h:[185,210], s:[14,34], l:[44,72] },
+            dark:   { h:[18,38], s:[18,40], l:[16,38] }
+          }
+        }
+      ],
+
+      playful: [
+        {
+          name: "Candy Party",
+          sat: [45, 78],
+          light: [52, 96],
+          distance: 23,
+          lanes: {
+            neutral: { h:[330,360], s:[12,34], l:[88,98] },
+            warm:   [{ h:[340,360], s:[48,78], l:[58,82] }, { h:[8,22], s:[48,78], l:[58,82] }],
+            organic:{ h:[135,165], s:[38,70], l:[56,84] },
+            cool:   [{ h:[180,205], s:[45,78], l:[56,84] }, { h:[230,260], s:[36,68], l:[58,86] }],
+            dark:   [{ h:[300,340], s:[35,65], l:[24,48] }, { h:[190,225], s:[35,65], l:[24,46] }]
+          }
+        },
+        {
+          name: "Pastel Play",
+          sat: [28, 55],
+          light: [68, 98],
+          distance: 18,
+          lanes: {
+            neutral: { h:[35,60], s:[8,24], l:[90,99] },
+            warm:   [{ h:[0,18], s:[28,55], l:[70,90] }, { h:[35,55], s:[28,55], l:[72,92] }],
+            organic:{ h:[95,155], s:[26,52], l:[68,90] },
+            cool:   [{ h:[185,220], s:[28,55], l:[68,90] }, { h:[235,270], s:[24,50], l:[70,92] }],
+            dark:   { h:[200,250], s:[22,48], l:[30,52] }
+          }
+        },
+        {
+          name: "Toy Box",
+          sat: [55, 82],
+          light: [38, 94],
+          distance: 26,
+          lanes: {
+            neutral: { h:[35,55], s:[10,28], l:[84,98] },
+            warm:   [{ h:[0,12], s:[60,84], l:[42,70] }, { h:[38,55], s:[60,84], l:[52,78] }],
+            organic:{ h:[90,145], s:[48,80], l:[42,74] },
+            cool:   [{ h:[195,225], s:[50,82], l:[42,76] }, { h:[175,195], s:[45,78], l:[46,78] }],
+            dark:   { h:[210,245], s:[40,70], l:[18,42] }
+          }
+        },
+        {
+          name: "Confetti Bright",
+          sat: [50, 82],
+          light: [45, 98],
+          distance: 25,
+          lanes: {
+            neutral: { h:[0,60], s:[5,18], l:[92,99] },
+            warm:   [{ h:[350,15], s:[55,82], l:[48,76] }, { h:[28,50], s:[55,82], l:[52,82] }],
+            organic:{ h:[85,150], s:[45,78], l:[44,78] },
+            cool:   [{ h:[175,205], s:[50,82], l:[45,80] }, { h:[205,235], s:[45,78], l:[42,76] }],
+            dark:   [{ h:[220,260], s:[35,70], l:[18,42] }, { h:[300,345], s:[35,70], l:[20,44] }]
+          }
+        }
+      ],
+
+      moody: [
+        {
+          name: "Misty Forest",
+          sat: [14, 48],
+          light: [18, 78],
+          distance: 21,
+          lanes: {
+            neutral: { h:[25,45], s:[6,24], l:[60,82] },
+            warm:   { h:[25,48], s:[24,48], l:[42,64] },
+            organic:{ h:[80,135], s:[20,48], l:[24,58] },
+            cool:   { h:[195,225], s:[20,48], l:[30,64] },
+            dark:   { h:[90,145], s:[18,44], l:[12,34] }
+          }
+        },
+        {
+          name: "Dark Botanical",
+          sat: [18, 55],
+          light: [14, 76],
+          distance: 22,
+          lanes: {
+            neutral: { h:[25,45], s:[8,26], l:[56,80] },
+            warm:   [{ h:[330,355], s:[24,50], l:[36,62] }, { h:[15,30], s:[28,52], l:[36,62] }],
+            organic:{ h:[80,140], s:[24,55], l:[22,58] },
+            cool:   [{ h:[175,205], s:[24,55], l:[26,60] }, { h:[230,265], s:[18,42], l:[30,64] }],
+            dark:   [{ h:[300,350], s:[20,48], l:[12,34] }, { h:[90,145], s:[20,48], l:[12,34] }]
+          }
+        },
+        {
+          name: "Stormy Blue",
+          sat: [16, 52],
+          light: [14, 78],
+          distance: 22,
+          lanes: {
+            neutral: { h:[25,45], s:[6,22], l:[58,82] },
+            warm:   { h:[12,30], s:[22,48], l:[38,62] },
+            organic:{ h:[70,115], s:[18,42], l:[26,58] },
+            cool:   [{ h:[205,235], s:[28,58], l:[24,66] }, { h:[185,205], s:[24,52], l:[26,62] }],
+            dark:   { h:[210,250], s:[22,55], l:[10,34] }
+          }
+        },
+        {
+          name: "Earthy Shadow",
+          sat: [18, 52],
+          light: [15, 76],
+          distance: 21,
+          lanes: {
+            neutral: { h:[25,45], s:[8,26], l:[55,80] },
+            warm:   [{ h:[12,28], s:[28,52], l:[36,62] }, { h:[35,48], s:[28,52], l:[38,64] }],
+            organic:{ h:[65,115], s:[22,50], l:[24,58] },
+            cool:   { h:[175,205], s:[22,48], l:[28,60] },
+            dark:   [{ h:[20,40], s:[20,46], l:[12,34] }, { h:[80,130], s:[20,46], l:[12,34] }]
+          }
+        }
+      ],
+
+      nature: [
+        {
+          name: "Fresh Garden",
+          sat: [25, 58],
+          light: [48, 96],
+          distance: 20,
+          lanes: {
+            neutral: { h:[35,60], s:[8,24], l:[86,98] },
+            warm:   [{ h:[35,55], s:[30,58], l:[62,86] }, { h:[0,18], s:[26,52], l:[58,82] }],
+            organic:{ h:[95,145], s:[32,62], l:[42,78] },
+            cool:   { h:[195,220], s:[26,55], l:[52,84] },
+            dark:   { h:[90,145], s:[25,52], l:[18,42] }
+          }
+        },
+        {
+          name: "Wildflower",
+          sat: [28, 62],
+          light: [45, 96],
+          distance: 21,
+          lanes: {
+            neutral: { h:[35,55], s:[8,24], l:[84,98] },
+            warm:   [{ h:[340,360], s:[32,62], l:[55,82] }, { h:[35,55], s:[34,62], l:[60,86] }],
+            organic:{ h:[85,140], s:[32,62], l:[40,76] },
+            cool:   [{ h:[195,220], s:[28,58], l:[52,82] }, { h:[240,270], s:[24,52], l:[55,84] }],
+            dark:   { h:[85,140], s:[25,52], l:[18,42] }
+          }
+        },
+        {
+          name: "Meadow",
+          sat: [18, 48],
+          light: [48, 96],
+          distance: 18,
+          lanes: {
+            neutral: { h:[35,55], s:[8,24], l:[86,98] },
+            warm:   { h:[38,55], s:[24,48], l:[58,82] },
+            organic:{ h:[65,115], s:[22,48], l:[42,74] },
+            cool:   { h:[195,220], s:[20,45], l:[56,84] },
+            dark:   { h:[75,130], s:[20,44], l:[20,44] }
+          }
+        },
+        {
+          name: "Forest Trail",
+          sat: [18, 50],
+          light: [25, 88],
+          distance: 20,
+          lanes: {
+            neutral: { h:[25,45], s:[8,24], l:[70,92] },
+            warm:   { h:[18,35], s:[24,50], l:[42,68] },
+            organic:{ h:[80,140], s:[25,55], l:[25,65] },
+            cool:   { h:[185,215], s:[18,45], l:[34,64] },
+            dark:   [{ h:[85,140], s:[24,52], l:[12,36] }, { h:[20,40], s:[18,42], l:[14,36] }]
+          }
+        }
+      ],
+
+      coastal: [
+        {
+          name: "Soft Beach",
+          sat: [16, 42],
+          light: [58, 98],
+          distance: 18,
+          lanes: {
+            neutral: { h:[35,55], s:[8,24], l:[86,99] },
+            warm:   { h:[25,42], s:[18,38], l:[64,88] },
+            organic:{ h:[90,150], s:[16,38], l:[52,78] },
+            cool:   [{ h:[175,200], s:[22,45], l:[60,88] }, { h:[200,220], s:[20,42], l:[58,86] }],
+            dark:   { h:[190,230], s:[18,42], l:[24,48] }
+          }
+        },
+        {
+          name: "Seaside Cottage",
+          sat: [20, 55],
+          light: [48, 98],
+          distance: 20,
+          lanes: {
+            neutral: { h:[0,60], s:[4,18], l:[90,99] },
+            warm:   [{ h:[10,22], s:[24,48], l:[58,82] }, { h:[28,42], s:[20,44], l:[58,82] }],
+            organic:{ h:[85,145], s:[18,42], l:[44,74] },
+            cool:   [{ h:[205,230], s:[30,58], l:[45,78] }, { h:[180,200], s:[26,52], l:[52,82] }],
+            dark:   { h:[210,240], s:[28,58], l:[18,42] }
+          }
+        },
+        {
+          name: "Bright Aqua Coast",
+          sat: [35, 70],
+          light: [48, 98],
+          distance: 23,
+          lanes: {
+            neutral: { h:[35,60], s:[8,22], l:[88,99] },
+            warm:   [{ h:[5,18], s:[35,65], l:[58,82] }, { h:[38,52], s:[35,65], l:[62,86] }],
+            organic:{ h:[100,155], s:[30,60], l:[48,78] },
+            cool:   [{ h:[175,198], s:[45,75], l:[50,82] }, { h:[198,218], s:[40,70], l:[48,80] }],
+            dark:   { h:[190,230], s:[32,65], l:[18,42] }
+          }
+        },
+        {
+          name: "Driftwood Coast",
+          sat: [10, 38],
+          light: [40, 94],
+          distance: 18,
+          lanes: {
+            neutral: [{ h:[25,45], s:[8,22], l:[78,96] }, { h:[20,45], s:[6,18], l:[48,72] }],
+            warm:   { h:[20,38], s:[12,34], l:[50,76] },
+            organic:{ h:[80,140], s:[12,34], l:[42,70] },
+            cool:   [{ h:[190,220], s:[14,38], l:[44,74] }, { h:[220,240], s:[10,30], l:[42,70] }],
+            dark:   { h:[190,230], s:[12,34], l:[20,44] }
+          }
+        }
+      ]
+    };
+
+    const fallbackVibeDNA = {
+      vintage: {
+        sat: [18, 48],
+        light: [35, 90],
         distance: 18,
         lanes: {
-          neutral: [{ h:[28,48], s:[8,28], l:[72,96] }, { h:[20,38], s:[8,25], l:[52,78] }],
-          warm:   [{ h:[18,35], s:[32,58], l:[45,78] }, { h:[35,48], s:[30,55], l:[45,76] }],
-          organic:{ h:[65,105], s:[20,45], l:[34,72] },
-          cool:   [{ h:[185,210], s:[18,42], l:[48,80] }, { h:[205,225], s:[16,38], l:[36,68] }],
-          dark:   [{ h:[20,38], s:[18,40], l:[18,38] }, { h:[85,130], s:[18,38], l:[18,36] }]
-        }
-      },
-
-      cheerful: {
-        sat: [45, 75],
-        light: [42, 95],
-        distance: 22,
-        lanes: {
-          neutral: { h:[35,55], s:[12,35], l:[78,97] },
-          warm:   [{ h:[8,24], s:[50,75], l:[45,78] }, { h:[28,48], s:[50,75], l:[55,84] }],
-          organic:{ h:[75,135], s:[40,70], l:[42,78] },
-          cool:   [{ h:[180,200], s:[40,70], l:[50,82] }, { h:[198,215], s:[38,65], l:[55,84] }],
-          dark:   [{ h:[185,230], s:[35,60], l:[22,42] }, { h:[20,38], s:[30,55], l:[20,40] }]
+          neutral: { h:[30,50], s:[12,32], l:[78,96] },
+          warm:   [{ h:[0,18], s:[24,48], l:[42,72] }, { h:[28,48], s:[25,48], l:[45,76] }],
+          organic:{ h:[55,95], s:[20,44], l:[35,70] },
+          cool:   [{ h:[198,222], s:[18,42], l:[42,76] }, { h:[175,195], s:[16,38], l:[40,72] }],
+          dark:   [{ h:[18,35], s:[20,42], l:[18,40] }, { h:[320,350], s:[16,35], l:[20,42] }]
         }
       },
 
@@ -420,37 +684,11 @@
         light: [58, 96],
         distance: 14,
         lanes: {
-          neutral: { h:[20,45], s:[8,24], l:[78,97] },
+          neutral: { h:[20,45], s:[8,24], l:[82,98] },
           warm:   [{ h:[5,20], s:[18,40], l:[65,88] }, { h:[340,360], s:[16,38], l:[64,86] }],
           organic:{ h:[80,140], s:[14,35], l:[55,82] },
           cool:   [{ h:[190,220], s:[14,36], l:[62,88] }, { h:[220,250], s:[10,28], l:[64,88] }],
           dark:   [{ h:[15,35], s:[12,30], l:[32,48] }, { h:[300,345], s:[10,28], l:[30,48] }]
-        }
-      },
-
-      vintage: {
-        sat: [18, 48],
-        light: [35, 90],
-        distance: 18,
-        lanes: {
-          neutral: { h:[30,50], s:[12,32], l:[70,94] },
-          warm:   [{ h:[0,18], s:[24,48], l:[42,72] }, { h:[28,48], s:[25,48], l:[45,76] }],
-          organic:{ h:[55,95], s:[20,44], l:[35,70] },
-          cool:   [{ h:[198,222], s:[18,42], l:[42,76] }, { h:[175,195], s:[16,38], l:[40,72] }],
-          dark:   [{ h:[18,35], s:[20,42], l:[18,40] }, { h:[320,350], s:[16,35], l:[20,42] }]
-        }
-      },
-
-      earthy: {
-        sat: [20, 55],
-        light: [25, 85],
-        distance: 18,
-        lanes: {
-          neutral: { h:[25,45], s:[10,30], l:[60,90] },
-          warm:   [{ h:[12,28], s:[30,58], l:[38,70] }, { h:[25,42], s:[30,55], l:[38,72] }],
-          organic:[{ h:[65,100], s:[22,50], l:[32,70] }, { h:[100,140], s:[20,45], l:[28,64] }],
-          cool:   [{ h:[170,195], s:[16,38], l:[38,70] }, { h:[195,215], s:[16,34], l:[38,68] }],
-          dark:   [{ h:[20,38], s:[20,42], l:[16,36] }, { h:[85,135], s:[20,42], l:[16,36] }]
         }
       },
 
@@ -459,7 +697,7 @@
         light: [55, 96],
         distance: 20,
         lanes: {
-          neutral: { h:[35,60], s:[8,28], l:[82,98] },
+          neutral: { h:[35,60], s:[8,28], l:[84,98] },
           warm:   [{ h:[35,55], s:[30,58], l:[65,90] }, { h:[8,20], s:[28,54], l:[62,86] }],
           organic:{ h:[95,150], s:[28,58], l:[55,86] },
           cool:   [{ h:[175,200], s:[32,60], l:[58,88] }, { h:[200,220], s:[30,55], l:[60,88] }],
@@ -472,7 +710,7 @@
         light: [45, 95],
         distance: 16,
         lanes: {
-          neutral: { h:[20,45], s:[10,28], l:[76,96] },
+          neutral: { h:[20,45], s:[10,28], l:[78,97] },
           warm:   [{ h:[345,360], s:[22,50], l:[55,82] }, { h:[0,18], s:[22,50], l:[55,82] }],
           organic:{ h:[75,135], s:[18,42], l:[42,76] },
           cool:   [{ h:[195,225], s:[16,40], l:[48,82] }, { h:[230,260], s:[12,32], l:[50,84] }],
@@ -480,29 +718,16 @@
         }
       },
 
-      moody: {
-        sat: [18, 55],
-        light: [15, 72],
-        distance: 20,
+      earthy: {
+        sat: [20, 55],
+        light: [25, 85],
+        distance: 18,
         lanes: {
-          neutral: { h:[20,45], s:[8,26], l:[45,78] },
-          warm:   [{ h:[350,15], s:[22,48], l:[34,62] }, { h:[15,30], s:[24,50], l:[32,60] }],
-          organic:{ h:[75,135], s:[18,48], l:[22,58] },
-          cool:   [{ h:[185,215], s:[20,55], l:[24,62] }, { h:[215,245], s:[18,48], l:[22,58] }],
-          dark:   [{ h:[200,245], s:[16,45], l:[12,34] }, { h:[300,350], s:[16,42], l:[12,34] }, { h:[80,135], s:[18,45], l:[12,34] }]
-        }
-      },
-
-      playful: {
-        sat: [45, 80],
-        light: [40, 96],
-        distance: 22,
-        lanes: {
-          neutral: { h:[35,55], s:[12,35], l:[78,98] },
-          warm:   [{ h:[0,18], s:[48,78], l:[48,78] }, { h:[25,45], s:[48,78], l:[55,86] }],
-          organic:{ h:[80,145], s:[42,75], l:[45,82] },
-          cool:   [{ h:[175,205], s:[45,80], l:[48,84] }, { h:[205,230], s:[40,72], l:[48,80] }],
-          dark:   [{ h:[205,245], s:[36,65], l:[18,40] }, { h:[15,35], s:[35,60], l:[18,38] }]
+          neutral: { h:[25,45], s:[10,30], l:[70,94] },
+          warm:   [{ h:[12,28], s:[30,58], l:[38,70] }, { h:[25,42], s:[30,55], l:[38,72] }],
+          organic:[{ h:[65,100], s:[22,50], l:[32,70] }, { h:[100,140], s:[20,45], l:[28,64] }],
+          cool:   [{ h:[170,195], s:[16,38], l:[38,70] }, { h:[195,215], s:[16,34], l:[38,68] }],
+          dark:   [{ h:[20,38], s:[20,42], l:[16,36] }, { h:[85,135], s:[20,42], l:[16,36] }]
         }
       },
 
@@ -511,24 +736,11 @@
         light: [35, 96],
         distance: 13,
         lanes: {
-          neutral: [{ h:[25,50], s:[4,22], l:[78,98] }, { h:[20,45], s:[4,20], l:[45,75] }],
+          neutral: [{ h:[25,50], s:[4,22], l:[82,98] }, { h:[20,45], s:[4,20], l:[45,75] }],
           warm:   { h:[20,40], s:[10,30], l:[45,75] },
           organic:{ h:[70,130], s:[8,28], l:[38,70] },
           cool:   { h:[190,225], s:[6,28], l:[42,78] },
           dark:   { h:[20,240], s:[4,24], l:[18,42] }
-        }
-      },
-
-      coastal: {
-        sat: [20, 55],
-        light: [50, 96],
-        distance: 18,
-        lanes: {
-          neutral: [{ h:[35,55], s:[8,28], l:[80,98] }, { h:[25,45], s:[8,24], l:[55,82] }],
-          warm:   [{ h:[8,22], s:[20,48], l:[60,86] }, { h:[25,42], s:[18,42], l:[60,84] }],
-          organic:{ h:[85,150], s:[18,45], l:[46,78] },
-          cool:   [{ h:[175,200], s:[25,55], l:[54,86] }, { h:[200,225], s:[22,50], l:[50,82] }],
-          dark:   [{ h:[190,230], s:[20,48], l:[20,44] }, { h:[25,45], s:[14,34], l:[22,44] }]
         }
       },
 
@@ -537,7 +749,7 @@
         light: [20, 92],
         distance: 26,
         lanes: {
-          neutral: { h:[35,55], s:[8,28], l:[78,98] },
+          neutral: { h:[35,55], s:[8,28], l:[82,98] },
           warm:   [{ h:[0,18], s:[55,85], l:[38,72] }, { h:[35,52], s:[55,85], l:[42,78] }],
           organic:{ h:[75,145], s:[48,80], l:[32,70] },
           cool:   [{ h:[175,205], s:[50,85], l:[36,76] }, { h:[210,245], s:[48,80], l:[28,70] }],
@@ -644,6 +856,15 @@
       return "#A67C52";
     }
 
+    function getWorkingDNA(vibe) {
+      if (vibeSubfamilies[vibe] && vibeSubfamilies[vibe].length) {
+        const familyList = vibeSubfamilies[vibe];
+        return familyList[Math.floor(Math.random() * familyList.length)];
+      }
+
+      return fallbackVibeDNA[vibe] || fallbackVibeDNA.earthy;
+    }
+
     function generatePalette() {
       const seedColor = getSeedColor();
       const size = paletteSize || 10;
@@ -667,12 +888,12 @@
     }
 
     function buildPalette(size, vibe, seedColor) {
-      const dna = vibeDNA[vibe] || vibeDNA.cozy;
-      const recipe = paletteRecipes[size] || paletteRecipes[10];
-
       let bestPalette = [];
 
-      for (let attempt = 0; attempt < 80; attempt++) {
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const dna = getWorkingDNA(vibe);
+        const recipe = paletteRecipes[size] || paletteRecipes[10];
+
         let palette = [];
 
         const maxPasses = Math.max(
@@ -696,7 +917,7 @@
 
         if (palette.length > bestPalette.length) bestPalette = palette;
 
-        if (palette.length === size && palettePassesQuality(palette, dna, size)) {
+        if (palette.length === size && palettePassesQuality(palette, dna, size, vibe)) {
           return palette;
         }
       }
@@ -707,10 +928,10 @@
     function pickLaneColor(dna, lane, pass, totalPasses, existing, seedColor, size) {
       const laneZones = normalizeZones(dna.lanes[lane]);
       const shuffledZones = shuffleArray(laneZones);
-      const minDistance = size === 20 ? Math.max(12, dna.distance - 5) : dna.distance;
+      const minDistance = size === 20 ? Math.max(11, dna.distance - 5) : dna.distance;
 
       for (let z = 0; z < shuffledZones.length; z++) {
-        for (let attempt = 0; attempt < 80; attempt++) {
+        for (let attempt = 0; attempt < 90; attempt++) {
           const color = generateColorFromZone(shuffledZones[z], dna, lane, pass, totalPasses, seedColor);
 
           if (passesColorRules(color, dna, existing, minDistance)) {
@@ -723,44 +944,40 @@
     }
 
     function generateColorFromZone(zone, dna, lane, pass, totalPasses, seedColor) {
-  const seed = hexToHsl(seedColor || "#A67C52");
+      const seed = hexToHsl(seedColor || "#A67C52");
 
-  let hue = randomHue(zone.h);
-  let sat = randomNumber(zone.s[0], zone.s[1]);
-  let light = randomNumber(zone.l[0], zone.l[1]);
+      let hue = randomHue(zone.h);
+      let sat = randomNumber(zone.s[0], zone.s[1]);
+      let light = randomNumber(zone.l[0], zone.l[1]);
 
-  // For 5-color palettes, force the Neutral / Air color to stay truly light.
-  // This keeps the first swatch from becoming khaki/tan instead of cream/oat/ivory.
-  if (totalPasses === 1 && lane === "neutral") {
-    light = randomNumber(84, 97);
-    sat = Math.max(zone.s[0], Math.min(sat, 24));
-  }
+      if (totalPasses === 1 && lane === "neutral") {
+        light = randomNumber(Math.max(84, zone.l[0]), Math.max(86, zone.l[1]));
+        sat = Math.max(zone.s[0], Math.min(sat, 24));
+      }
 
-  // For 5-color palettes, make the Warm / Charm color feel warmer and prettier,
-  // but not darker or muddy.
-  if (totalPasses === 1 && lane === "warm") {
-    light = randomNumber(58, 78);
-    sat = Math.max(sat, 38);
-  }
+      if (totalPasses === 1 && lane === "warm") {
+        light = randomNumber(Math.max(52, zone.l[0]), Math.min(82, zone.l[1]));
+        sat = Math.max(sat, Math.min(42, zone.s[1]));
+      }
 
-  if (totalPasses > 1) {
-    if (pass === 0) {
-      light = Math.min(zone.l[1], light + randomNumber(4, 10));
-      sat = Math.max(zone.s[0], sat - randomNumber(0, 5));
-    } else if (pass === totalPasses - 1) {
-      light = Math.max(zone.l[0], light - randomNumber(4, 10));
-      sat = Math.min(zone.s[1], sat + randomNumber(0, 5));
+      if (totalPasses > 1) {
+        if (pass === 0) {
+          light = Math.min(zone.l[1], light + randomNumber(4, 10));
+          sat = Math.max(zone.s[0], sat - randomNumber(0, 5));
+        } else if (pass === totalPasses - 1) {
+          light = Math.max(zone.l[0], light - randomNumber(4, 10));
+          sat = Math.min(zone.s[1], sat + randomNumber(0, 5));
+        }
+      }
+
+      const seedInfluence = lane === "warm" ? 0.07 : lane === "cool" ? 0.03 : 0.04;
+      hue = blendHue(hue, seed.h, seedInfluence);
+
+      sat = clamp(sat, dna.sat[0], dna.sat[1]);
+      light = clamp(light, dna.light[0], dna.light[1]);
+
+      return hslToHex(clampHue(hue), sat, light);
     }
-  }
-
-  const seedInfluence = lane === "warm" ? 0.10 : lane === "cool" ? 0.04 : 0.06;
-  hue = blendHue(hue, seed.h, seedInfluence);
-
-  sat = clamp(sat, dna.sat[0], dna.sat[1]);
-  light = clamp(light, dna.light[0], dna.light[1]);
-
-  return hslToHex(clampHue(hue), sat, light);
-}
 
     function passesColorRules(color, dna, existing, minDistance) {
       const hsl = hexToHsl(color);
@@ -776,7 +993,7 @@
       return true;
     }
 
-    function palettePassesQuality(palette, dna, size) {
+    function palettePassesQuality(palette, dna, size, vibe) {
       if (palette.length !== size) return false;
 
       const lights = palette.filter(function(color) {
@@ -794,6 +1011,8 @@
       if (size === 20 && lights < 3) return false;
       if (size === 20 && darks < 3) return false;
 
+      if (vibe === "moody" && !hasMoodyLift(palette)) return false;
+
       for (let i = 0; i < palette.length; i++) {
         for (let j = i + 1; j < palette.length; j++) {
           if (isNearTwin(palette[i], palette[j])) return false;
@@ -801,6 +1020,17 @@
       }
 
       return true;
+    }
+
+    function hasMoodyLift(palette) {
+      return palette.some(function(color) {
+        const hsl = hexToHsl(color);
+        const isMauvePlum = hsl.h >= 290 || hsl.h <= 15;
+        const isGoldRust = hsl.h >= 18 && hsl.h <= 50;
+        const isTealBlue = hsl.h >= 175 && hsl.h <= 230;
+
+        return hsl.l >= 35 && hsl.l <= 68 && hsl.s >= 24 && (isMauvePlum || isGoldRust || isTealBlue);
+      });
     }
 
     function isNearTwin(a, b) {
