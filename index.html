@@ -31,60 +31,12 @@
     }
 
     .choice-card.selected,
-    .segmented button.active {
+    .segmented button.active,
+    .vibe-btn.active {
       background: #2f2d2a !important;
       color: #fbfaf7 !important;
       border-color: #2f2d2a !important;
       box-shadow: 4px 5px 0 rgba(176, 138, 60, 0.28) !important;
-    }
-
-    .tag-check-grid {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      gap: 12px !important;
-    }
-
-    .tag-pill {
-      display: inline-block !important;
-      margin: 0 !important;
-    }
-
-    .tag-pill input {
-      position: absolute !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .tag-pill span {
-      display: inline-block !important;
-      border: 2px solid #2f2d2a !important;
-      border-radius: 999px !important;
-      background: #fbfaf7 !important;
-      color: #2f2d2a !important;
-      padding: 12px 18px !important;
-      min-width: 110px !important;
-      text-align: center !important;
-      font-size: 1.05rem !important;
-      cursor: pointer !important;
-    }
-
-    .tag-pill input:checked + span {
-      background: #2f2d2a !important;
-      color: #fbfaf7 !important;
-      border-color: #2f2d2a !important;
-      box-shadow: 4px 5px 0 rgba(176, 138, 60, 0.28) !important;
-    }
-
-    .mini-clear-btn {
-      margin-top: 14px;
-      background: transparent;
-      border: 2px solid #2f2d2a;
-      color: #2f2d2a;
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 15px;
-      font-family: inherit;
-      cursor: pointer;
     }
 
     .start-control-box {
@@ -122,6 +74,26 @@
       display: none;
     }
 
+    .vibe-grid {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 12px !important;
+      margin-top: 16px;
+    }
+
+    .vibe-btn {
+      border: 2px solid #2f2d2a;
+      border-radius: 999px;
+      background: #fbfaf7;
+      color: #2f2d2a;
+      padding: 12px 18px;
+      min-width: 108px;
+      text-align: center;
+      font-size: 1.05rem;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
     .floral-pattern {
       min-height: 420px !important;
       background-image: url("floral-pattern-new.png") !important;
@@ -136,6 +108,7 @@
 <body>
   <div class="app-shell">
 
+    <!-- HOME PAGE -->
     <section id="homePage" class="page active-page">
       <div class="home-card">
         <img src="paintboxed-app-cover.png" alt="Paintboxed app cover" class="app-cover" />
@@ -178,6 +151,7 @@
       </div>
     </section>
 
+    <!-- CREATOR PAGE -->
     <section id="creatorPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn" onclick="showPage('homePage')">←</button>
@@ -248,26 +222,23 @@
         </section>
 
         <section class="section-block">
-          <h2>3. Inspiration <span>choose up to 3</span></h2>
+          <h2>3. Pick a Vibe</h2>
+          <p class="tiny-note">Choose the feeling you want your palette to have.</p>
 
-          <div class="tag-check-grid">
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="earthy" onchange="limitTags(this)"><span>Earthy</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="moody" onchange="limitTags(this)"><span>Moody</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="bright" onchange="limitTags(this)"><span>Bright</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="soft" onchange="limitTags(this)"><span>Soft</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="vintage" onchange="limitTags(this)"><span>Vintage</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="playful" onchange="limitTags(this)"><span>Playful</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="warm" onchange="limitTags(this)"><span>Warm</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="cool" onchange="limitTags(this)"><span>Cool</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="whimsical" onchange="limitTags(this)"><span>Whimsical</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="minimal" onchange="limitTags(this)"><span>Minimal</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="romantic" onchange="limitTags(this)"><span>Romantic</span></label>
-            <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="seasonal" onchange="limitTags(this)"><span>Seasonal</span></label>
+          <div class="vibe-grid">
+            <button type="button" class="vibe-btn active" data-vibe="cozy" onclick="setVibe('cozy', this)">Cozy</button>
+            <button type="button" class="vibe-btn" data-vibe="cheerful" onclick="setVibe('cheerful', this)">Cheerful</button>
+            <button type="button" class="vibe-btn" data-vibe="soft" onclick="setVibe('soft', this)">Soft</button>
+            <button type="button" class="vibe-btn" data-vibe="vintage" onclick="setVibe('vintage', this)">Vintage</button>
+            <button type="button" class="vibe-btn" data-vibe="earthy" onclick="setVibe('earthy', this)">Earthy</button>
+            <button type="button" class="vibe-btn" data-vibe="fresh" onclick="setVibe('fresh', this)">Fresh</button>
+            <button type="button" class="vibe-btn" data-vibe="romantic" onclick="setVibe('romantic', this)">Romantic</button>
+            <button type="button" class="vibe-btn" data-vibe="moody" onclick="setVibe('moody', this)">Moody</button>
+            <button type="button" class="vibe-btn" data-vibe="playful" onclick="setVibe('playful', this)">Playful</button>
+            <button type="button" class="vibe-btn" data-vibe="simple" onclick="setVibe('simple', this)">Simple</button>
+            <button type="button" class="vibe-btn" data-vibe="coastal" onclick="setVibe('coastal', this)">Coastal</button>
+            <button type="button" class="vibe-btn" data-vibe="bold" onclick="setVibe('bold', this)">Bold</button>
           </div>
-
-          <button type="button" class="mini-clear-btn" onclick="clearInspirationTags()">Clear All</button>
-
-          <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
 
           <button type="button" class="wide-btn" onclick="generatePalette()">Generate Palette ✨</button>
         </section>
@@ -311,6 +282,7 @@
       </nav>
     </section>
 
+    <!-- PATTERN PAGE -->
     <section id="patternPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn" onclick="showPage('creatorPage')">←</button>
@@ -367,6 +339,7 @@
       </nav>
     </section>
 
+    <!-- LIBRARY PAGE -->
     <section id="libraryPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn">☰</button>
@@ -402,6 +375,7 @@
   <script>
     let startMethod = "color";
     let paletteSize = 10;
+    let selectedVibe = "cozy";
     let currentPalette = [];
     let lockedColors = [];
     let savedPalettes = JSON.parse(localStorage.getItem("paintboxedPalettes")) || [];
@@ -414,109 +388,161 @@
       20: { neutral: 4, warm: 4, organic: 4, cool: 4, dark: 4 }
     };
 
-    const moodLanes = {
-      base: {
-        neutral: ["#FAF4EA", "#F6EFE4", "#EFE5D8", "#E8DED1", "#DDD0C1", "#D3C5B6", "#C8BBAE", "#BDAFA3"],
-        warm: ["#F0B090", "#E59A7D", "#D88668", "#C9745A", "#B8644C", "#D9A15E", "#C98B4E", "#B77A44"],
-        organic: ["#C7C79E", "#B5BD91", "#A1AE7F", "#8E9A6F", "#7D8A63", "#6D7D58", "#5F714F", "#4E6144"],
-        cool: ["#C6D9D6", "#B3CFD0", "#9DBEC3", "#86ABB4", "#7399A5", "#638893", "#527781", "#41666F"],
-        dark: ["#5C4B40", "#4F4238", "#443A33", "#3A332E", "#34423A", "#2F3B35", "#2B3330", "#262928"]
+    const vibeDNA = {
+      cozy: {
+        sat: [22, 55],
+        light: [25, 90],
+        distance: 18,
+        lanes: {
+          neutral: [{ h:[28,48], s:[8,28], l:[72,96] }, { h:[20,38], s:[8,25], l:[52,78] }],
+          warm:   [{ h:[18,35], s:[32,58], l:[45,78] }, { h:[35,48], s:[30,55], l:[45,76] }],
+          organic:{ h:[65,105], s:[20,45], l:[34,72] },
+          cool:   [{ h:[185,210], s:[18,42], l:[48,80] }, { h:[205,225], s:[16,38], l:[36,68] }],
+          dark:   [{ h:[20,38], s:[18,40], l:[18,38] }, { h:[85,130], s:[18,38], l:[18,36] }]
+        }
       },
 
-      earthy: {
-        neutral: ["#F3E8DA", "#E6D5C3", "#D7C2AC", "#C7AF98"],
-        warm: ["#D88D63", "#C87550", "#B45F43", "#A4533C"],
-        organic: ["#A6A879", "#8E966A", "#76865B", "#5E714D"],
-        cool: ["#9EB8B4", "#7F9E9A", "#658983", "#4E716B"],
-        dark: ["#5A4638", "#493A30", "#3B332B", "#2F382C"]
+      cheerful: {
+        sat: [45, 75],
+        light: [42, 95],
+        distance: 22,
+        lanes: {
+          neutral: { h:[35,55], s:[12,35], l:[78,97] },
+          warm:   [{ h:[8,24], s:[50,75], l:[45,78] }, { h:[28,48], s:[50,75], l:[55,84] }],
+          organic:{ h:[75,135], s:[40,70], l:[42,78] },
+          cool:   [{ h:[180,200], s:[40,70], l:[50,82] }, { h:[198,215], s:[38,65], l:[55,84] }],
+          dark:   [{ h:[185,230], s:[35,60], l:[22,42] }, { h:[20,38], s:[30,55], l:[20,40] }]
+        }
       },
 
       soft: {
-        neutral: ["#FFF7F1", "#F6ECE4", "#EADDD3", "#D9CBBF"],
-        warm: ["#E7B2A1", "#DCA092", "#CF8D84", "#BF7C78"],
-        organic: ["#C8D4BE", "#B5C7AD", "#9FB394", "#879D7D"],
-        cool: ["#C7D9DD", "#B2CBD3", "#9AB9C6", "#84A6B3"],
-        dark: ["#6B5D58", "#5A514D", "#4B4642", "#383633"]
+        sat: [15, 40],
+        light: [58, 96],
+        distance: 14,
+        lanes: {
+          neutral: { h:[20,45], s:[8,24], l:[78,97] },
+          warm:   [{ h:[5,20], s:[18,40], l:[65,88] }, { h:[340,360], s:[16,38], l:[64,86] }],
+          organic:{ h:[80,140], s:[14,35], l:[55,82] },
+          cool:   [{ h:[190,220], s:[14,36], l:[62,88] }, { h:[220,250], s:[10,28], l:[64,88] }],
+          dark:   [{ h:[15,35], s:[12,30], l:[32,48] }, { h:[300,345], s:[10,28], l:[30,48] }]
+        }
       },
 
       vintage: {
-        neutral: ["#F3E6D4", "#E4D2BB", "#D3BFA3", "#BFA98E"],
-        warm: ["#D09A72", "#BE7D60", "#A96650", "#935746"],
-        organic: ["#B6AB76", "#9D9563", "#817F56", "#666C4D"],
-        cool: ["#B6C3C8", "#9AADB7", "#7D98A3", "#637F8A"],
-        dark: ["#5C473A", "#4A3A31", "#3C302A", "#312B27"]
+        sat: [18, 48],
+        light: [35, 90],
+        distance: 18,
+        lanes: {
+          neutral: { h:[30,50], s:[12,32], l:[70,94] },
+          warm:   [{ h:[0,18], s:[24,48], l:[42,72] }, { h:[28,48], s:[25,48], l:[45,76] }],
+          organic:{ h:[55,95], s:[20,44], l:[35,70] },
+          cool:   [{ h:[198,222], s:[18,42], l:[42,76] }, { h:[175,195], s:[16,38], l:[40,72] }],
+          dark:   [{ h:[18,35], s:[20,42], l:[18,40] }, { h:[320,350], s:[16,35], l:[20,42] }]
+        }
       },
 
-      moody: {
-        neutral: ["#E8DDD2", "#D4C6BA", "#BBAEA4", "#9F938A"],
-        warm: ["#B77B68", "#9E6558", "#875149", "#70433F"],
-        organic: ["#818B66", "#697553", "#566343", "#424F37"],
-        cool: ["#8AA1A9", "#6F8994", "#586F7A", "#405661"],
-        dark: ["#3A322F", "#302B2B", "#28302D", "#222827"]
+      earthy: {
+        sat: [20, 55],
+        light: [25, 85],
+        distance: 18,
+        lanes: {
+          neutral: { h:[25,45], s:[10,30], l:[60,90] },
+          warm:   [{ h:[12,28], s:[30,58], l:[38,70] }, { h:[25,42], s:[30,55], l:[38,72] }],
+          organic:[{ h:[65,100], s:[22,50], l:[32,70] }, { h:[100,140], s:[20,45], l:[28,64] }],
+          cool:   [{ h:[170,195], s:[16,38], l:[38,70] }, { h:[195,215], s:[16,34], l:[38,68] }],
+          dark:   [{ h:[20,38], s:[20,42], l:[16,36] }, { h:[85,135], s:[20,42], l:[16,36] }]
+        }
       },
 
-      bright: {
-        neutral: ["#FFF7E8", "#F7E9D5", "#E9D5BC", "#D8BFA5"],
-        warm: ["#F1A06D", "#E7835F", "#DA6E52", "#C65A46"],
-        organic: ["#C8CA68", "#ABB85B", "#91A150", "#748944"],
-        cool: ["#A9D7D6", "#85C3C5", "#62AEB4", "#4B929A"],
-        dark: ["#5A4037", "#3F3A2A", "#2F4236", "#283B45"]
-      },
-
-      playful: {
-        neutral: ["#FFF4E8", "#F4DFCE", "#E8CDBA", "#D8B9A4"],
-        warm: ["#F0A184", "#E78375", "#D96B64", "#C45A58"],
-        organic: ["#C7D688", "#AFC577", "#92AE65", "#769752"],
-        cool: ["#B1DADB", "#91C6CC", "#75B2BB", "#5A99A5"],
-        dark: ["#60483B", "#4A3C35", "#38483B", "#33444A"]
-      },
-
-      warm: {
-        neutral: ["#FFF0DE", "#F2DCC3", "#E2C3A4", "#CFAC89"],
-        warm: ["#E4A066", "#D48652", "#C06F43", "#A85C38"],
-        organic: ["#B9A56E", "#A3915E", "#877B51", "#6F6847"],
-        cool: ["#B5C4BD", "#98ACA7", "#7F9690", "#627D79"],
-        dark: ["#6B4735", "#553A2D", "#443126", "#302722"]
-      },
-
-      cool: {
-        neutral: ["#F4F5EF", "#E7EAE2", "#D4DAD2", "#BDC8C0"],
-        warm: ["#D99B83", "#C98573", "#B57264", "#9E6258"],
-        organic: ["#B8C3AA", "#9FAF98", "#849A83", "#6A826D"],
-        cool: ["#BCD7D8", "#9FC4C9", "#82B0BA", "#6698A5"],
-        dark: ["#465E63", "#374C52", "#303D45", "#293238"]
-      },
-
-      whimsical: {
-        neutral: ["#FFF6EA", "#F5E4D3", "#E7CFBD", "#D8BBA8"],
-        warm: ["#EFA68E", "#E78A7A", "#DA7468", "#C85F59"],
-        organic: ["#C4D5A0", "#ADC58E", "#93B078", "#77995F"],
-        cool: ["#B9DBD9", "#9ACDCD", "#78B9BD", "#5FA2AA"],
-        dark: ["#5A403D", "#47423A", "#394C40", "#31454A"]
-      },
-
-      minimal: {
-        neutral: ["#FFFFFF", "#FBFAF7", "#F3EFE8", "#E7DED2", "#D6CBBB", "#BFAF9D"],
-        warm: ["#C99A71", "#B98562", "#A36F53", "#8D5E49"],
-        organic: ["#B4B19A", "#9B9980", "#807F6A", "#676957"],
-        cool: ["#C7D2D1", "#AEBDBE", "#94A7AA", "#7A9095"],
-        dark: ["#5E5750", "#4A453F", "#393632", "#262421"]
+      fresh: {
+        sat: [25, 60],
+        light: [55, 96],
+        distance: 20,
+        lanes: {
+          neutral: { h:[35,60], s:[8,28], l:[82,98] },
+          warm:   [{ h:[35,55], s:[30,58], l:[65,90] }, { h:[8,20], s:[28,54], l:[62,86] }],
+          organic:{ h:[95,150], s:[28,58], l:[55,86] },
+          cool:   [{ h:[175,200], s:[32,60], l:[58,88] }, { h:[200,220], s:[30,55], l:[60,88] }],
+          dark:   [{ h:[170,210], s:[28,55], l:[22,45] }, { h:[105,155], s:[28,50], l:[22,44] }]
+        }
       },
 
       romantic: {
-        neutral: ["#FFF5EF", "#F4E4DD", "#E5D0C8", "#D3BBB3"],
-        warm: ["#E2A79A", "#D28E87", "#BF7676", "#A95F65"],
-        organic: ["#C2C2A0", "#A9AD89", "#8D976F", "#737E5B"],
-        cool: ["#C6D1D8", "#AEBFCB", "#94A8B8", "#798FA2"],
-        dark: ["#6E4E50", "#5B4147", "#463641", "#302C31"]
+        sat: [20, 50],
+        light: [45, 95],
+        distance: 16,
+        lanes: {
+          neutral: { h:[20,45], s:[10,28], l:[76,96] },
+          warm:   [{ h:[345,360], s:[22,50], l:[55,82] }, { h:[0,18], s:[22,50], l:[55,82] }],
+          organic:{ h:[75,135], s:[18,42], l:[42,76] },
+          cool:   [{ h:[195,225], s:[16,40], l:[48,82] }, { h:[230,260], s:[12,32], l:[50,84] }],
+          dark:   [{ h:[330,355], s:[20,42], l:[18,42] }, { h:[15,35], s:[16,36], l:[20,42] }]
+        }
       },
 
-      seasonal: {
-        neutral: ["#FFF1DF", "#EAD8BF", "#D5BFA0", "#BFA888"],
-        warm: ["#D98955", "#C96F49", "#B7583E", "#9B4735"],
-        organic: ["#B5A756", "#92954F", "#717F4B", "#566A3F"],
-        cool: ["#A6BBC5", "#839EAD", "#667F90", "#4A6375"],
-        dark: ["#6A4235", "#4B3A2D", "#354335", "#2E3534"]
+      moody: {
+        sat: [18, 55],
+        light: [15, 72],
+        distance: 20,
+        lanes: {
+          neutral: { h:[20,45], s:[8,26], l:[45,78] },
+          warm:   [{ h:[350,15], s:[22,48], l:[34,62] }, { h:[15,30], s:[24,50], l:[32,60] }],
+          organic:{ h:[75,135], s:[18,48], l:[22,58] },
+          cool:   [{ h:[185,215], s:[20,55], l:[24,62] }, { h:[215,245], s:[18,48], l:[22,58] }],
+          dark:   [{ h:[200,245], s:[16,45], l:[12,34] }, { h:[300,350], s:[16,42], l:[12,34] }, { h:[80,135], s:[18,45], l:[12,34] }]
+        }
+      },
+
+      playful: {
+        sat: [45, 80],
+        light: [40, 96],
+        distance: 22,
+        lanes: {
+          neutral: { h:[35,55], s:[12,35], l:[78,98] },
+          warm:   [{ h:[0,18], s:[48,78], l:[48,78] }, { h:[25,45], s:[48,78], l:[55,86] }],
+          organic:{ h:[80,145], s:[42,75], l:[45,82] },
+          cool:   [{ h:[175,205], s:[45,80], l:[48,84] }, { h:[205,230], s:[40,72], l:[48,80] }],
+          dark:   [{ h:[205,245], s:[36,65], l:[18,40] }, { h:[15,35], s:[35,60], l:[18,38] }]
+        }
+      },
+
+      simple: {
+        sat: [5, 30],
+        light: [35, 96],
+        distance: 13,
+        lanes: {
+          neutral: [{ h:[25,50], s:[4,22], l:[78,98] }, { h:[20,45], s:[4,20], l:[45,75] }],
+          warm:   { h:[20,40], s:[10,30], l:[45,75] },
+          organic:{ h:[70,130], s:[8,28], l:[38,70] },
+          cool:   { h:[190,225], s:[6,28], l:[42,78] },
+          dark:   { h:[20,240], s:[4,24], l:[18,42] }
+        }
+      },
+
+      coastal: {
+        sat: [20, 55],
+        light: [50, 96],
+        distance: 18,
+        lanes: {
+          neutral: [{ h:[35,55], s:[8,28], l:[80,98] }, { h:[25,45], s:[8,24], l:[55,82] }],
+          warm:   [{ h:[8,22], s:[20,48], l:[60,86] }, { h:[25,42], s:[18,42], l:[60,84] }],
+          organic:{ h:[85,150], s:[18,45], l:[46,78] },
+          cool:   [{ h:[175,200], s:[25,55], l:[54,86] }, { h:[200,225], s:[22,50], l:[50,82] }],
+          dark:   [{ h:[190,230], s:[20,48], l:[20,44] }, { h:[25,45], s:[14,34], l:[22,44] }]
+        }
+      },
+
+      bold: {
+        sat: [55, 85],
+        light: [20, 92],
+        distance: 26,
+        lanes: {
+          neutral: { h:[35,55], s:[8,28], l:[78,98] },
+          warm:   [{ h:[0,18], s:[55,85], l:[38,72] }, { h:[35,52], s:[55,85], l:[42,78] }],
+          organic:{ h:[75,145], s:[48,80], l:[32,70] },
+          cool:   [{ h:[175,205], s:[50,85], l:[36,76] }, { h:[210,245], s:[48,80], l:[28,70] }],
+          dark:   [{ h:[210,250], s:[30,70], l:[12,35] }, { h:[300,350], s:[30,70], l:[12,35] }, { h:[90,150], s:[35,70], l:[12,35] }]
+        }
       }
     };
 
@@ -586,28 +612,15 @@
       generatePalette();
     }
 
-    function limitTags(clickedInput) {
-      const checked = document.querySelectorAll('input[name="inspirationTag"]:checked');
+    function setVibe(vibe, button) {
+      selectedVibe = vibe;
 
-      if (checked.length > 3) {
-        clickedInput.checked = false;
-        alert("Choose up to 3 inspiration words.");
-      }
-    }
-
-    function clearInspirationTags() {
-      document.querySelectorAll('input[name="inspirationTag"]').forEach(function(input) {
-        input.checked = false;
+      document.querySelectorAll(".vibe-btn").forEach(function(btn) {
+        btn.classList.remove("active");
       });
-    }
 
-    function getSelectedTags() {
-      const selected = Array.from(document.querySelectorAll('input[name="inspirationTag"]:checked'))
-        .map(function(input) {
-          return input.value;
-        });
-
-      return selected.length ? selected : ["earthy", "soft", "vintage"];
+      button.classList.add("active");
+      generatePalette();
     }
 
     function getSeedColor() {
@@ -632,11 +645,10 @@
     }
 
     function generatePalette() {
-      const tags = getSelectedTags();
       const seedColor = getSeedColor();
       const size = paletteSize || 10;
 
-      let generated = buildPalette(size, tags, seedColor);
+      let generated = buildPalette(size, selectedVibe, seedColor);
 
       if (currentPalette.length && lockedColors.length) {
         generated = generated.map(function(color, index) {
@@ -654,139 +666,140 @@
       renderPattern();
     }
 
-    function buildPalette(size, tags, seedColor) {
+    function buildPalette(size, vibe, seedColor) {
+      const dna = vibeDNA[vibe] || vibeDNA.cozy;
       const recipe = paletteRecipes[size] || paletteRecipes[10];
-      const maxPasses = Math.max(recipe.neutral, recipe.warm, recipe.organic, recipe.cool, recipe.dark);
 
-      const pools = {
-        neutral: collectLane(tags, "neutral"),
-        warm: collectLane(tags, "warm"),
-        organic: collectLane(tags, "organic"),
-        cool: collectLane(tags, "cool"),
-        dark: collectLane(tags, "dark")
-      };
+      let bestPalette = [];
 
-      let palette = [];
+      for (let attempt = 0; attempt < 80; attempt++) {
+        let palette = [];
 
-      for (let pass = 0; pass < maxPasses; pass++) {
-        laneOrder.forEach(function(lane) {
-          if (recipe[lane] > pass) {
-            palette.push(pickByTone(pools[lane], lane, pass, recipe[lane], palette, seedColor));
+        const maxPasses = Math.max(
+          recipe.neutral,
+          recipe.warm,
+          recipe.organic,
+          recipe.cool,
+          recipe.dark
+        );
+
+        for (let pass = 0; pass < maxPasses; pass++) {
+          laneOrder.forEach(function(lane) {
+            if (recipe[lane] > pass) {
+              const color = pickLaneColor(dna, lane, pass, recipe[lane], palette, seedColor, size);
+              if (color) palette.push(color);
+            }
+          });
+        }
+
+        palette = palette.slice(0, size);
+
+        if (palette.length > bestPalette.length) bestPalette = palette;
+
+        if (palette.length === size && palettePassesQuality(palette, dna, size)) {
+          return palette;
+        }
+      }
+
+      return bestPalette.slice(0, size);
+    }
+
+    function pickLaneColor(dna, lane, pass, totalPasses, existing, seedColor, size) {
+      const laneZones = normalizeZones(dna.lanes[lane]);
+      const shuffledZones = shuffleArray(laneZones);
+      const minDistance = size === 20 ? Math.max(12, dna.distance - 5) : dna.distance;
+
+      for (let z = 0; z < shuffledZones.length; z++) {
+        for (let attempt = 0; attempt < 80; attempt++) {
+          const color = generateColorFromZone(shuffledZones[z], dna, lane, pass, totalPasses, seedColor);
+
+          if (passesColorRules(color, dna, existing, minDistance)) {
+            return color;
           }
-        });
-      }
-
-      palette = removeNearDuplicates(palette, size === 20 ? 13 : 16);
-
-      while (palette.length < size) {
-        const shuffledLanes = shuffleArray(laneOrder);
-        let added = false;
-
-        for (let i = 0; i < shuffledLanes.length; i++) {
-          const lane = shuffledLanes[i];
-          const picked = pickByTone(pools[lane], lane, palette.length % 4, 4, palette, seedColor);
-
-          if (picked && palette.every(function(existing) {
-            return colorDistance(picked, existing) >= 12;
-          })) {
-            palette.push(picked);
-            added = true;
-            break;
-          }
         }
-
-        if (!added) break;
       }
 
-      return palette.slice(0, size);
+      return null;
     }
 
-    function collectLane(tags, lane) {
-      let pool = moodLanes.base[lane].slice();
-
-      tags.forEach(function(tag) {
-        if (moodLanes[tag] && moodLanes[tag][lane]) {
-          pool = pool.concat(moodLanes[tag][lane]);
-        }
-      });
-
-      return removeNearDuplicates(pool, 8);
-    }
-
-    function pickByTone(pool, lane, pass, totalPasses, existing, seedColor) {
-      let sorted = pool.slice().sort(function(a, b) {
-        return hexToHsl(b).l - hexToHsl(a).l;
-      });
-
-      let zone;
-
-      if (totalPasses === 1) {
-        zone = sorted;
-      } else if (pass === 0) {
-        zone = sorted.slice(0, Math.ceil(sorted.length * 0.45));
-      } else if (pass === totalPasses - 1) {
-        zone = sorted.slice(Math.floor(sorted.length * 0.55));
-      } else {
-        zone = sorted.slice(Math.floor(sorted.length * 0.25), Math.ceil(sorted.length * 0.75));
-      }
-
-      zone = shuffleArray(zone);
-
-      for (let i = 0; i < zone.length; i++) {
-        const candidate = tasteShift(zone[i], lane, pass, seedColor);
-
-        if (existing.every(function(existingColor) {
-          return colorDistance(candidate, existingColor) >= 18;
-        })) {
-          return candidate;
-        }
-      }
-
-      for (let i = 0; i < sorted.length; i++) {
-        const candidate = tasteShift(sorted[i], lane, pass, seedColor);
-
-        if (existing.every(function(existingColor) {
-          return colorDistance(candidate, existingColor) >= 13;
-        })) {
-          return candidate;
-        }
-      }
-
-      return sorted[pass % sorted.length];
-    }
-
-    function tasteShift(hex, lane, pass, seedColor) {
-      const hsl = hexToHsl(hex);
+    function generateColorFromZone(zone, dna, lane, pass, totalPasses, seedColor) {
       const seed = hexToHsl(seedColor || "#A67C52");
 
-      const laneRules = {
-        neutral: { sMin: 5,  sMax: 28, lMin: 58, lMax: 96, hueShift: 4, seedMix: 0.06 },
-        warm:   { sMin: 28, sMax: 62, lMin: 42, lMax: 78, hueShift: 8, seedMix: 0.14 },
-        organic:{ sMin: 18, sMax: 48, lMin: 36, lMax: 74, hueShift: 7, seedMix: 0.08 },
-        cool:   { sMin: 18, sMax: 45, lMin: 38, lMax: 80, hueShift: 7, seedMix: 0.06 },
-        dark:   { sMin: 14, sMax: 48, lMin: 16, lMax: 42, hueShift: 5, seedMix: 0.04 }
-      };
+      let hue = randomHue(zone.h);
+      let sat = randomNumber(zone.s[0], zone.s[1]);
+      let light = randomNumber(zone.l[0], zone.l[1]);
 
-      const rule = laneRules[lane];
-      const hueNudge = (pass - 1.5) * rule.hueShift;
-      const mixedHue = hsl.h * (1 - rule.seedMix) + seed.h * rule.seedMix;
-
-      let newS = hsl.s;
-      let newL = hsl.l;
-
-      if (pass === 0) {
-        newL += lane === "dark" ? 4 : 5;
-        newS -= 2;
-      } else if (pass >= 2) {
-        newL -= lane === "neutral" ? 4 : 6;
-        newS += 2;
+      if (totalPasses > 1) {
+        if (pass === 0) {
+          light = Math.min(zone.l[1], light + randomNumber(4, 10));
+          sat = Math.max(zone.s[0], sat - randomNumber(0, 5));
+        } else if (pass === totalPasses - 1) {
+          light = Math.max(zone.l[0], light - randomNumber(4, 10));
+          sat = Math.min(zone.s[1], sat + randomNumber(0, 5));
+        }
       }
 
-      return hslToHex(
-        clampHue(mixedHue + hueNudge),
-        clamp(newS, rule.sMin, rule.sMax),
-        clamp(newL, rule.lMin, rule.lMax)
-      );
+      const seedInfluence = lane === "warm" ? 0.10 : lane === "cool" ? 0.04 : 0.06;
+      hue = blendHue(hue, seed.h, seedInfluence);
+
+      sat = clamp(sat, dna.sat[0], dna.sat[1]);
+      light = clamp(light, dna.light[0], dna.light[1]);
+
+      return hslToHex(clampHue(hue), sat, light);
+    }
+
+    function passesColorRules(color, dna, existing, minDistance) {
+      const hsl = hexToHsl(color);
+
+      if (hsl.s < dna.sat[0] || hsl.s > dna.sat[1]) return false;
+      if (hsl.l < dna.light[0] || hsl.l > dna.light[1]) return false;
+
+      for (let i = 0; i < existing.length; i++) {
+        if (colorDistance(color, existing[i]) < minDistance) return false;
+        if (isNearTwin(color, existing[i])) return false;
+      }
+
+      return true;
+    }
+
+    function palettePassesQuality(palette, dna, size) {
+      if (palette.length !== size) return false;
+
+      const lights = palette.filter(function(color) {
+        return hexToHsl(color).l >= 72;
+      }).length;
+
+      const darks = palette.filter(function(color) {
+        return hexToHsl(color).l <= 42;
+      }).length;
+
+      if (size === 5 && lights < 1) return false;
+      if (size === 5 && darks < 1) return false;
+      if (size === 10 && lights < 2) return false;
+      if (size === 10 && darks < 2) return false;
+      if (size === 20 && lights < 3) return false;
+      if (size === 20 && darks < 3) return false;
+
+      for (let i = 0; i < palette.length; i++) {
+        for (let j = i + 1; j < palette.length; j++) {
+          if (isNearTwin(palette[i], palette[j])) return false;
+        }
+      }
+
+      return true;
+    }
+
+    function isNearTwin(a, b) {
+      const ah = hexToHsl(a);
+      const bh = hexToHsl(b);
+
+      let hue = Math.abs(ah.h - bh.h);
+      hue = Math.min(hue, 360 - hue);
+
+      const sat = Math.abs(ah.s - bh.s);
+      const light = Math.abs(ah.l - bh.l);
+
+      return hue < 12 && sat < 12 && light < 12;
     }
 
     function colorDistance(a, b) {
@@ -799,21 +812,33 @@
       const sat = Math.abs(ah.s - bh.s);
       const light = Math.abs(ah.l - bh.l);
 
-      return hue * 1.1 + sat * 0.8 + light * 1.4;
+      return hue * 1.1 + sat * 0.85 + light * 1.45;
     }
 
-    function removeNearDuplicates(colors, minDistance) {
-      const finalColors = [];
+    function normalizeZones(zoneData) {
+      return Array.isArray(zoneData) ? zoneData : [zoneData];
+    }
 
-      colors.forEach(function(color) {
-        const tooClose = finalColors.some(function(existing) {
-          return colorDistance(color, existing) < minDistance;
-        });
+    function randomNumber(min, max) {
+      return min + Math.random() * (max - min);
+    }
 
-        if (!tooClose) finalColors.push(color);
-      });
+    function randomHue(range) {
+      const start = range[0];
+      const end = range[1];
 
-      return finalColors;
+      if (start <= end) {
+        return randomNumber(start, end);
+      }
+
+      const span = (360 - start) + end;
+      const value = start + Math.random() * span;
+      return value >= 360 ? value - 360 : value;
+    }
+
+    function blendHue(h1, h2, amount) {
+      let diff = ((h2 - h1 + 540) % 360) - 180;
+      return clampHue(h1 + diff * amount);
     }
 
     function shuffleArray(array) {
@@ -906,6 +931,7 @@
         name: name,
         colors: currentPalette.slice(),
         size: currentPalette.length,
+        vibe: selectedVibe,
         date: new Date().toLocaleDateString(),
         favorite: false
       };
@@ -945,7 +971,7 @@
           <div class="library-card-left">
             <div class="mini-swatch-row">${swatches}</div>
             <h3>${palette.name} <button type="button" class="heart-btn" onclick="toggleFavorite(${index})">${palette.favorite ? "♥" : "♡"}</button></h3>
-            <p>${palette.size} colors • Created ${palette.date}</p>
+            <p>${palette.size} colors • ${palette.vibe || "custom"} • Created ${palette.date}</p>
           </div>
 
           <div class="library-card-actions">
