@@ -723,30 +723,44 @@
     }
 
     function generateColorFromZone(zone, dna, lane, pass, totalPasses, seedColor) {
-      const seed = hexToHsl(seedColor || "#A67C52");
+  const seed = hexToHsl(seedColor || "#A67C52");
 
-      let hue = randomHue(zone.h);
-      let sat = randomNumber(zone.s[0], zone.s[1]);
-      let light = randomNumber(zone.l[0], zone.l[1]);
+  let hue = randomHue(zone.h);
+  let sat = randomNumber(zone.s[0], zone.s[1]);
+  let light = randomNumber(zone.l[0], zone.l[1]);
 
-      if (totalPasses > 1) {
-        if (pass === 0) {
-          light = Math.min(zone.l[1], light + randomNumber(4, 10));
-          sat = Math.max(zone.s[0], sat - randomNumber(0, 5));
-        } else if (pass === totalPasses - 1) {
-          light = Math.max(zone.l[0], light - randomNumber(4, 10));
-          sat = Math.min(zone.s[1], sat + randomNumber(0, 5));
-        }
-      }
+  // For 5-color palettes, force the Neutral / Air color to stay truly light.
+  // This keeps the first swatch from becoming khaki/tan instead of cream/oat/ivory.
+  if (totalPasses === 1 && lane === "neutral") {
+    light = randomNumber(84, 97);
+    sat = Math.max(zone.s[0], Math.min(sat, 24));
+  }
 
-      const seedInfluence = lane === "warm" ? 0.10 : lane === "cool" ? 0.04 : 0.06;
-      hue = blendHue(hue, seed.h, seedInfluence);
+  // For 5-color palettes, make the Warm / Charm color feel warmer and prettier,
+  // but not darker or muddy.
+  if (totalPasses === 1 && lane === "warm") {
+    light = randomNumber(58, 78);
+    sat = Math.max(sat, 38);
+  }
 
-      sat = clamp(sat, dna.sat[0], dna.sat[1]);
-      light = clamp(light, dna.light[0], dna.light[1]);
-
-      return hslToHex(clampHue(hue), sat, light);
+  if (totalPasses > 1) {
+    if (pass === 0) {
+      light = Math.min(zone.l[1], light + randomNumber(4, 10));
+      sat = Math.max(zone.s[0], sat - randomNumber(0, 5));
+    } else if (pass === totalPasses - 1) {
+      light = Math.max(zone.l[0], light - randomNumber(4, 10));
+      sat = Math.min(zone.s[1], sat + randomNumber(0, 5));
     }
+  }
+
+  const seedInfluence = lane === "warm" ? 0.10 : lane === "cool" ? 0.04 : 0.06;
+  hue = blendHue(hue, seed.h, seedInfluence);
+
+  sat = clamp(sat, dna.sat[0], dna.sat[1]);
+  light = clamp(light, dna.light[0], dna.light[1]);
+
+  return hslToHex(clampHue(hue), sat, light);
+}
 
     function passesColorRules(color, dna, existing, minDistance) {
       const hsl = hexToHsl(color);
