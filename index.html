@@ -136,7 +136,6 @@
 <body>
   <div class="app-shell">
 
-    <!-- HOME PAGE -->
     <section id="homePage" class="page active-page">
       <div class="home-card">
         <img src="paintboxed-app-cover.png" alt="Paintboxed app cover" class="app-cover" />
@@ -179,7 +178,6 @@
       </div>
     </section>
 
-    <!-- CREATOR PAGE -->
     <section id="creatorPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn" onclick="showPage('homePage')">←</button>
@@ -313,7 +311,6 @@
       </nav>
     </section>
 
-    <!-- PATTERN PAGE -->
     <section id="patternPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn" onclick="showPage('creatorPage')">←</button>
@@ -370,7 +367,6 @@
       </nav>
     </section>
 
-    <!-- LIBRARY PAGE -->
     <section id="libraryPage" class="page">
       <header class="top-bar">
         <button type="button" class="plain-btn">☰</button>
@@ -410,97 +406,118 @@
     let lockedColors = [];
     let savedPalettes = JSON.parse(localStorage.getItem("paintboxedPalettes")) || [];
 
-    const colorBanks = {
-      earthy: {
-        lights: ["#FAF4EA", "#F5EBDD", "#EFE2CE", "#F8F0E3"],
-        neutrals: ["#D8C7B0", "#C7B59D", "#B8A58C", "#A9947C"],
-        supports: ["#A7A88A", "#8F9B73", "#7E8B64", "#9B9272"],
-        accents: ["#C77750", "#B96745", "#D08A61", "#B8843D"],
-        darks: ["#3E4738", "#4E3B2F", "#5B3A2E", "#2F352B"]
-      },
-      soft: {
-        lights: ["#FFF7F2", "#F8EEE8", "#F7F1E9", "#F1E9DF"],
-        neutrals: ["#E0D2C8", "#D8C8BE", "#CDBBB0", "#BFAEA4"],
-        supports: ["#C9D6C5", "#B9CAD6", "#D9CFE2", "#D8BDB7"],
-        accents: ["#E5A99F", "#D99991", "#E8B79D", "#C88D92"],
-        darks: ["#776C62", "#6E6259", "#5D5851", "#4D4945"]
-      },
-      vintage: {
-        lights: ["#F7F0E3", "#EFE3CF", "#F3E8D8", "#EADBC5"],
-        neutrals: ["#D8C7A8", "#C9B899", "#BDA98C", "#AA957A"],
-        supports: ["#7B805B", "#6E7652", "#7E8B7A", "#6E7E88"],
-        accents: ["#B58A5A", "#B46E57", "#A65E4F", "#C08A3E"],
-        darks: ["#4B573F", "#4C3A31", "#5B4038", "#2F2A25"]
-      },
-      moody: {
-        lights: ["#F3EEE7", "#E8E0D4", "#DED4C8", "#DAD2C6"],
-        neutrals: ["#B5A99B", "#9C9186", "#847B72", "#706A63"],
-        supports: ["#6F7C73", "#6B7480", "#7A6C72", "#7E715E"],
-        accents: ["#9C6A54", "#884F47", "#A27A3E", "#8C5D68"],
-        darks: ["#243038", "#2E3A40", "#2F332B", "#3B2E2C"]
-      },
-      bright: {
-        lights: ["#FFF8E7", "#FFF4D9", "#FCEDE5", "#F4FAF2"],
-        neutrals: ["#EADCC7", "#DCC9B8", "#C9B8A3", "#F0E3D3"],
-        supports: ["#A8DCC4", "#83B6D9", "#B7D96F", "#D9C4F2"],
-        accents: ["#F06A45", "#E889B9", "#E04D3F", "#F5A43B"],
-        darks: ["#2F2D2A", "#243A4A", "#314433", "#4E2C2B"]
-      },
-      playful: {
-        lights: ["#FFF7E8", "#FFF2F0", "#FFF5CF", "#F2FBF7"],
-        neutrals: ["#E8D8C5", "#D7C6B6", "#CDBCAA", "#F0DFCD"],
-        supports: ["#A9D7C2", "#90BCE0", "#CDB8E8", "#F6D36E"],
-        accents: ["#EA6B4D", "#E58AB5", "#F2A23C", "#E45A6A"],
-        darks: ["#2D2B28", "#31505D", "#3C4732", "#5B3434"]
-      },
-      warm: {
-        lights: ["#FFF4E4", "#FAE6D0", "#F6DDC2", "#FFEEDB"],
-        neutrals: ["#E9C8A4", "#D7B58F", "#C6A17B", "#B8906C"],
-        supports: ["#B9A26B", "#A88F5C", "#A87052", "#C18757"],
-        accents: ["#C99263", "#A86A47", "#D6A23F", "#C76F3D"],
-        darks: ["#7A4734", "#5D4636", "#4A352A", "#2C2520"]
-      },
-      cool: {
-        lights: ["#F5F7F4", "#EEF5F5", "#E8F0EE", "#EDF4FA"],
-        neutrals: ["#D7E0D9", "#C6D1CA", "#B8C7BF", "#AAB6B0"],
-        supports: ["#91A99F", "#6F8B84", "#A5B7D1", "#7B9CB0"],
-        accents: ["#526F74", "#5A7E95", "#6C83B2", "#4F927A"],
-        darks: ["#385760", "#2A3A42", "#303E50", "#243731"]
-      },
-      whimsical: {
-        lights: ["#FFF9EF", "#FFF2E8", "#FFF7D8", "#F1FAEF"],
-        neutrals: ["#E8D7C8", "#D8C8B8", "#CBB9A8", "#E9DEC9"],
-        supports: ["#BFE3C3", "#A6CDE8", "#DCC8F0", "#F5C3B4"],
-        accents: ["#D98263", "#F0A6C8", "#F6D36F", "#9AA6E8"],
-        darks: ["#302C2A", "#38505A", "#4B4730", "#613A38"]
-      },
-      minimal: {
-        lights: ["#FFFFFF", "#FBFAF7", "#F7F2EA", "#F2EFE8"],
-        neutrals: ["#E0D8CC", "#D6CFC4", "#C8BCAE", "#B8AEA2"],
-        supports: ["#B08A3C", "#A89E8B", "#918C80", "#B7B2A7"],
-        accents: ["#B08A3C", "#8E7345", "#A56D4E", "#6F7A6A"],
-        darks: ["#83796F", "#5E5750", "#3B3834", "#262421"]
-      },
-      romantic: {
-        lights: ["#FFF7F2", "#FAEDE9", "#F6E2DF", "#F8F0E9"],
-        neutrals: ["#EFD5CF", "#D8C4BB", "#CBB2AA", "#A88D83"],
-        supports: ["#DFAEA7", "#D6A7BE", "#C98784", "#B99AA3"],
-        accents: ["#C98784", "#A7605C", "#B25C76", "#C0799A"],
-        darks: ["#7A3E3F", "#6D5650", "#563F43", "#2E2927"]
-      },
-      seasonal: {
-        lights: ["#FFF8E9", "#F6EBD5", "#FFF2DB", "#F0F4E4"],
-        neutrals: ["#D9C2A5", "#C9B08E", "#B9A483", "#D7CBB9"],
-        supports: ["#A7A47A", "#6E7A58", "#7D9AAA", "#9E8C68"],
-        accents: ["#F1C46D", "#D9824B", "#A6533D", "#C95D4A"],
-        darks: ["#7C3E32", "#302B26", "#4A5638", "#344957"]
-      }
+    const laneOrder = ["neutral", "warm", "organic", "cool", "dark"];
+
+    const paletteRecipes = {
+      5:  { neutral: 1, warm: 1, organic: 1, cool: 1, dark: 1 },
+      10: { neutral: 2, warm: 2, organic: 2, cool: 2, dark: 2 },
+      20: { neutral: 4, warm: 4, organic: 4, cool: 4, dark: 4 }
     };
 
-    const recipes = {
-      5: { lights: 1, neutrals: 1, supports: 1, accents: 1, darks: 1 },
-      10: { lights: 2, neutrals: 2, supports: 2, accents: 2, darks: 2 },
-      20: { lights: 4, neutrals: 4, supports: 4, accents: 4, darks: 4 }
+    const moodLanes = {
+      base: {
+        neutral: ["#FAF4EA", "#F6EFE4", "#EFE5D8", "#E8DED1", "#DDD0C1", "#D3C5B6", "#C8BBAE", "#BDAFA3"],
+        warm: ["#F0B090", "#E59A7D", "#D88668", "#C9745A", "#B8644C", "#D9A15E", "#C98B4E", "#B77A44"],
+        organic: ["#C7C79E", "#B5BD91", "#A1AE7F", "#8E9A6F", "#7D8A63", "#6D7D58", "#5F714F", "#4E6144"],
+        cool: ["#C6D9D6", "#B3CFD0", "#9DBEC3", "#86ABB4", "#7399A5", "#638893", "#527781", "#41666F"],
+        dark: ["#5C4B40", "#4F4238", "#443A33", "#3A332E", "#34423A", "#2F3B35", "#2B3330", "#262928"]
+      },
+
+      earthy: {
+        neutral: ["#F3E8DA", "#E6D5C3", "#D7C2AC", "#C7AF98"],
+        warm: ["#D88D63", "#C87550", "#B45F43", "#A4533C"],
+        organic: ["#A6A879", "#8E966A", "#76865B", "#5E714D"],
+        cool: ["#9EB8B4", "#7F9E9A", "#658983", "#4E716B"],
+        dark: ["#5A4638", "#493A30", "#3B332B", "#2F382C"]
+      },
+
+      soft: {
+        neutral: ["#FFF7F1", "#F6ECE4", "#EADDD3", "#D9CBBF"],
+        warm: ["#E7B2A1", "#DCA092", "#CF8D84", "#BF7C78"],
+        organic: ["#C8D4BE", "#B5C7AD", "#9FB394", "#879D7D"],
+        cool: ["#C7D9DD", "#B2CBD3", "#9AB9C6", "#84A6B3"],
+        dark: ["#6B5D58", "#5A514D", "#4B4642", "#383633"]
+      },
+
+      vintage: {
+        neutral: ["#F3E6D4", "#E4D2BB", "#D3BFA3", "#BFA98E"],
+        warm: ["#D09A72", "#BE7D60", "#A96650", "#935746"],
+        organic: ["#B6AB76", "#9D9563", "#817F56", "#666C4D"],
+        cool: ["#B6C3C8", "#9AADB7", "#7D98A3", "#637F8A"],
+        dark: ["#5C473A", "#4A3A31", "#3C302A", "#312B27"]
+      },
+
+      moody: {
+        neutral: ["#E8DDD2", "#D4C6BA", "#BBAEA4", "#9F938A"],
+        warm: ["#B77B68", "#9E6558", "#875149", "#70433F"],
+        organic: ["#818B66", "#697553", "#566343", "#424F37"],
+        cool: ["#8AA1A9", "#6F8994", "#586F7A", "#405661"],
+        dark: ["#3A322F", "#302B2B", "#28302D", "#222827"]
+      },
+
+      bright: {
+        neutral: ["#FFF7E8", "#F7E9D5", "#E9D5BC", "#D8BFA5"],
+        warm: ["#F1A06D", "#E7835F", "#DA6E52", "#C65A46"],
+        organic: ["#C8CA68", "#ABB85B", "#91A150", "#748944"],
+        cool: ["#A9D7D6", "#85C3C5", "#62AEB4", "#4B929A"],
+        dark: ["#5A4037", "#3F3A2A", "#2F4236", "#283B45"]
+      },
+
+      playful: {
+        neutral: ["#FFF4E8", "#F4DFCE", "#E8CDBA", "#D8B9A4"],
+        warm: ["#F0A184", "#E78375", "#D96B64", "#C45A58"],
+        organic: ["#C7D688", "#AFC577", "#92AE65", "#769752"],
+        cool: ["#B1DADB", "#91C6CC", "#75B2BB", "#5A99A5"],
+        dark: ["#60483B", "#4A3C35", "#38483B", "#33444A"]
+      },
+
+      warm: {
+        neutral: ["#FFF0DE", "#F2DCC3", "#E2C3A4", "#CFAC89"],
+        warm: ["#E4A066", "#D48652", "#C06F43", "#A85C38"],
+        organic: ["#B9A56E", "#A3915E", "#877B51", "#6F6847"],
+        cool: ["#B5C4BD", "#98ACA7", "#7F9690", "#627D79"],
+        dark: ["#6B4735", "#553A2D", "#443126", "#302722"]
+      },
+
+      cool: {
+        neutral: ["#F4F5EF", "#E7EAE2", "#D4DAD2", "#BDC8C0"],
+        warm: ["#D99B83", "#C98573", "#B57264", "#9E6258"],
+        organic: ["#B8C3AA", "#9FAF98", "#849A83", "#6A826D"],
+        cool: ["#BCD7D8", "#9FC4C9", "#82B0BA", "#6698A5"],
+        dark: ["#465E63", "#374C52", "#303D45", "#293238"]
+      },
+
+      whimsical: {
+        neutral: ["#FFF6EA", "#F5E4D3", "#E7CFBD", "#D8BBA8"],
+        warm: ["#EFA68E", "#E78A7A", "#DA7468", "#C85F59"],
+        organic: ["#C4D5A0", "#ADC58E", "#93B078", "#77995F"],
+        cool: ["#B9DBD9", "#9ACDCD", "#78B9BD", "#5FA2AA"],
+        dark: ["#5A403D", "#47423A", "#394C40", "#31454A"]
+      },
+
+      minimal: {
+        neutral: ["#FFFFFF", "#FBFAF7", "#F3EFE8", "#E7DED2", "#D6CBBB", "#BFAF9D"],
+        warm: ["#C99A71", "#B98562", "#A36F53", "#8D5E49"],
+        organic: ["#B4B19A", "#9B9980", "#807F6A", "#676957"],
+        cool: ["#C7D2D1", "#AEBDBE", "#94A7AA", "#7A9095"],
+        dark: ["#5E5750", "#4A453F", "#393632", "#262421"]
+      },
+
+      romantic: {
+        neutral: ["#FFF5EF", "#F4E4DD", "#E5D0C8", "#D3BBB3"],
+        warm: ["#E2A79A", "#D28E87", "#BF7676", "#A95F65"],
+        organic: ["#C2C2A0", "#A9AD89", "#8D976F", "#737E5B"],
+        cool: ["#C6D1D8", "#AEBFCB", "#94A8B8", "#798FA2"],
+        dark: ["#6E4E50", "#5B4147", "#463641", "#302C31"]
+      },
+
+      seasonal: {
+        neutral: ["#FFF1DF", "#EAD8BF", "#D5BFA0", "#BFA888"],
+        warm: ["#D98955", "#C96F49", "#B7583E", "#9B4735"],
+        organic: ["#B5A756", "#92954F", "#717F4B", "#566A3F"],
+        cool: ["#A6BBC5", "#839EAD", "#667F90", "#4A6375"],
+        dark: ["#6A4235", "#4B3A2D", "#354335", "#2E3534"]
+      }
     };
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -617,17 +634,9 @@
     function generatePalette() {
       const tags = getSelectedTags();
       const seedColor = getSeedColor();
-      const recipe = recipes[paletteSize] || recipes[10];
+      const size = paletteSize || 10;
 
-      let generated = [];
-
-      Object.keys(recipe).forEach(function(role) {
-        for (let i = 0; i < recipe[role]; i++) {
-          generated.push(pickRoleColor(tags, role, generated, seedColor, i));
-        }
-      });
-
-      generated = generated.slice(0, paletteSize);
+      let generated = buildPalette(size, tags, seedColor);
 
       if (currentPalette.length && lockedColors.length) {
         generated = generated.map(function(color, index) {
@@ -645,68 +654,179 @@
       renderPattern();
     }
 
-    function pickRoleColor(tags, role, existing, seedColor, index) {
-      let bank = [];
+    function buildPalette(size, tags, seedColor) {
+      const recipe = paletteRecipes[size] || paletteRecipes[10];
+      const maxPasses = Math.max(recipe.neutral, recipe.warm, recipe.organic, recipe.cool, recipe.dark);
+
+      const pools = {
+        neutral: collectLane(tags, "neutral"),
+        warm: collectLane(tags, "warm"),
+        organic: collectLane(tags, "organic"),
+        cool: collectLane(tags, "cool"),
+        dark: collectLane(tags, "dark")
+      };
+
+      let palette = [];
+
+      for (let pass = 0; pass < maxPasses; pass++) {
+        laneOrder.forEach(function(lane) {
+          if (recipe[lane] > pass) {
+            palette.push(pickByTone(pools[lane], lane, pass, recipe[lane], palette, seedColor));
+          }
+        });
+      }
+
+      palette = removeNearDuplicates(palette, size === 20 ? 13 : 16);
+
+      while (palette.length < size) {
+        const shuffledLanes = shuffleArray(laneOrder);
+        let added = false;
+
+        for (let i = 0; i < shuffledLanes.length; i++) {
+          const lane = shuffledLanes[i];
+          const picked = pickByTone(pools[lane], lane, palette.length % 4, 4, palette, seedColor);
+
+          if (picked && palette.every(function(existing) {
+            return colorDistance(picked, existing) >= 12;
+          })) {
+            palette.push(picked);
+            added = true;
+            break;
+          }
+        }
+
+        if (!added) break;
+      }
+
+      return palette.slice(0, size);
+    }
+
+    function collectLane(tags, lane) {
+      let pool = moodLanes.base[lane].slice();
 
       tags.forEach(function(tag) {
-        if (colorBanks[tag] && colorBanks[tag][role]) {
-          bank = bank.concat(colorBanks[tag][role]);
+        if (moodLanes[tag] && moodLanes[tag][lane]) {
+          pool = pool.concat(moodLanes[tag][lane]);
         }
       });
 
-      if (!bank.length) {
-        bank = colorBanks.earthy[role].concat(colorBanks.soft[role], colorBanks.vintage[role]);
-      }
-
-      for (let attempt = 0; attempt < 80; attempt++) {
-        const base = bank[Math.floor(Math.random() * bank.length)];
-        const candidate = varyColorForRole(base, role, attempt, index, seedColor);
-
-        if (isDistinct(candidate, existing)) return candidate;
-      }
-
-      return bank[index % bank.length];
+      return removeNearDuplicates(pool, 8);
     }
 
-    function varyColorForRole(hex, role, attempt, index, seedColor) {
+    function pickByTone(pool, lane, pass, totalPasses, existing, seedColor) {
+      let sorted = pool.slice().sort(function(a, b) {
+        return hexToHsl(b).l - hexToHsl(a).l;
+      });
+
+      let zone;
+
+      if (totalPasses === 1) {
+        zone = sorted;
+      } else if (pass === 0) {
+        zone = sorted.slice(0, Math.ceil(sorted.length * 0.45));
+      } else if (pass === totalPasses - 1) {
+        zone = sorted.slice(Math.floor(sorted.length * 0.55));
+      } else {
+        zone = sorted.slice(Math.floor(sorted.length * 0.25), Math.ceil(sorted.length * 0.75));
+      }
+
+      zone = shuffleArray(zone);
+
+      for (let i = 0; i < zone.length; i++) {
+        const candidate = tasteShift(zone[i], lane, pass, seedColor);
+
+        if (existing.every(function(existingColor) {
+          return colorDistance(candidate, existingColor) >= 18;
+        })) {
+          return candidate;
+        }
+      }
+
+      for (let i = 0; i < sorted.length; i++) {
+        const candidate = tasteShift(sorted[i], lane, pass, seedColor);
+
+        if (existing.every(function(existingColor) {
+          return colorDistance(candidate, existingColor) >= 13;
+        })) {
+          return candidate;
+        }
+      }
+
+      return sorted[pass % sorted.length];
+    }
+
+    function tasteShift(hex, lane, pass, seedColor) {
       const hsl = hexToHsl(hex);
-      const seed = hexToHsl(seedColor);
+      const seed = hexToHsl(seedColor || "#A67C52");
 
-      const settings = {
-        lights: { sMin: 8, sMax: 34, lMin: 82, lMax: 96, hue: 10 },
-        neutrals: { sMin: 8, sMax: 30, lMin: 50, lMax: 78, hue: 12 },
-        supports: { sMin: 18, sMax: 50, lMin: 42, lMax: 72, hue: 18 },
-        accents: { sMin: 42, sMax: 78, lMin: 42, lMax: 70, hue: 28 },
-        darks: { sMin: 18, sMax: 52, lMin: 16, lMax: 36, hue: 14 }
-      }[role];
+      const laneRules = {
+        neutral: { sMin: 5,  sMax: 28, lMin: 58, lMax: 96, hueShift: 4, seedMix: 0.06 },
+        warm:   { sMin: 28, sMax: 62, lMin: 42, lMax: 78, hueShift: 8, seedMix: 0.14 },
+        organic:{ sMin: 18, sMax: 48, lMin: 36, lMax: 74, hueShift: 7, seedMix: 0.08 },
+        cool:   { sMin: 18, sMax: 45, lMin: 38, lMax: 80, hueShift: 7, seedMix: 0.06 },
+        dark:   { sMin: 14, sMax: 48, lMin: 16, lMax: 42, hueShift: 5, seedMix: 0.04 }
+      };
 
-      const seedInfluence = role === "accents" ? 0.35 : 0.18;
-      const blendedHue = hsl.h * (1 - seedInfluence) + seed.h * seedInfluence;
-      const hueShift = ((attempt * 9) + (index * 17)) % (settings.hue * 2) - settings.hue;
+      const rule = laneRules[lane];
+      const hueNudge = (pass - 1.5) * rule.hueShift;
+      const mixedHue = hsl.h * (1 - rule.seedMix) + seed.h * rule.seedMix;
+
+      let newS = hsl.s;
+      let newL = hsl.l;
+
+      if (pass === 0) {
+        newL += lane === "dark" ? 4 : 5;
+        newS -= 2;
+      } else if (pass >= 2) {
+        newL -= lane === "neutral" ? 4 : 6;
+        newS += 2;
+      }
 
       return hslToHex(
-        clampHue(blendedHue + hueShift),
-        clamp(hsl.s + ((attempt % 5) - 2) * 4, settings.sMin, settings.sMax),
-        clamp(hsl.l + ((attempt % 7) - 3) * 3, settings.lMin, settings.lMax)
+        clampHue(mixedHue + hueNudge),
+        clamp(newS, rule.sMin, rule.sMax),
+        clamp(newL, rule.lMin, rule.lMax)
       );
     }
 
-    function isDistinct(candidate, existing) {
-      if (!existing.length) return true;
+    function colorDistance(a, b) {
+      const ah = hexToHsl(a);
+      const bh = hexToHsl(b);
 
-      const c = hexToHsl(candidate);
+      let hue = Math.abs(ah.h - bh.h);
+      hue = Math.min(hue, 360 - hue);
 
-      return !existing.some(function(color) {
-        const e = hexToHsl(color);
+      const sat = Math.abs(ah.s - bh.s);
+      const light = Math.abs(ah.l - bh.l);
 
-        let hueDistance = Math.abs(c.h - e.h);
-        hueDistance = Math.min(hueDistance, 360 - hueDistance);
+      return hue * 1.1 + sat * 0.8 + light * 1.4;
+    }
 
-        const lightDistance = Math.abs(c.l - e.l);
-        const satDistance = Math.abs(c.s - e.s);
+    function removeNearDuplicates(colors, minDistance) {
+      const finalColors = [];
 
-        return hueDistance < 18 && lightDistance < 16 && satDistance < 20;
+      colors.forEach(function(color) {
+        const tooClose = finalColors.some(function(existing) {
+          return colorDistance(color, existing) < minDistance;
+        });
+
+        if (!tooClose) finalColors.push(color);
       });
+
+      return finalColors;
+    }
+
+    function shuffleArray(array) {
+      const copy = array.slice();
+
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = copy[i];
+        copy[i] = copy[j];
+        copy[j] = temp;
+      }
+
+      return copy;
     }
 
     function renderPalette() {
