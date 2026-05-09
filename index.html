@@ -75,6 +75,18 @@
       box-shadow: 4px 5px 0 rgba(176, 138, 60, 0.28) !important;
     }
 
+    .mini-clear-btn {
+      margin-top: 14px;
+      background: transparent;
+      border: 2px solid #2f2d2a;
+      color: #2f2d2a;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
     .start-control-box {
       margin-top: 22px;
       padding: 18px;
@@ -112,7 +124,7 @@
 
     .floral-pattern {
       min-height: 420px !important;
-      background-image: url("paintboxed-floral-pattern.png") !important;
+      background-image: url("floral-pattern-new.png") !important;
       background-repeat: repeat !important;
       background-size: 260px 260px !important;
       background-position: center !important;
@@ -254,6 +266,8 @@
             <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="romantic" onchange="limitTags(this)"><span>Romantic</span></label>
             <label class="tag-pill"><input type="checkbox" name="inspirationTag" value="seasonal" onchange="limitTags(this)"><span>Seasonal</span></label>
           </div>
+
+          <button type="button" class="mini-clear-btn" onclick="clearInspirationTags()">Clear All</button>
 
           <p class="tiny-note">Curated using color theory + trend-informed style direction.</p>
 
@@ -558,6 +572,12 @@
       }
     }
 
+    function clearInspirationTags() {
+      document.querySelectorAll('input[name="inspirationTag"]').forEach(function(input) {
+        input.checked = false;
+      });
+    }
+
     function getSelectedTags() {
       const selected = Array.from(document.querySelectorAll('input[name="inspirationTag"]:checked'))
         .map(function(input) {
@@ -735,7 +755,7 @@
       const scale = scaleSlider ? scaleSlider.value : 100;
 
       pattern.style.backgroundColor = background;
-      pattern.style.backgroundImage = 'url("paintboxed-floral-pattern.png")';
+      pattern.style.backgroundImage = 'url("floral-pattern-new.png")';
       pattern.style.backgroundRepeat = "repeat";
       pattern.style.backgroundSize = `${scale * 2.6}px ${scale * 2.6}px`;
       pattern.style.backgroundPosition = "center";
