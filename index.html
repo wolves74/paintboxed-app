@@ -339,11 +339,15 @@
         </section>
 
         <section class="controls-bar">
-          <label>Scale <input type="range" min="60" max="160" value="100" id="scaleSlider" oninput="renderPattern()"></label>
+          <label>
+            Scale
+            <input type="range" min="60" max="160" value="100" id="scaleSlider" oninput="renderPattern()">
+          </label>
 
           <button type="button" onclick="shufflePalette()">Shuffle Colors</button>
 
-          <label>Background
+          <label>
+            Background
             <select id="backgroundSelect" onchange="renderPattern()">
               <option value="#fbfaf7">Off White</option>
               <option value="#ffffff">White</option>
@@ -561,6 +565,8 @@
         button.classList.remove("active");
         if (button.textContent.includes(String(size))) button.classList.add("active");
       });
+
+      generatePalette();
     }
 
     function limitTags(clickedInput) {
@@ -752,13 +758,14 @@
       const scaleSlider = document.getElementById("scaleSlider");
 
       const background = backgroundSelect ? backgroundSelect.value : "#fbfaf7";
-      const scale = scaleSlider ? scaleSlider.value : 100;
+      const scale = scaleSlider ? Number(scaleSlider.value) : 100;
+      const tileSize = scale * 2.6;
 
-      pattern.style.backgroundColor = background;
-      pattern.style.backgroundImage = 'url("floral-pattern-new.png")';
-      pattern.style.backgroundRepeat = "repeat";
-      pattern.style.backgroundSize = `${scale * 2.6}px ${scale * 2.6}px`;
-      pattern.style.backgroundPosition = "center";
+      pattern.style.setProperty("background-color", background, "important");
+      pattern.style.setProperty("background-image", 'url("floral-pattern-new.png")', "important");
+      pattern.style.setProperty("background-repeat", "repeat", "important");
+      pattern.style.setProperty("background-size", tileSize + "px " + tileSize + "px", "important");
+      pattern.style.setProperty("background-position", "center", "important");
     }
 
     function shufflePalette() {
