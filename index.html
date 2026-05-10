@@ -819,18 +819,112 @@ function chooseDarkLightness(vibe, accentSat) {
     }
 
     function buildPlayful(seedContext) {
-  const accentHue = wrapHue(getSeedHue(seedContext, [350, 12, 28, 45, 185, 202, 240, 270]) + rand(-12, 12));
-  const balanceHue = wrapHue(accentHue + pick([80, 105, 135, 160, -80, -105, -135, -160]));
-  const softHue = wrapHue(accentHue + rand(-18, 18));
+  const playfulRecipes = [
+    {
+      name: "coral-aqua",
+      accent: [8, 20],
+      balance: [175, 200],
+      soft: [345, 18],
+      light: [28, 48]
+    },
+    {
+      name: "pink-lemon-teal",
+      accent: [325, 345],
+      balance: [48, 62],
+      soft: [335, 355],
+      light: [38, 58]
+    },
+    {
+      name: "lavender-lime",
+      accent: [265, 292],
+      balance: [88, 122],
+      soft: [270, 310],
+      light: [240, 280]
+    },
+    {
+      name: "peach-cobalt",
+      accent: [18, 34],
+      balance: [220, 248],
+      soft: [8, 28],
+      light: [32, 52]
+    },
+    {
+      name: "mint-berry",
+      accent: [155, 178],
+      balance: [320, 345],
+      soft: [145, 175],
+      light: [165, 195]
+    },
+    {
+      name: "butter-periwinkle",
+      accent: [48, 62],
+      balance: [225, 255],
+      soft: [35, 55],
+      light: [45, 70]
+    },
+    {
+      name: "watermelon-sky",
+      accent: [350, 8],
+      balance: [198, 220],
+      soft: [340, 360],
+      light: [190, 215]
+    },
+    {
+      name: "orange-sherbet-violet",
+      accent: [24, 42],
+      balance: [275, 305],
+      soft: [18, 38],
+      light: [30, 55]
+    }
+  ];
+
+  const recipe = pick(playfulRecipes);
+
+  function hueFromRange(range) {
+    return wrapHue(rand(range[0], range[1]));
+  }
+
+  let accentHue = hueFromRange(recipe.accent);
+  let balanceHue = hueFromRange(recipe.balance);
+  let softHue = hueFromRange(recipe.soft);
+  let lightHue = hueFromRange(recipe.light);
+
+  const seedContextHasImageOrHex = seedContext && seedContext.seeds && seedContext.seeds.length;
+  if (seedContextHasImageOrHex && Math.random() < 0.35) {
+    const seedHue = getSeedHue(seedContext, [accentHue]);
+    accentHue = wrapHue(seedHue + rand(-10, 10));
+    balanceHue = wrapHue(accentHue + pick([85, 105, 135, 155, -85, -105, -135, -155]));
+    softHue = wrapHue(accentHue + rand(-20, 20));
+    lightHue = wrapHue(softHue + rand(-12, 12));
+  }
 
   const accentSat = rand(58, 82);
+  const balanceSat = rand(38, 68);
+
   const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "playful");
 
+  const lightOptions = [
+    { h: lightHue, s: rand(4, 10), l: rand(94, 98) },
+    { h: lightHue, s: rand(10, 18), l: rand(91, 96) },
+    { h: wrapHue(balanceHue + rand(-10, 10)), s: rand(8, 18), l: rand(90, 95) },
+    { h: wrapHue(accentHue + rand(-14, 14)), s: rand(7, 16), l: rand(91, 96) }
+  ];
+
+  const softOptions = [
+    { h: softHue, s: rand(16, 30), l: rand(72, 84) },
+    { h: wrapHue(accentHue + rand(-18, 18)), s: rand(18, 34), l: rand(70, 82) },
+    { h: wrapHue(balanceHue + rand(-18, 18)), s: rand(14, 28), l: rand(74, 86) },
+    { h: wrapHue(lightHue + rand(-12, 12)), s: rand(12, 26), l: rand(76, 88) }
+  ];
+
+  const lightColor = pick(lightOptions);
+  const softColor = pick(softOptions);
+
   return [
-    { h: softHue, s: rand(4, 10), l: rand(95, 98) },
-    { h: softHue, s: rand(18, 30), l: rand(76, 86) },
-    { h: accentHue, s: accentSat, l: rand(50, 68) },
-    { h: balanceHue, s: rand(42, 70), l: rand(54, 74) },
+    lightColor,
+    softColor,
+    { h: accentHue, s: accentSat, l: rand(48, 68) },
+    { h: balanceHue, s: balanceSat, l: rand(50, 74) },
     { h: darkHue, s: chooseDarkSaturation("playful", accentSat), l: chooseDarkLightness("playful", accentSat) }
   ];
 }
