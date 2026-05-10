@@ -823,163 +823,132 @@ function chooseDarkLightness(vibe, accentSat) {
     {
       name: "coral-aqua",
       accent: [8, 20],
-      balance: [175, 200],
-      soft: [345, 18],
-      light: [28, 48]
+      balance: [175, 200]
     },
     {
       name: "pink-lemon-teal",
       accent: [325, 345],
-      balance: [48, 62],
-      soft: [335, 355],
-      light: [38, 58]
+      balance: [48, 62]
     },
     {
       name: "lavender-lime",
       accent: [265, 292],
-      balance: [88, 122],
-      soft: [270, 310],
-      light: [240, 280]
+      balance: [88, 122]
     },
     {
       name: "peach-cobalt",
       accent: [18, 34],
-      balance: [220, 248],
-      soft: [8, 28],
-      light: [32, 52]
+      balance: [220, 248]
     },
     {
       name: "mint-berry",
       accent: [155, 178],
-      balance: [320, 345],
-      soft: [145, 175],
-      light: [165, 195]
+      balance: [320, 345]
     },
     {
       name: "butter-periwinkle",
       accent: [48, 62],
-      balance: [225, 255],
-      soft: [35, 55],
-      light: [45, 70]
+      balance: [225, 255]
     },
     {
       name: "watermelon-sky",
       accent: [350, 8],
-      balance: [198, 220],
-      soft: [340, 360],
-      light: [190, 215]
+      balance: [198, 220]
     },
     {
-      name: "orange-sherbet-violet",
+      name: "orange-violet",
       accent: [24, 42],
-      balance: [275, 305],
-      soft: [18, 38],
-      light: [30, 55]
+      balance: [275, 305]
     }
   ];
 
-  const recipe = pick(playfulRecipes);
-
   function hueFromRange(range) {
-    return wrapHue(rand(range[0], range[1]));
+    if (range[0] <= range[1]) {
+      return wrapHue(rand(range[0], range[1]));
+    }
+
+    // Handles ranges that cross 360, like 350 to 8.
+    return Math.random() < 0.5
+      ? wrapHue(rand(range[0], 360))
+      : wrapHue(rand(0, range[1]));
   }
+
+  const recipe = pick(playfulRecipes);
 
   let accentHue = hueFromRange(recipe.accent);
   let balanceHue = hueFromRange(recipe.balance);
-  let softHue = hueFromRange(recipe.soft);
-  let lightHue = hueFromRange(recipe.light);
 
-  const seedContextHasImageOrHex = seedContext && seedContext.seeds && seedContext.seeds.length;
-  if (seedContextHasImageOrHex && Math.random() < 0.35) {
+  const seedContextHasInput = seedContext && seedContext.seeds && seedContext.seeds.length;
+
+  if (seedContextHasInput && Math.random() < 0.25) {
     const seedHue = getSeedHue(seedContext, [accentHue]);
     accentHue = wrapHue(seedHue + rand(-10, 10));
     balanceHue = wrapHue(accentHue + pick([85, 105, 135, 155, -85, -105, -135, -155]));
-    softHue = wrapHue(accentHue + rand(-20, 20));
-    lightHue = wrapHue(softHue + rand(-12, 12));
   }
 
   const accentSat = rand(58, 82);
-  const balanceSat = rand(38, 68);
-
+  const balanceSat = rand(40, 68);
   const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "playful");
 
-  const lightOptions = [
-  // clean airy white
-  { h: lightHue, s: rand(4, 10), l: rand(95, 98) },
+  const lightPairOptions = [
+    // warm ivory + peach
+    [
+      { h: rand(36, 48), s: rand(10, 18), l: rand(93, 97) },
+      { h: rand(16, 28), s: rand(34, 48), l: rand(74, 82) }
+    ],
 
-  // soft blush / pale pink
-  { h: rand(340, 358), s: rand(16, 30), l: rand(89, 95) },
+    // blush mist + apricot
+    [
+      { h: rand(338, 355), s: rand(12, 20), l: rand(92, 96) },
+      { h: rand(22, 34), s: rand(34, 50), l: rand(74, 82) }
+    ],
 
-  // pale peach / apricot
-  { h: rand(12, 30), s: rand(16, 32), l: rand(89, 95) },
+    // pale peach + warm rose
+    [
+      { h: rand(14, 26), s: rand(14, 22), l: rand(92, 96) },
+      { h: rand(340, 354), s: rand(34, 50), l: rand(74, 82) }
+    ],
 
-  // soft butter / earthy yellow
-  { h: rand(42, 58), s: rand(18, 34), l: rand(88, 94) },
+    // buttercream + golden peach
+    [
+      { h: rand(44, 56), s: rand(14, 22), l: rand(92, 96) },
+      { h: rand(30, 44), s: rand(36, 52), l: rand(74, 82) }
+    ],
 
-  // pale mint
-  { h: rand(120, 155), s: rand(14, 30), l: rand(89, 95) },
+    // pale lavender + warm peach
+    [
+      { h: rand(265, 288), s: rand(12, 20), l: rand(91, 96) },
+      { h: rand(16, 30), s: rand(34, 50), l: rand(74, 82) }
+    ],
 
-  // powder aqua / soft blue
-  { h: rand(180, 210), s: rand(14, 30), l: rand(89, 95) },
+    // pale mint + apricot
+    [
+      { h: rand(125, 155), s: rand(12, 20), l: rand(91, 96) },
+      { h: rand(20, 34), s: rand(34, 50), l: rand(74, 82) }
+    ],
 
-  // soft lavender
-  { h: rand(255, 288), s: rand(14, 30), l: rand(89, 95) },
+    // powder aqua + warm blush
+    [
+      { h: rand(185, 205), s: rand(12, 20), l: rand(91, 96) },
+      { h: rand(342, 356), s: rand(34, 50), l: rand(74, 82) }
+    ],
 
-  // light color related to the accent
-  { h: wrapHue(accentHue + rand(-14, 14)), s: rand(14, 28), l: rand(89, 95) },
+    // pale butter + warm pink
+    [
+      { h: rand(46, 58), s: rand(14, 22), l: rand(91, 96) },
+      { h: rand(336, 352), s: rand(34, 50), l: rand(74, 82) }
+    ],
 
-  // light color related to the balance color
-  { h: wrapHue(balanceHue + rand(-12, 12)), s: rand(14, 28), l: rand(89, 95) }
-];
+    // cream + soft coral
+    [
+      { h: rand(38, 50), s: rand(10, 18), l: rand(93, 97) },
+      { h: rand(4, 18), s: rand(36, 52), l: rand(73, 82) }
+    ]
+  ];
 
-  const softOptions = [
-  // warm blush support
-  { h: rand(345, 360), s: rand(24, 38), l: rand(76, 84) },
-
-  // soft peach / apricot support
-  { h: rand(12, 30), s: rand(24, 42), l: rand(74, 84) },
-
-  // pale butter / warm yellow support
-  { h: rand(42, 58), s: rand(24, 40), l: rand(76, 86) },
-
-  // warm lavender-pink support
-  { h: rand(305, 335), s: rand(20, 36), l: rand(74, 84) },
-
-  // gentle coral-pink related to accent
-  { h: wrapHue(accentHue + rand(-12, 12)), s: rand(24, 40), l: rand(72, 84) },
-
-  // soft candy contrast related to balance
-  { h: wrapHue(balanceHue + rand(-16, 16)), s: rand(20, 34), l: rand(74, 86) }
-];
-
-  const lightColor = pick(lightOptions);
-
-let softColor = pick(softOptions);
-let softTries = 0;
-
-while (
-  softTries < 20 &&
-  (
-    Math.abs(softColor.l - lightColor.l) < 8 ||
-    softColor.s - lightColor.s < 8 ||
-    hueDistance(softColor.h, lightColor.h) < 18
-  )
-) {
-  softColor = pick(softOptions);
-  softTries++;
-}
-
-// If swatch 2 still lands too close to swatch 1, force it warmer/richer.
-if (
-  Math.abs(softColor.l - lightColor.l) < 8 ||
-  softColor.s - lightColor.s < 8
-) {
-  softColor = {
-    h: pick([12, 22, 34, 48, 325, 345]),
-    s: rand(28, 42),
-    l: clamp(lightColor.l - rand(9, 16), 72, 84)
-  };
-}
+  const chosenLightPair = pick(lightPairOptions);
+  const lightColor = chosenLightPair[0];
+  const softColor = chosenLightPair[1];
 
   return [
     lightColor,
