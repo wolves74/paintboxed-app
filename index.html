@@ -1067,25 +1067,48 @@ function chooseDarkLightness(vibe, accentSat) {
 
     // Swatch 4: cozy support color — earthy/muted only, never grassy/neon
   const cozySupportFamilies = [
-    { hueMin: 18,  hueMax: 30,  satMin: 26, satMax: 40, lightMin: 58, lightMax: 70 }, // dusty blush / clay
-    { hueMin: 38,  hueMax: 56,  satMin: 28, satMax: 42, lightMin: 58, lightMax: 68 }, // antique gold / muted mustard
-    { hueMin: 82,  hueMax: 98,  satMin: 14, satMax: 24, lightMin: 50, lightMax: 60 }, // soft sage
-    { hueMin: 58,  hueMax: 76,  satMin: 18, satMax: 28, lightMin: 42, lightMax: 54 }, // olive / moss
-    { hueMin: 205, hueMax: 222, satMin: 22, satMax: 36, lightMin: 50, lightMax: 64 }, // dusty blue
-    { hueMin: 278, hueMax: 300, satMin: 22, satMax: 34, lightMin: 42, lightMax: 56 }  // muted plum
-  ];
+  // warm cozy supports
+  { hueMin: 18, hueMax: 30, satMin: 24, satMax: 38, lightMin: 58, lightMax: 70 }, // dusty clay
+  { hueMin: 32, hueMax: 46, satMin: 22, satMax: 36, lightMin: 56, lightMax: 68 }, // caramel / tan
+  { hueMin: 42, hueMax: 56, satMin: 24, satMax: 38, lightMin: 56, lightMax: 66 }, // antique gold
 
-  const supportFamily = pick(cozySupportFamilies);
+  // muted cozy greens — expanded
+  { hueMin: 62, hueMax: 72, satMin: 12, satMax: 22, lightMin: 44, lightMax: 56 }, // mossy olive
+  { hueMin: 72, hueMax: 84, satMin: 10, satMax: 22, lightMin: 48, lightMax: 62 }, // lichen / khaki green
+  { hueMin: 84, hueMax: 96, satMin: 10, satMax: 22, lightMin: 52, lightMax: 66 }, // dusty sage
+  { hueMin: 96, hueMax: 108, satMin: 10, satMax: 20, lightMin: 50, lightMax: 64 }, // herbal sage
+  { hueMin: 108, hueMax: 122, satMin: 10, satMax: 20, lightMin: 46, lightMax: 60 }, // muted eucalyptus
+  { hueMin: 122, hueMax: 138, satMin: 8, satMax: 18, lightMin: 42, lightMax: 56 }, // smoky forest-sage
+  { hueMin: 145, hueMax: 165, satMin: 8, satMax: 18, lightMin: 40, lightMax: 56 }, // green-blue slate
 
-  let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
-  let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
-  let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
+  // other cozy contrast options
+  { hueMin: 200, hueMax: 222, satMin: 18, satMax: 32, lightMin: 48, lightMax: 62 }, // dusty blue
+  { hueMin: 220, hueMax: 238, satMin: 14, satMax: 28, lightMin: 42, lightMax: 56 }, // denim slate
+  { hueMin: 280, hueMax: 305, satMin: 16, satMax: 30, lightMin: 42, lightMax: 56 }, // muted plum
+  { hueMin: 320, hueMax: 340, satMin: 16, satMax: 30, lightMin: 46, lightMax: 60 }  // dusty berry
+];
 
-  // Extra Cozy safety rules for any green-ish result
-  if (balanceHue >= 58 && balanceHue <= 102) {
-    balanceSat = Math.min(balanceSat, 24);
+const supportFamily = pick(cozySupportFamilies);
+
+let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
+let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
+let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
+
+// Extra Cozy safety rule: any green must stay muted/earthy.
+if (balanceHue >= 58 && balanceHue <= 165) {
+  balanceSat = Math.min(balanceSat, 22);
+
+  // keep bright spring greens from happening
+  if (balanceHue >= 95 && balanceHue <= 140) {
+    balanceSat = Math.min(balanceSat, 18);
+    balanceLight = Math.min(balanceLight, 62);
+  }
+
+  // olive/moss can go a little deeper
+  if (balanceHue >= 58 && balanceHue <= 85) {
     balanceLight = Math.min(balanceLight, 58);
   }
+}
 
   // Swatch 5: relationship-based dark anchor.
   const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, refinedBalanceHue, "playful");
