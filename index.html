@@ -818,7 +818,7 @@ function chooseDarkLightness(vibe, accentSat) {
       return buildVintage(seedContext);
     }
 
-    function buildPlayful(seedContext) {
+   function buildPlayful(seedContext) {
   const playfulRecipes = [
     { name: "coral-aqua", accent: [8, 20], balance: [175, 200] },
     { name: "pink-lemon", accent: [325, 345], balance: [48, 62] },
@@ -857,10 +857,6 @@ function chooseDarkLightness(vibe, accentSat) {
     .slice(-8)
     .map(item => item.supportFamily)
     .filter(Boolean);
-
-  const accentSat = rand(58, 82);
-  const balanceSat = rand(40, 68);
-  const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "playful");
 
   const lightPairOptions = [
     // cool pale mint + warm peach
@@ -965,12 +961,36 @@ function chooseDarkLightness(vibe, accentSat) {
     pairTries++;
   }
 
+  // Swatch 3: playful accent, but capped so it does not go neon.
+  const accentSat = rand(48, 66);
+  const accentLight = rand(50, 64);
+
+  // Swatch 4: colorful balance, but not electric/primary-school.
+  let refinedBalanceHue = balanceHue;
+  let balanceTries = 0;
+
+  while (
+    balanceTries < 24 &&
+    hueDistance(refinedBalanceHue, accentHue) < 52
+  ) {
+    refinedBalanceHue = wrapHue(accentHue + pick([75, 95, 115, 135, 155, -75, -95, -115, -135, -155]));
+    balanceTries++;
+  }
+
+  const balanceSat = accentSat >= 60 ? rand(32, 48) : rand(36, 54);
+  const balanceLight = accentSat >= 60 ? rand(54, 66) : rand(52, 68);
+
+  // Swatch 5: relationship-based dark anchor.
+  const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, refinedBalanceHue, "playful");
+  const darkSat = chooseDarkSaturation("playful", accentSat);
+  const darkLight = chooseDarkLightness("playful", accentSat);
+
   return [
     lightColor,
     softColor,
-    { h: accentHue, s: accentSat, l: rand(48, 68) },
-    { h: balanceHue, s: balanceSat, l: rand(50, 74) },
-    { h: darkHue, s: chooseDarkSaturation("playful", accentSat), l: chooseDarkLightness("playful", accentSat) }
+    { h: accentHue, s: accentSat, l: accentLight },
+    { h: refinedBalanceHue, s: balanceSat, l: balanceLight },
+    { h: darkHue, s: darkSat, l: darkLight }
   ];
 }
 
