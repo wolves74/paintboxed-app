@@ -1065,33 +1065,26 @@ function chooseDarkLightness(vibe, accentSat) {
     accentLight = rand(54, 66);
   }
 
-  // Swatch 4: colorful balance, controlled and less primary-feeling.
-  let refinedBalanceHue = balanceHue;
-  let balanceTries = 0;
+    // Swatch 4: cozy support color — earthy/muted only, never grassy/neon
+  const cozySupportFamilies = [
+    { hueMin: 18,  hueMax: 30,  satMin: 26, satMax: 40, lightMin: 58, lightMax: 70 }, // dusty blush / clay
+    { hueMin: 38,  hueMax: 56,  satMin: 28, satMax: 42, lightMin: 58, lightMax: 68 }, // antique gold / muted mustard
+    { hueMin: 82,  hueMax: 98,  satMin: 14, satMax: 24, lightMin: 50, lightMax: 60 }, // soft sage
+    { hueMin: 58,  hueMax: 76,  satMin: 18, satMax: 28, lightMin: 42, lightMax: 54 }, // olive / moss
+    { hueMin: 205, hueMax: 222, satMin: 22, satMax: 36, lightMin: 50, lightMax: 64 }, // dusty blue
+    { hueMin: 278, hueMax: 300, satMin: 22, satMax: 34, lightMin: 42, lightMax: 56 }  // muted plum
+  ];
 
-  while (
-    balanceTries < 24 &&
-    hueDistance(refinedBalanceHue, accentHue) < 52
-  ) {
-    refinedBalanceHue = wrapHue(
-      accentHue + pick([75, 95, 115, 135, 155, -75, -95, -115, -135, -155])
-    );
-    balanceTries++;
-  }
+  const supportFamily = pick(cozySupportFamilies);
 
-  let balanceSat = accentSat >= 54 ? rand(28, 42) : rand(32, 48);
-  let balanceLight = accentSat >= 54 ? rand(56, 68) : rand(54, 68);
+  let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
+  let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
+  let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
 
-  // Purple / violet / blue-violet in swatch 4 needs extra restraint.
-  if (refinedBalanceHue >= 250 && refinedBalanceHue <= 315) {
-    balanceSat = rand(24, 38);
-    balanceLight = rand(58, 70);
-  }
-
-  // Yellow / lime / green in swatch 4 should not go neon.
-  if (refinedBalanceHue >= 45 && refinedBalanceHue <= 135) {
-    balanceSat = rand(28, 42);
-    balanceLight = rand(56, 70);
+  // Extra Cozy safety rules for any green-ish result
+  if (balanceHue >= 58 && balanceHue <= 102) {
+    balanceSat = Math.min(balanceSat, 24);
+    balanceLight = Math.min(balanceLight, 58);
   }
 
   // Swatch 5: relationship-based dark anchor.
