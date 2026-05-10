@@ -388,6 +388,118 @@
   </div>
 
   <script>
+    /*
+PAINTBOXED MASTER PALETTE DNA
+--------------------------------
+Every generated palette should feel intentional, collectible, balanced, and usable
+for pattern design — never random, neon, muddy, repetitive, or overly formulaic.
+
+CORE GOALS
+1. Healthy balance of light-to-dark.
+2. Healthy balance of warm-to-cool.
+3. Clear contrast without harshness.
+4. No neon / no primary-marker feeling.
+5. No repeated palette stories.
+6. No swatches too close in value, especially swatch 1 vs swatch 2.
+7. Every swatch should feel like it has a role.
+
+GENERAL RULES
+- Avoid palettes that feel flat, bland, overly samey, or over-structured.
+- Avoid repeated hue stories even if exact hex codes differ.
+- Avoid using multiple swatches that are too similar in lightness, saturation, or temperature.
+- Avoid all colors drifting too pastel, too muddy, too gray, or too saturated.
+- Avoid colors that feel fluorescent, loud, sharp, or synthetic.
+- Favor softened, curated, tasteful color.
+
+SATURATION RULES
+- Never allow any swatch to push into near-neon saturation.
+- Purples, pinks, magentas, electric blues, and lime greens must be especially controlled.
+- Bright colors are allowed, but they must feel softened, rounded, and design-friendly.
+- Saturation should feel lively, not screaming.
+
+VALUE / CONTRAST RULES
+- Each palette must contain:
+  - at least one clearly light swatch
+  - at least one clearly dark anchor
+  - enough value spread across the set to avoid flatness
+- Do not let all 5 swatches cluster in similar value ranges.
+- Swatch 1 and swatch 2 must have visible separation in value and/or temperature.
+- If swatch 1 is very light, swatch 2 must not feel like a barely-shifted duplicate.
+
+ANTI-REPEAT RULES
+- Reject palettes that are too similar to recent accepted palettes.
+- Similarity should be judged by:
+  - hue family structure
+  - warm/cool structure
+  - value structure
+  - saturation pattern
+  - dark anchor family
+  - overall palette story / emotional feel
+- Example of repeated story to avoid:
+  pale neutral + blush support + coral accent + cool balancing color + navy/plum dark
+- The generator should vary not just hex codes, but the entire palette relationship.
+
+SWATCH ROLE RULES
+Swatch 1: LIGHT OPENER
+- Should provide air, breathing room, and softness.
+- Usually light, but not always just white/off-white.
+- Can be soft cream, pale pink, pale butter, misty sage, powder blue, faded lilac, warm ivory, etc.
+- Must not recycle the same whitish family too often.
+- Should not be too close to swatch 2.
+
+Swatch 2: SOFT SUPPORT
+- Should be clearly distinct from swatch 1.
+- Should usually feel a touch warmer, deeper, or more colored than swatch 1.
+- Should not constantly default to the same nude/blush/apricot family.
+- Can act as a bridge between light softness and the bolder middle palette colors.
+- Must avoid being flat, boring, or nearly identical to swatch 1.
+
+Swatch 3: EXPRESSIVE ACCENT
+- Main personality color.
+- Can be colorful and playful, but must stay controlled.
+- Should not feel neon, primary, or toy-like.
+- Must avoid repeated overuse of the same hot pink, bright purple, or overly sharp coral behavior.
+
+Swatch 4: BALANCING COLOR
+- Should support or counterbalance swatch 3.
+- May be cooler, earthier, fresher, dustier, or moodier depending on palette direction.
+- Should add balance, not chaos.
+- Should not become another version of swatch 3.
+- Should not feel random or disconnected.
+
+Swatch 5: DARK ANCHOR
+- Must ground the palette.
+- Should be relationship-based, not a fixed repeating dark lane.
+- Dark anchor should respond to the accent:
+  - if accent is warm and bold, dark anchor often shifts cooler / slate / forest / deep teal / plum / inky blue
+  - if accent is cool, dark anchor may shift warmer / olive / espresso / berry / earthy brown
+- Must not overpower the palette.
+- Must not keep repeating the same dark brown / same navy / same dark purple story.
+
+WARM / COOL BALANCE RULES
+- Most palettes should contain both warm and cool influence, even if one side dominates.
+- Avoid all-warm or all-cool palettes unless intentionally appropriate for the vibe.
+- Aim for pleasing temperature interplay, not random opposites.
+
+PATTERN-FRIENDLY RULE
+- All palette decisions should support beautiful repeat patterns.
+- Palettes should feel harmonious when assigned to intentional roles in pattern previews.
+- Colors should look good together in repeated use, not just as isolated swatches.
+
+FINAL QUALITY TEST
+Before accepting a palette, ask:
+- Does it feel balanced from light to dark?
+- Does it have healthy warm/cool interplay?
+- Is there enough contrast?
+- Are any swatches too similar?
+- Is anything too neon, too primary, or too loud?
+- Does swatch 1 repeat the same pale story too often?
+- Does swatch 2 feel distinct and useful?
+- Does the palette avoid recent repeated stories?
+- Does the palette feel tasteful, collectible, and premium?
+
+If the answer to any of those is no, regenerate or adjust.
+*/
     const state = {
       size: 5,
       vibe: "playful",
