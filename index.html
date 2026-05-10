@@ -904,11 +904,33 @@ function chooseDarkLightness(vibe, accentSat) {
   const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "playful");
 
   const lightOptions = [
-    { h: lightHue, s: rand(4, 10), l: rand(94, 98) },
-    { h: lightHue, s: rand(10, 18), l: rand(91, 96) },
-    { h: wrapHue(balanceHue + rand(-10, 10)), s: rand(8, 18), l: rand(90, 95) },
-    { h: wrapHue(accentHue + rand(-14, 14)), s: rand(7, 16), l: rand(91, 96) }
-  ];
+  // clean airy white
+  { h: lightHue, s: rand(4, 10), l: rand(95, 98) },
+
+  // soft blush / pale pink
+  { h: rand(340, 358), s: rand(16, 30), l: rand(89, 95) },
+
+  // pale peach / apricot
+  { h: rand(12, 30), s: rand(16, 32), l: rand(89, 95) },
+
+  // soft butter / earthy yellow
+  { h: rand(42, 58), s: rand(18, 34), l: rand(88, 94) },
+
+  // pale mint
+  { h: rand(120, 155), s: rand(14, 30), l: rand(89, 95) },
+
+  // powder aqua / soft blue
+  { h: rand(180, 210), s: rand(14, 30), l: rand(89, 95) },
+
+  // soft lavender
+  { h: rand(255, 288), s: rand(14, 30), l: rand(89, 95) },
+
+  // light color related to the accent
+  { h: wrapHue(accentHue + rand(-14, 14)), s: rand(14, 28), l: rand(89, 95) },
+
+  // light color related to the balance color
+  { h: wrapHue(balanceHue + rand(-12, 12)), s: rand(14, 28), l: rand(89, 95) }
+];
 
   const softOptions = [
     { h: softHue, s: rand(16, 30), l: rand(72, 84) },
