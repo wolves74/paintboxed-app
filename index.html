@@ -859,107 +859,88 @@ function chooseDarkLightness(vibe, accentSat) {
     .filter(Boolean);
 
   const lightPairOptions = [
-    // cool pale mint + warm peach
-    [
-      { h: rand(125, 152), s: rand(18, 32), l: rand(88, 94) },
-      { h: rand(18, 32), s: rand(38, 54), l: rand(72, 82) }
-    ],
+  // airy cream + warm peach
+  [
+    { h: rand(36, 50), s: rand(14, 24), l: rand(92, 96) },
+    { h: rand(16, 30), s: rand(32, 46), l: rand(76, 84) }
+  ],
 
-    // pale aqua + warm rose
-    [
-      { h: rand(180, 205), s: rand(18, 32), l: rand(88, 94) },
-      { h: rand(338, 354), s: rand(38, 54), l: rand(72, 82) }
-    ],
+  // pale blush + golden peach
+  [
+    { h: rand(340, 356), s: rand(16, 26), l: rand(92, 96) },
+    { h: rand(28, 42), s: rand(34, 48), l: rand(76, 84) }
+  ],
 
-    // pale lavender + golden peach
-    [
-      { h: rand(260, 288), s: rand(18, 32), l: rand(88, 94) },
-      { h: rand(30, 44), s: rand(38, 54), l: rand(72, 82) }
-    ],
+  // powder blue + warm blush
+  [
+    { h: rand(198, 220), s: rand(14, 24), l: rand(92, 96) },
+    { h: rand(340, 356), s: rand(32, 46), l: rand(76, 84) }
+  ],
 
-    // pale blush + butter yellow
-    [
-      { h: rand(340, 356), s: rand(18, 32), l: rand(88, 94) },
-      { h: rand(46, 58), s: rand(40, 56), l: rand(72, 82) }
-    ],
+  // pale mint + apricot
+  [
+    { h: rand(125, 155), s: rand(14, 24), l: rand(92, 96) },
+    { h: rand(20, 34), s: rand(34, 50), l: rand(76, 84) }
+  ],
 
-    // soft butter base + watermelon pink
-    [
-      { h: rand(46, 58), s: rand(20, 34), l: rand(88, 94) },
-      { h: rand(344, 358), s: rand(40, 58), l: rand(72, 82) }
-    ],
+  // pale lavender + warm peach
+  [
+    { h: rand(265, 288), s: rand(14, 24), l: rand(92, 96) },
+    { h: rand(16, 30), s: rand(34, 48), l: rand(76, 84) }
+  ],
 
-    // pale peach base + soft violet-pink
-    [
-      { h: rand(16, 30), s: rand(20, 34), l: rand(88, 94) },
-      { h: rand(305, 328), s: rand(36, 52), l: rand(72, 82) }
-    ],
+  // pale butter + warm pink
+  [
+    { h: rand(48, 60), s: rand(16, 28), l: rand(91, 96) },
+    { h: rand(338, 354), s: rand(34, 48), l: rand(76, 84) }
+  ],
 
-    // warm cream base + melon
-    [
-      { h: rand(36, 50), s: rand(18, 30), l: rand(89, 95) },
-      { h: rand(8, 20), s: rand(42, 58), l: rand(72, 82) }
-    ],
+  // soft sage light + peachy nude
+  [
+    { h: rand(95, 125), s: rand(12, 22), l: rand(92, 96) },
+    { h: rand(18, 34), s: rand(30, 44), l: rand(76, 84) }
+  ],
 
-    // pale lilac-pink + honey
-    [
-      { h: rand(300, 328), s: rand(18, 32), l: rand(88, 94) },
-      { h: rand(38, 50), s: rand(40, 56), l: rand(72, 82) }
-    ],
+  // pale lilac-pink + honey cream
+  [
+    { h: rand(300, 328), s: rand(14, 24), l: rand(92, 96) },
+    { h: rand(38, 52), s: rand(34, 48), l: rand(76, 84) }
+  ]
+];
 
-    // pale sky + coral peach
-    [
-      { h: rand(198, 218), s: rand(18, 32), l: rand(88, 94) },
-      { h: rand(8, 22), s: rand(42, 58), l: rand(72, 82) }
-    ],
+const recentSupportFamilies = (state.history.playful || [])
+  .slice(-8)
+  .map(item => item.supportFamily)
+  .filter(Boolean);
 
-    // pale yellow + warm pink
-    [
-      { h: rand(48, 62), s: rand(20, 34), l: rand(88, 94) },
-      { h: rand(334, 352), s: rand(40, 56), l: rand(72, 82) }
-    ],
+let possiblePairs = lightPairOptions.filter(pair => {
+  const supportFamily = hueFamily(pair[1].h);
+  return !recentSupportFamilies.includes(supportFamily);
+});
 
-    // pale apricot + orchid support
-    [
-      { h: rand(24, 38), s: rand(20, 34), l: rand(88, 94) },
-      { h: rand(285, 315), s: rand(36, 52), l: rand(72, 82) }
-    ],
+if (!possiblePairs.length) {
+  possiblePairs = lightPairOptions;
+}
 
-    // very pale rose + soft tangerine
-    [
-      { h: rand(340, 354), s: rand(18, 30), l: rand(89, 95) },
-      { h: rand(24, 38), s: rand(42, 58), l: rand(72, 82) }
-    ]
-  ];
+let chosenLightPair = pick(possiblePairs);
+let lightColor = chosenLightPair[0];
+let softColor = chosenLightPair[1];
 
-  let possiblePairs = lightPairOptions.filter(pair => {
-    const supportFamily = hueFamily(pair[1].h);
-    return !recentSupportFamilies.includes(supportFamily);
-  });
+let pairTries = 0;
 
-  if (!possiblePairs.length) {
-    possiblePairs = lightPairOptions;
-  }
-
-  let chosenLightPair = pick(possiblePairs);
-  let lightColor = chosenLightPair[0];
-  let softColor = chosenLightPair[1];
-
-  let pairTries = 0;
-
-  while (
-    pairTries < 30 &&
-    (
-      Math.abs(lightColor.l - softColor.l) < 10 ||
-      softColor.s - lightColor.s < 12 ||
-      hueDistance(lightColor.h, softColor.h) < 20
-    )
-  ) {
-    chosenLightPair = pick(possiblePairs);
-    lightColor = chosenLightPair[0];
-    softColor = chosenLightPair[1];
-    pairTries++;
-  }
+while (
+  pairTries < 30 &&
+  (
+    Math.abs(lightColor.l - softColor.l) < 10 ||
+    softColor.s - lightColor.s < 10 ||
+    hueDistance(lightColor.h, softColor.h) < 18
+  )
+) {
+  chosenLightPair = pick(possiblePairs);
+  lightColor = chosenLightPair[0];
+  softColor = chosenLightPair[1];
+  pairTries++;
+}
 
   // Swatch 3: playful accent, but capped so it does not go neon.
   const accentSat = rand(48, 66);
