@@ -1151,15 +1151,21 @@ function buildVintage(seedContext) {
 }
 
 function makePaletteMemorySignature(palette, vibe) {
+  const light = palette[0];
+  const support = palette[1];
   const mainAccent = palette[2];
   const balance = palette[3];
   const dark = palette[4];
 
   return {
+    lightHue: light.h,
+    supportHue: support.h,
     mainAccentHue: mainAccent.h,
     balanceHue: balance.h,
     darkHue: dark.h,
 
+    lightFamily: hueFamily(light.h),
+    supportFamily: hueFamily(support.h),
     mainAccentFamily: hueFamily(mainAccent.h),
     balanceFamily: hueFamily(balance.h),
     darkFamily: hueFamily(dark.h),
