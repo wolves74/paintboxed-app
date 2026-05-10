@@ -4,498 +4,528 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paintboxed Palette Creator</title>
+
   <style>
-    :root{
-      --bg:#f3f0ea;
-      --card:#fbfaf7;
-      --ink:#2f2c28;
-      --muted:#6f6a63;
-      --line:#3b3732;
-      --accent:#d9cfba;
-      --shadow:#ddd2bc;
+    :root {
+      --bg: #f6f1e8;
+      --card: #fffdf8;
+      --ink: #2f2c28;
+      --muted: #6d675f;
+      --line: #2f2c28;
+      --shadow: #d9cdb7;
     }
 
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--ink);
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
     }
 
-    .wrap{
-      max-width:1120px;
-      margin:0 auto;
-      padding:22px 18px 60px;
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 70px;
     }
 
-    h1{
-      text-align:center;
-      font-size:clamp(2.1rem, 4vw, 3.6rem);
-      letter-spacing:.06em;
-      margin:10px 0 22px;
+    h1 {
+      text-align: center;
+      font-size: clamp(2.1rem, 4vw, 3.8rem);
+      letter-spacing: .06em;
+      margin: 8px 0 8px;
     }
 
-    .section-line{
-      border-top:4px solid #c8c4be;
-      margin:20px 0 26px;
+    .subhead {
+      text-align: center;
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto 28px;
+      line-height: 1.45;
+      font-size: 1.05rem;
     }
 
-    .controls{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:18px;
-      margin-bottom:22px;
+    .panel {
+      background: var(--card);
+      border: 4px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 8px 8px 0 var(--shadow);
+      margin-bottom: 20px;
     }
 
-    .panel{
-      background:var(--card);
-      border:4px solid var(--line);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:10px 10px 0 var(--shadow);
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
     }
 
-    .panel h2,
-    .group-title{
-      margin:0 0 12px;
-      font-size:1.25rem;
-      letter-spacing:.05em;
+    .section-title {
+      font-size: 1.25rem;
+      letter-spacing: .05em;
+      margin: 0 0 12px;
+      text-transform: uppercase;
     }
 
-    .helper{
-      color:var(--muted);
-      font-size:.96rem;
-      line-height:1.4;
-      margin-top:8px;
+    .helper {
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.4;
+      margin-top: 8px;
     }
 
-    .stack{display:flex; flex-direction:column; gap:10px;}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-
-    input[type="text"]{
-      width:100%;
-      padding:14px 16px;
-      border:3px solid var(--line);
-      border-radius:16px;
-      background:white;
-      font-family:inherit;
-      font-size:1rem;
-      color:var(--ink);
+    input[type="text"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 13px 14px;
+      border: 3px solid var(--line);
+      border-radius: 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--ink);
     }
 
-    input[type="file"]{
-      width:100%;
-      padding:12px;
-      border:3px solid var(--line);
-      border-radius:16px;
-      background:white;
-      font-family:inherit;
+    input[type="color"] {
+      width: 86px;
+      height: 86px;
+      border: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
     }
 
-    input[type="color"]{
-      width:84px;
-      height:84px;
-      border:none;
-      background:none;
-      padding:0;
-      cursor:pointer;
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    .color-wheel-wrap{
-      display:flex;
-      align-items:center;
-      gap:14px;
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
     }
 
-    .big-btn{
-      display:inline-flex;
-      justify-content:center;
-      align-items:center;
-      min-height:66px;
-      padding:14px 24px;
-      border:4px solid var(--line);
-      border-radius:22px;
-      background:#2d2a26;
-      color:#fffdf8;
-      font-family:inherit;
-      font-size:1.25rem;
-      letter-spacing:.08em;
-      cursor:pointer;
-      box-shadow:8px 8px 0 var(--shadow);
-      text-transform:uppercase;
+    .chip,
+    .main-btn,
+    .secondary-btn {
+      border: 4px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      color: var(--ink);
+      padding: 13px 18px;
+      font-family: inherit;
+      font-size: 1.05rem;
+      cursor: pointer;
     }
 
-    .big-btn:hover{transform:translateY(-1px);}
-    .big-btn.secondary{
-      background:var(--card);
-      color:var(--ink);
+    .chip {
+      min-width: 120px;
     }
 
-    .btn-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin:14px 0 8px;
+    .chip.active {
+      background: var(--ink);
+      color: #fffdf8;
+      box-shadow: 6px 6px 0 var(--shadow);
     }
 
-    .chip{
-      padding:14px 22px;
-      border:4px solid var(--line);
-      border-radius:20px;
-      background:var(--card);
-      color:var(--ink);
-      font-family:inherit;
-      font-size:1.15rem;
-      cursor:pointer;
-      min-width:140px;
-      text-align:center;
+    .main-btn {
+      background: var(--ink);
+      color: #fffdf8;
+      box-shadow: 7px 7px 0 var(--shadow);
+      font-size: 1.25rem;
+      min-height: 58px;
     }
 
-    .chip.active{
-      background:#2d2a26;
-      color:#fffdf8;
-      box-shadow:8px 8px 0 var(--shadow);
+    .secondary-btn {
+      background: var(--card);
+      color: var(--ink);
+      min-height: 58px;
     }
 
-    .toolbar{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-      margin:26px 0 16px;
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 22px 0;
     }
 
-    .toolbar-left,
-    .toolbar-right{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
+    .status {
+      background: #fffdf8;
+      border: 3px solid #d1c8b8;
+      border-radius: 18px;
+      padding: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 20px;
     }
 
-    .toolbar-note{
-      color:var(--muted);
-      font-size:1rem;
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
     }
 
-    .palette-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      margin:10px 0 18px;
-      flex-wrap:wrap;
+    .swatch-card {
+      text-align: center;
     }
 
-    .palette-head h3{
-      font-size:clamp(2rem,4vw,3.1rem);
-      margin:0;
-      letter-spacing:.04em;
+    .swatch {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border: 4px solid var(--line);
+      border-radius: 20px;
+      cursor: pointer;
+      position: relative;
     }
 
-    .mini-link-btn{
-      border:none;
-      background:none;
-      font-family:inherit;
-      font-size:1.05rem;
-      color:var(--ink);
-      cursor:pointer;
-      padding:4px 0;
+    .swatch.locked::after {
+      content: "LOCKED";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(47, 44, 40, .9);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: .65rem;
+      letter-spacing: .08em;
     }
 
-    .mini-link-btn:hover{text-decoration:underline;}
-
-    .palette-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-      gap:18px;
-      margin-bottom:12px;
+    .hex {
+      margin-top: 8px;
+      color: var(--muted);
+      letter-spacing: .05em;
+      font-size: .95rem;
     }
 
-    .swatch-card{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:10px;
+    .heart {
+      border: none;
+      background: transparent;
+      font-size: 1.7rem;
+      cursor: pointer;
+      color: var(--ink);
+      line-height: 1;
     }
 
-    .swatch{
-      width:100%;
-      aspect-ratio:1/1;
-      border:5px solid var(--line);
-      border-radius:22px;
-      cursor:pointer;
-      position:relative;
-      transition:transform .12s ease;
-      background:#eee;
+    .pattern-shell {
+      border: 4px solid var(--line);
+      border-radius: 24px;
+      padding: 14px;
+      background: var(--card);
+      box-shadow: 8px 8px 0 var(--shadow);
+      margin-top: 24px;
     }
 
-    .swatch:hover{transform:translateY(-2px);}
-
-    .swatch.locked::after{
-      content:"LOCKED";
-      position:absolute;
-      top:10px;
-      right:10px;
-      padding:5px 8px;
-      background:rgba(47,44,40,.9);
-      color:#fff;
-      border-radius:999px;
-      font-size:.68rem;
-      letter-spacing:.08em;
+    .pattern-preview {
+      min-height: 440px;
+      border: 3px solid var(--line);
+      border-radius: 20px;
+      background-image: url("pumpkin-pattern.png");
+      background-repeat: repeat;
+      background-size: 260px 260px;
+      background-position: center;
+      background-color: #fffdf8;
     }
 
-    .hex{
-      font-size:1rem;
-      color:#65615a;
-      letter-spacing:.05em;
+    .pattern-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-top: 16px;
     }
 
-    .lock-btn{
-      border:none;
-      background:none;
-      font-size:2rem;
-      line-height:1;
-      cursor:pointer;
-      color:var(--line);
+    .pattern-controls label {
+      flex: 1 1 220px;
+      color: var(--muted);
     }
 
-    .status-box{
-      background:var(--card);
-      border:3px solid #c9c4bd;
-      border-radius:18px;
-      padding:14px 16px;
-      color:var(--muted);
-      line-height:1.5;
-      margin:16px 0 24px;
-      font-size:1rem;
+    input[type="range"] {
+      width: 100%;
     }
 
-    .preview-wrap{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-      margin-top:8px;
+    .preview-img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border: 3px solid var(--line);
+      border-radius: 16px;
+      display: none;
+      margin-top: 10px;
     }
 
-    .preview{
-      width:120px;
-      height:120px;
-      border:4px solid var(--line);
-      border-radius:18px;
-      object-fit:cover;
-      background:#ebe7df;
-      display:none;
+    .seed-pill {
+      display: inline-block;
+      padding: 7px 10px;
+      border: 2px solid #c8beab;
+      border-radius: 999px;
+      margin: 6px 5px 0 0;
+      font-size: .88rem;
+      color: #514d47;
+      background: #eee5d6;
     }
 
-    .seed-pill{
-      display:inline-block;
-      padding:8px 12px;
-      background:#ebe7de;
-      border:2px solid #c5bfae;
-      border-radius:999px;
-      font-size:.92rem;
-      color:#59554f;
-      margin:4px 6px 0 0;
-    }
+    @media (max-width: 640px) {
+      .chip {
+        flex: 1 1 calc(50% - 10px);
+      }
 
-    .footer-note{
-      color:var(--muted);
-      font-size:1rem;
-      margin-top:10px;
-    }
+      .main-btn,
+      .secondary-btn {
+        width: 100%;
+      }
 
-    @media (max-width:640px){
-      .chip{min-width:unset; flex:1 1 calc(50% - 10px);}
-      .big-btn{width:100%;}
-      .toolbar{align-items:stretch;}
-      .toolbar-left,.toolbar-right{width:100%;}
+      .pattern-preview {
+        min-height: 330px;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <h1>PALETTE CREATOR</h1>
+    <h1>Paintboxed</h1>
+    <p class="subhead">
+      Create balanced, thoughtful palettes with strong light/dark contrast, saturation contrast, and vibe-based color logic.
+    </p>
 
-    <div class="controls">
-      <div class="panel">
-        <h2>COLOR WHEEL</h2>
-        <div class="color-wheel-wrap">
-          <input id="colorPicker" type="color" value="#c46f54" />
+    <div class="grid">
+      <section class="panel">
+        <h2 class="section-title">Color Wheel</h2>
+        <div class="color-row">
+          <input id="colorPicker" type="color" value="#C46F54" />
           <div>
-            <div style="font-size:1.15rem; margin-bottom:4px;">Pick a seed color</div>
-            <div class="helper">Use this when you want one starting color to guide the palette.</div>
+            <strong>Pick a seed color</strong>
+            <div class="helper">The generator will harmonize around this color.</div>
           </div>
         </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Hex Code</h2>
+        <input id="hexInput" type="text" placeholder="Enter a hex like #C46F54" />
+        <div class="helper">A valid hex overrides the color wheel.</div>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Upload Image</h2>
+        <input id="imageUpload" type="file" accept="image/*" />
+        <div class="helper">Image upload extracts color seeds for the palette brain.</div>
+        <img id="imagePreview" class="preview-img" alt="Uploaded image preview" />
+        <div id="seedList"></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2 class="section-title">Palette Size</h2>
+      <div id="sizeButtons" class="btn-row">
+        <button class="chip active" data-size="5">5 Colors</button>
+        <button class="chip" data-size="10">10 Colors</button>
+        <button class="chip" data-size="20">20 Colors</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Pick a Vibe</h2>
+      <div id="vibeButtons" class="btn-row">
+        <button class="chip active" data-vibe="playful">Playful</button>
+        <button class="chip" data-vibe="cozy">Cozy</button>
+        <button class="chip" data-vibe="moody">Moody</button>
+        <button class="chip" data-vibe="nature">Nature</button>
+        <button class="chip" data-vibe="coastal">Coastal</button>
+        <button class="chip" data-vibe="vintage">Vintage</button>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="generateBtn" class="main-btn">Generate Palette ✨</button>
+      <button id="unlockBtn" class="secondary-btn">Unlock All ♡</button>
+      <button id="exportBtn" class="secondary-btn">Export Hex Codes</button>
+    </div>
+
+    <div id="statusBox" class="status">
+      Ready. Generate a palette to begin.
+    </div>
+
+    <section class="panel">
+      <h2 class="section-title">Your Palette</h2>
+      <div id="paletteGrid" class="palette-grid"></div>
+    </section>
+
+    <section class="pattern-shell">
+      <h2 class="section-title">Pumpkin Pattern Preview</h2>
+      <div id="patternPreview" class="pattern-preview"></div>
+
+      <div class="pattern-controls">
+        <label>
+          Pattern Scale
+          <input id="scaleSlider" type="range" min="80" max="220" value="130" />
+        </label>
+
+        <label>
+          Background
+          <select id="backgroundSelect">
+            <option value="palette-light">Use palette light color</option>
+            <option value="#FFFFFF">White</option>
+            <option value="#FFFDF8">Warm White</option>
+            <option value="#F6F1E8">Cream</option>
+          </select>
+        </label>
       </div>
 
-      <div class="panel">
-        <h2>HEX CODE</h2>
-        <div class="stack">
-          <input id="hexInput" type="text" placeholder="Enter a hex like #C46F54" />
-          <div class="helper">If a valid hex is entered, it takes priority over the color wheel.</div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>UPLOAD IMAGE</h2>
-        <div class="stack">
-          <input id="imageUpload" type="file" accept="image/*" />
-          <div class="helper">This now extracts real image color seeds and uses them to build harmonized palettes.</div>
-          <div class="preview-wrap">
-            <img id="imagePreview" class="preview" alt="Uploaded preview" />
-            <div id="seedList"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-line"></div>
-
-    <div class="group-title">1. PALETTE SIZE</div>
-    <div id="sizeButtons" class="btn-row">
-      <button class="chip active" data-size="5">5 Colors</button>
-      <button class="chip" data-size="10">10 Colors</button>
-      <button class="chip" data-size="20">20 Colors</button>
-    </div>
-
-    <div class="group-title" style="margin-top:28px;">2. PICK A VIBE</div>
-    <div id="vibeButtons" class="btn-row">
-      <button class="chip active" data-vibe="playful">Playful</button>
-      <button class="chip" data-vibe="cozy">Cozy</button>
-      <button class="chip" data-vibe="moody">Moody</button>
-      <button class="chip" data-vibe="fresh">Fresh</button>
-    </div>
-
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <button id="generateBtn" class="big-btn">Generate Palette ✨</button>
-      </div>
-      <div class="toolbar-right">
-        <button id="unlockBtn" class="big-btn secondary">Unlock All ♡</button>
-      </div>
-    </div>
-
-    <div class="status-box" id="statusBox">
-      Ready. This generator now scores palettes for value contrast, saturation contrast, hue spacing, and vibe fit.
-    </div>
-
-    <div class="section-line"></div>
-
-    <div class="palette-head">
-      <h3>4. YOUR PALETTE</h3>
-      <button id="unlockTopBtn" class="mini-link-btn">Unlock All ♡</button>
-    </div>
-
-    <div id="paletteGrid" class="palette-grid"></div>
-
-    <div class="footer-note">
-      Tap a swatch to lock it. Locked colors stay when you regenerate, as long as you stay in the same palette size.
-    </div>
+      <p class="helper">
+        This uses <strong>pumpkin-pattern.png</strong> as a repeating PNG background. SVG role-based recoloring can come later.
+      </p>
+    </section>
   </div>
 
   <script>
     const state = {
       size: 5,
-      vibe: 'playful',
+      vibe: "playful",
       palette: [],
       locked: [],
       imageSeeds: [],
-      sourceLabel: 'color wheel'
+      history: {
+        playful: [],
+        cozy: [],
+        moody: [],
+        nature: [],
+        coastal: [],
+        vintage: []
+      }
     };
 
-    const colorPicker = document.getElementById('colorPicker');
-    const hexInput = document.getElementById('hexInput');
-    const imageUpload = document.getElementById('imageUpload');
-    const imagePreview = document.getElementById('imagePreview');
-    const seedList = document.getElementById('seedList');
-    const paletteGrid = document.getElementById('paletteGrid');
-    const statusBox = document.getElementById('statusBox');
+    const colorPicker = document.getElementById("colorPicker");
+    const hexInput = document.getElementById("hexInput");
+    const imageUpload = document.getElementById("imageUpload");
+    const imagePreview = document.getElementById("imagePreview");
+    const seedList = document.getElementById("seedList");
+    const sizeButtons = document.getElementById("sizeButtons");
+    const vibeButtons = document.getElementById("vibeButtons");
+    const generateBtn = document.getElementById("generateBtn");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const paletteGrid = document.getElementById("paletteGrid");
+    const statusBox = document.getElementById("statusBox");
+    const patternPreview = document.getElementById("patternPreview");
+    const scaleSlider = document.getElementById("scaleSlider");
+    const backgroundSelect = document.getElementById("backgroundSelect");
 
-    const sizeButtons = document.getElementById('sizeButtons');
-    const vibeButtons = document.getElementById('vibeButtons');
-    const generateBtn = document.getElementById('generateBtn');
-    const unlockBtn = document.getElementById('unlockBtn');
-    const unlockTopBtn = document.getElementById('unlockTopBtn');
+    function clamp(n, min, max) {
+      return Math.min(max, Math.max(min, n));
+    }
 
-    function clamp(n, min, max){ return Math.min(max, Math.max(min, n)); }
-    function rand(min, max){ return Math.random() * (max - min) + min; }
-    function randi(min, max){ return Math.floor(rand(min, max + 1)); }
-    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
-    function wrapHue(h){ return ((h % 360) + 360) % 360; }
-    function hueDistance(a, b){
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function wrapHue(h) {
+      return ((h % 360) + 360) % 360;
+    }
+
+    function hueDistance(a, b) {
       const d = Math.abs(wrapHue(a) - wrapHue(b));
       return Math.min(d, 360 - d);
     }
-    function normalizeHex(value){
-      if(!value) return null;
-      let v = value.trim().replace(/^#/, '');
-      if(v.length === 3){
-        v = v.split('').map(ch => ch + ch).join('');
+
+    function normalizeHex(value) {
+      if (!value) return null;
+      let v = value.trim().replace(/^#/, "");
+      if (v.length === 3) {
+        v = v.split("").map(ch => ch + ch).join("");
       }
-      if(!/^[0-9a-fA-F]{6}$/.test(v)) return null;
-      return '#' + v.toUpperCase();
+      if (!/^[0-9a-fA-F]{6}$/.test(v)) return null;
+      return "#" + v.toUpperCase();
     }
-    function rgbToHex(r,g,b){
-      return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
+
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map(v => v.toString(16).padStart(2, "0")).join("").toUpperCase();
     }
-    function hexToRgb(hex){
+
+    function hexToRgb(hex) {
       const h = normalizeHex(hex);
-      if(!h) return null;
       const clean = h.slice(1);
       return {
-        r: parseInt(clean.slice(0,2),16),
-        g: parseInt(clean.slice(2,4),16),
-        b: parseInt(clean.slice(4,6),16)
+        r: parseInt(clean.slice(0, 2), 16),
+        g: parseInt(clean.slice(2, 4), 16),
+        b: parseInt(clean.slice(4, 6), 16)
       };
     }
-    function rgbToHsl(r, g, b){
-      r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r,g,b), min = Math.min(r,g,b);
-      let h, s, l = (max + min) / 2;
 
-      if(max === min){
-        h = s = 0;
-      } else {
+    function rgbToHsl(r, g, b) {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+
+      let h = 0;
+      let s = 0;
+      const l = (max + min) / 2;
+
+      if (max !== min) {
         const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch(max){
-          case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
-          case g: h = ((b - r) / d + 2); break;
-          case b: h = ((r - g) / d + 4); break;
-        }
+
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        if (max === g) h = (b - r) / d + 2;
+        if (max === b) h = (r - g) / d + 4;
+
         h *= 60;
       }
 
       return {
-        h: wrapHue(h || 0),
-        s: Math.round((s || 0) * 100),
+        h: wrapHue(h),
+        s: Math.round(s * 100),
         l: Math.round(l * 100)
       };
     }
-    function hexToHsl(hex){
+
+    function hexToHsl(hex) {
       const rgb = hexToRgb(hex);
       return rgbToHsl(rgb.r, rgb.g, rgb.b);
     }
-    function hslToRgb(h, s, l){
+
+    function hslToRgb(h, s, l) {
       h = wrapHue(h);
       s /= 100;
       l /= 100;
 
-      const c = (1 - Math.abs(2*l - 1)) * s;
+      const c = (1 - Math.abs(2 * l - 1)) * s;
       const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-      const m = l - c/2;
-      let r=0,g=0,b=0;
+      const m = l - c / 2;
 
-      if(h < 60){ r=c; g=x; b=0; }
-      else if(h < 120){ r=x; g=c; b=0; }
-      else if(h < 180){ r=0; g=c; b=x; }
-      else if(h < 240){ r=0; g=x; b=c; }
-      else if(h < 300){ r=x; g=0; b=c; }
-      else { r=c; g=0; b=x; }
+      let r = 0;
+      let g = 0;
+      let b = 0;
+
+      if (h < 60) {
+        r = c; g = x; b = 0;
+      } else if (h < 120) {
+        r = x; g = c; b = 0;
+      } else if (h < 180) {
+        r = 0; g = c; b = x;
+      } else if (h < 240) {
+        r = 0; g = x; b = c;
+      } else if (h < 300) {
+        r = x; g = 0; b = c;
+      } else {
+        r = c; g = 0; b = x;
+      }
 
       return {
         r: Math.round((r + m) * 255),
@@ -503,16 +533,17 @@
         b: Math.round((b + m) * 255)
       };
     }
-    function hslToHex(h, s, l){
-      const rgb = hslToRgb(h,s,l);
+
+    function hslToHex(h, s, l) {
+      const rgb = hslToRgb(h, s, l);
       return rgbToHex(rgb.r, rgb.g, rgb.b);
     }
 
-    function copyColor(c){
-      return {h:c.h, s:c.s, l:c.l};
+    function copyColor(c) {
+      return { h: c.h, s: c.s, l: c.l };
     }
 
-    function withShift(color, dh=0, ds=0, dl=0){
+    function shiftColor(color, dh, ds, dl) {
       return {
         h: wrapHue(color.h + dh),
         s: clamp(Math.round(color.s + ds), 0, 100),
@@ -520,559 +551,561 @@
       };
     }
 
-    function nearestNotTooPrimary(h){
-      const primaries = [0, 60, 120, 180, 240, 300];
-      for(const p of primaries){
-        if(hueDistance(h, p) < 8){
-          h = wrapHue(h + 12);
-        }
-      }
-      return h;
-    }
-
-    function getSeedContext(){
+    function getSeedContext() {
       const hex = normalizeHex(hexInput.value);
-      if(hex){
-        state.sourceLabel = 'hex input';
-        return { type:'hex', seeds:[hexToHsl(hex)] };
+
+      if (hex) {
+        return {
+          label: "hex input",
+          seeds: [hexToHsl(hex)]
+        };
       }
-      if(state.imageSeeds.length){
-        state.sourceLabel = 'uploaded image';
-        return { type:'image', seeds: state.imageSeeds.map(copyColor) };
+
+      if (state.imageSeeds.length) {
+        return {
+          label: "uploaded image",
+          seeds: state.imageSeeds.map(copyColor)
+        };
       }
-      state.sourceLabel = 'color wheel';
-      return { type:'wheel', seeds:[hexToHsl(colorPicker.value)] };
+
+      return {
+        label: "color wheel",
+        seeds: [hexToHsl(colorPicker.value)]
+      };
     }
 
-    function getSeedHue(seedContext, fallbackPool){
-      if(seedContext.seeds.length){
-        const strong = seedContext.seeds.filter(c => c.s >= 18);
-        const chosen = strong.length ? pick(strong) : pick(seedContext.seeds);
-        return chosen.h;
-      }
-      return pick(fallbackPool);
+    function getSeedHue(seedContext, fallback) {
+      const usable = seedContext.seeds.filter(c => c.s >= 12);
+      if (usable.length) return pick(usable).h;
+      return pick(fallback);
     }
 
-    function extractImageSeedsFromImg(img){
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      const maxSide = 70;
+    function extractImageSeeds(img) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      const maxSide = 80;
       const scale = Math.min(maxSide / img.width, maxSide / img.height, 1);
+
       canvas.width = Math.max(10, Math.round(img.width * scale));
       canvas.height = Math.max(10, Math.round(img.height * scale));
+
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       const bins = new Map();
 
-      for(let i=0; i<data.length; i+=16){
-        const a = data[i+3];
-        if(a < 180) continue;
-        const hsl = rgbToHsl(data[i], data[i+1], data[i+2]);
-        if(hsl.l < 6 || hsl.l > 96) continue;
+      for (let i = 0; i < data.length; i += 20) {
+        const a = data[i + 3];
+        if (a < 180) continue;
 
-        const hueBucket = Math.round(hsl.h / 12) * 12;
-        const key = `${wrapHue(hueBucket)}`;
+        const hsl = rgbToHsl(data[i], data[i + 1], data[i + 2]);
 
-        const satWeight = hsl.s < 10 ? 0.35 : 1;
-        const lightWeight = 1 - (Math.abs(hsl.l - 56) / 100);
-        const weight = Math.max(0.2, satWeight * lightWeight * (hsl.s + 8));
+        if (hsl.l < 6 || hsl.l > 96) continue;
 
-        if(!bins.has(key)){
-          bins.set(key, {
-            weight: 0,
-            hSin: 0,
-            hCos: 0,
-            s: 0,
-            l: 0,
-            count: 0
-          });
+        const hueBucket = Math.round(hsl.h / 15) * 15;
+        const key = String(wrapHue(hueBucket));
+        const weight = Math.max(.3, (hsl.s + 10) * (1 - Math.abs(hsl.l - 55) / 100));
+
+        if (!bins.has(key)) {
+          bins.set(key, { weight: 0, hSin: 0, hCos: 0, s: 0, l: 0 });
         }
+
         const bin = bins.get(key);
         const rad = hsl.h * Math.PI / 180;
+
         bin.weight += weight;
         bin.hSin += Math.sin(rad) * weight;
         bin.hCos += Math.cos(rad) * weight;
         bin.s += hsl.s * weight;
         bin.l += hsl.l * weight;
-        bin.count += weight;
       }
 
-      const ranked = Array.from(bins.values())
-        .map(bin => {
-          let h = Math.atan2(bin.hSin, bin.hCos) * 180 / Math.PI;
-          if(h < 0) h += 360;
-          return {
-            h: wrapHue(h),
-            s: Math.round(bin.s / bin.count),
-            l: Math.round(bin.l / bin.count),
-            weight: bin.weight
-          };
-        })
-        .sort((a,b) => b.weight - a.weight);
+      const ranked = Array.from(bins.values()).map(bin => {
+        let h = Math.atan2(bin.hSin, bin.hCos) * 180 / Math.PI;
+        if (h < 0) h += 360;
+
+        return {
+          h: wrapHue(h),
+          s: Math.round(bin.s / bin.weight),
+          l: Math.round(bin.l / bin.weight),
+          weight: bin.weight
+        };
+      }).sort((a, b) => b.weight - a.weight);
 
       const chosen = [];
-      for(const c of ranked){
-        if(chosen.length >= 5) break;
-        if(chosen.every(existing => hueDistance(existing.h, c.h) > 22 || c.s < 14)){
-          chosen.push(c);
+
+      for (const color of ranked) {
+        if (chosen.length >= 5) break;
+        if (chosen.every(existing => hueDistance(existing.h, color.h) > 22)) {
+          chosen.push(color);
         }
       }
 
       return chosen.length ? chosen : [hexToHsl(colorPicker.value)];
     }
 
-    imageUpload.addEventListener('change', e => {
-      const file = e.target.files?.[0];
-      if(!file) return;
+    imageUpload.addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
 
       const url = URL.createObjectURL(file);
       const img = new Image();
 
       img.onload = () => {
         imagePreview.src = url;
-        imagePreview.style.display = 'block';
-        state.imageSeeds = extractImageSeedsFromImg(img);
-        renderSeedPills();
-        setStatus(`Image analyzed. Using ${state.imageSeeds.length} extracted seed colors to help build harmonized palettes.`);
+        imagePreview.style.display = "block";
+
+        state.imageSeeds = extractImageSeeds(img);
+        seedList.innerHTML = "";
+
+        state.imageSeeds.forEach(seed => {
+          const pill = document.createElement("span");
+          pill.className = "seed-pill";
+          pill.textContent = hslToHex(seed.h, seed.s, seed.l);
+          pill.style.background = hslToHex(seed.h, Math.max(18, seed.s), Math.min(88, Math.max(72, seed.l)));
+          seedList.appendChild(pill);
+        });
+
+        setStatus("Image analyzed. Generate a new palette to use the extracted image colors.");
       };
 
       img.src = url;
     });
 
-    function renderSeedPills(){
-      seedList.innerHTML = '';
-      if(!state.imageSeeds.length) return;
-      state.imageSeeds.forEach(seed => {
-        const pill = document.createElement('span');
-        pill.className = 'seed-pill';
-        pill.textContent = hslToHex(seed.h, seed.s, seed.l);
-        pill.style.background = hslToHex(seed.h, Math.max(18, seed.s), Math.min(90, Math.max(76, seed.l)));
-        seedList.appendChild(pill);
-      });
+    function buildCorePalette(seedContext, vibe) {
+      if (vibe === "playful") return buildPlayful(seedContext);
+      if (vibe === "cozy") return buildCozy(seedContext);
+      if (vibe === "moody") return buildMoody(seedContext);
+      if (vibe === "nature") return buildNature(seedContext);
+      if (vibe === "coastal") return buildCoastal(seedContext);
+      return buildVintage(seedContext);
     }
 
-    function buildPlayfulCore(seedContext){
-      const baseHue = nearestNotTooPrimary(getSeedHue(seedContext, [18, 28, 38, 92, 195, 215, 245, 268]));
-      const schemeType = pick(['split', 'triad', 'contrast']);
-      const accentHue = wrapHue(baseHue + rand(-10, 10));
-      let contrastHue;
-
-      if(schemeType === 'split'){
-        contrastHue = wrapHue(accentHue + pick([145, 160, -145, -160]));
-      } else if(schemeType === 'triad'){
-        contrastHue = wrapHue(accentHue + pick([105, 120, -105, -120]));
-      } else {
-        contrastHue = wrapHue(accentHue + pick([85, 95, 110, -85, -95, -110]));
-      }
-
-      contrastHue = nearestNotTooPrimary(contrastHue);
-
-      let darkHue = wrapHue(contrastHue + pick([55, 75, 95, 120]));
-      if(hueDistance(darkHue, accentHue) < 45){
-        darkHue = wrapHue(accentHue + 180 + rand(-18,18));
-      }
-
-      const softHue = Math.random() < 0.5 ? wrapHue(accentHue + rand(-18,18)) : wrapHue(22 + rand(-8,8));
+    function buildPlayful(seedContext) {
+      const accentHue = wrapHue(getSeedHue(seedContext, [350, 12, 28, 45, 185, 202, 240, 270]) + rand(-12, 12));
+      const balanceHue = wrapHue(accentHue + pick([80, 105, 135, 160, -80, -105, -135, -160]));
+      const softHue = wrapHue(accentHue + rand(-18, 18));
+      const darkHue = wrapHue(balanceHue + pick([70, 100, 130, 170]));
 
       return [
-        { h: softHue, s: rand(4,10),  l: rand(95,97) },  // light
-        { h: softHue, s: rand(18,30), l: rand(75,82) },  // soft support
-        { h: accentHue, s: rand(58,76), l: rand(54,63) }, // lively accent
-        { h: contrastHue, s: rand(40,64), l: rand(60,72) }, // balancing contrast
-        { h: darkHue, s: rand(28,46), l: rand(20,29) } // dark anchor
+        { h: softHue, s: rand(4, 10), l: rand(95, 98) },
+        { h: softHue, s: rand(18, 30), l: rand(76, 86) },
+        { h: accentHue, s: rand(58, 82), l: rand(50, 68) },
+        { h: balanceHue, s: rand(42, 70), l: rand(54, 74) },
+        { h: darkHue, s: rand(28, 50), l: rand(18, 30) }
       ];
     }
 
-    function buildCozyCore(seedContext){
-      const warmHue = getSeedHue(seedContext, [16, 26, 34, 42]);
-      const accentHue = wrapHue(warmHue + rand(-8, 8));
-
-      const supportPool = state.imageSeeds.length
-        ? state.imageSeeds.map(s => s.h)
-        : [86, 96, 108, 205, 212];
-
-      let supportHue = pick(supportPool);
-      if(hueDistance(supportHue, accentHue) < 25){
-        supportHue = pick([92, 102, 212]);
-      }
-
-      let darkHue = pick([18, 24, 30, 332, 345]);
-      if(Math.random() < 0.3) darkHue = wrapHue(supportHue + 115);
+    function buildCozy(seedContext) {
+      const warmHue = wrapHue(getSeedHue(seedContext, [12, 20, 28, 36, 350]) + rand(-8, 8));
+      const balanceHue = pick([88, 100, 112, 205, 214]);
+      const darkHue = pick([18, 26, 32, 104, 118, 330, 342]);
 
       return [
-        { h: 38, s: rand(4,10),  l: rand(94,97) },  // cream light
-        { h: wrapHue(accentHue - 8), s: rand(18,28), l: rand(71,79) }, // oatmeal/blush
-        { h: accentHue, s: rand(42,58), l: rand(50,60) }, // warm accent
-        { h: supportHue, s: rand(22,36), l: rand(50,64) }, // sage/dusty blue support
-        { h: darkHue, s: rand(20,34), l: rand(18,28) } // deep anchor
+        { h: 38, s: rand(4, 10), l: rand(94, 98) },
+        { h: wrapHue(warmHue - 6), s: rand(16, 28), l: rand(70, 80) },
+        { h: warmHue, s: rand(38, 60), l: rand(46, 62) },
+        { h: balanceHue, s: rand(20, 38), l: rand(44, 64) },
+        { h: darkHue, s: rand(18, 36), l: rand(14, 26) }
       ];
     }
 
-    function buildMoodyCore(seedContext){
-      const liftHue = getSeedHue(seedContext, [20, 36, 82, 205, 320]);
-      const mutedLiftHue = wrapHue(liftHue + rand(-12,12));
-      let supportHue = wrapHue(mutedLiftHue + pick([55, 72, 95, 140]));
-      let darkHue = wrapHue(supportHue + pick([55, 85, 115]));
-
-      if(hueDistance(darkHue, supportHue) < 25){
-        darkHue = wrapHue(mutedLiftHue + 180);
-      }
+    function buildMoody(seedContext) {
+      const liftHue = wrapHue(getSeedHue(seedContext, [18, 36, 205, 318, 330]) + rand(-12, 12));
+      const balanceHue = wrapHue(liftHue + pick([75, 105, 135, 160, -75, -105]));
+      const darkHue = wrapHue(balanceHue + pick([60, 90, 130, 170]));
 
       return [
-        { h: wrapHue(mutedLiftHue - 12), s: rand(4,9),  l: rand(92,95) },  // pale mist
-        { h: wrapHue(mutedLiftHue - 4), s: rand(10,20), l: rand(68,78) }, // soft stone/mushroom
-        { h: mutedLiftHue, s: rand(28,44), l: rand(42,58) }, // lift color
-        { h: supportHue, s: rand(18,30), l: rand(34,50) }, // muted support
-        { h: darkHue, s: rand(18,34), l: rand(14,22) } // deep moody anchor
+        { h: wrapHue(liftHue - 10), s: rand(4, 10), l: rand(84, 93) },
+        { h: wrapHue(liftHue - 4), s: rand(10, 22), l: rand(58, 75) },
+        { h: liftHue, s: rand(24, 46), l: rand(38, 58) },
+        { h: balanceHue, s: rand(18, 34), l: rand(30, 48) },
+        { h: darkHue, s: rand(16, 34), l: rand(10, 22) }
       ];
     }
 
-    function buildFreshCore(seedContext){
-      const airyHue = getSeedHue(seedContext, [185, 205, 214, 98, 110]);
-      const accentHue = wrapHue(airyHue + rand(-10,10));
-      let supportHue = wrapHue(accentHue + pick([35, 55, -35, -55]));
-      let darkHue = wrapHue(accentHue + pick([115, 140, 180]));
+    function buildNature(seedContext) {
+      const greenHue = wrapHue(getSeedHue(seedContext, [92, 105, 118, 132]) + rand(-12, 12));
+      const warmHue = pick([18, 36, 48, 345]);
+      const coolHue = pick([195, 205, 215]);
 
       return [
-        { h: 200, s: rand(3,9),  l: rand(96,98) },   // airy light
-        { h: wrapHue(accentHue - 12), s: rand(16,28), l: rand(80,88) }, // soft pastel support
-        { h: accentHue, s: rand(48,66), l: rand(58,68) }, // clean bright accent
-        { h: supportHue, s: rand(26,44), l: rand(56,68) }, // fresh contrast support
-        { h: darkHue, s: rand(24,38), l: rand(22,32) } // deep anchor
+        { h: 42, s: rand(4, 12), l: rand(94, 98) },
+        { h: warmHue, s: rand(20, 40), l: rand(70, 84) },
+        { h: greenHue, s: rand(36, 62), l: rand(40, 66) },
+        { h: coolHue, s: rand(26, 48), l: rand(54, 74) },
+        { h: wrapHue(greenHue + rand(-10, 10)), s: rand(24, 46), l: rand(12, 28) }
       ];
     }
 
-    function buildCorePalette(seedContext, vibe){
-      if(vibe === 'playful') return buildPlayfulCore(seedContext);
-      if(vibe === 'cozy') return buildCozyCore(seedContext);
-      if(vibe === 'moody') return buildMoodyCore(seedContext);
-      return buildFreshCore(seedContext);
+    function buildCoastal(seedContext) {
+      const waterHue = wrapHue(getSeedHue(seedContext, [180, 190, 200, 210]) + rand(-10, 10));
+      const warmHue = pick([14, 28, 38, 45]);
+      const darkHue = wrapHue(waterHue + pick([10, 25, 35]));
+
+      return [
+        { h: 42, s: rand(3, 10), l: rand(95, 99) },
+        { h: warmHue, s: rand(16, 32), l: rand(70, 84) },
+        { h: waterHue, s: rand(42, 72), l: rand(50, 76) },
+        { h: wrapHue(waterHue + rand(18, 38)), s: rand(28, 54), l: rand(48, 70) },
+        { h: darkHue, s: rand(24, 50), l: rand(14, 30) }
+      ];
     }
 
-    function metrics(palette){
+    function buildVintage(seedContext) {
+      const accentHue = wrapHue(getSeedHue(seedContext, [350, 12, 36, 190, 205, 88]) + rand(-10, 10));
+      const balanceHue = pick([82, 98, 205, 215, 335]);
+      const darkHue = pick([20, 28, 330, 342, 210]);
+
+      return [
+        { h: 38, s: rand(8, 18), l: rand(90, 98) },
+        { h: wrapHue(accentHue - 8), s: rand(18, 34), l: rand(64, 80) },
+        { h: accentHue, s: rand(26, 54), l: rand(44, 68) },
+        { h: balanceHue, s: rand(18, 38), l: rand(40, 64) },
+        { h: darkHue, s: rand(18, 36), l: rand(12, 28) }
+      ];
+    }
+
+    function metrics(palette) {
       const sats = palette.map(c => c.s);
       const lights = palette.map(c => c.l);
+
       return {
         satRange: Math.max(...sats) - Math.min(...sats),
         lightRange: Math.max(...lights) - Math.min(...lights)
       };
     }
 
-    function passesRules(palette, vibe){
-      const m = metrics(palette);
-      if(m.lightRange < 54) return false;
-      if(m.satRange < 26) return false;
-
-      if(Math.abs(palette[0].l - palette[1].l) < 7) return false;
-      if(hueDistance(palette[3].h, palette[4].h) < 20) return false;
-      if(palette[4].l > 32) return false;
-      if(palette[0].l < 92) return false;
-
-      if(vibe === 'playful'){
-        if(palette[2].s < 55) return false;
-        if(palette[3].s < 38) return false;
-        if(m.satRange < 36) return false;
-        if(m.lightRange < 58) return false;
-        if(hueDistance(palette[2].h, palette[3].h) < 34) return false;
-      }
-
-      if(vibe === 'cozy'){
-        if(palette[2].s < 38) return false;
-        if(palette[2].l < 46 || palette[2].l > 63) return false;
-        if(m.lightRange < 56) return false;
-      }
-
-      if(vibe === 'moody'){
-        if(palette[2].s < 26 || palette[2].s > 48) return false;
-        if(palette[3].l < 30 || palette[3].l > 52) return false;
-        if(palette[4].l > 24) return false;
-      }
-
-      if(vibe === 'fresh'){
-        if(palette[2].s < 46) return false;
-        if(palette[1].l < 78) return false;
-      }
-
-      return true;
-    }
-
-    function scorePalette(palette, vibe){
+    function scorePalette(palette, vibe) {
       const m = metrics(palette);
       let score = 0;
 
       score += m.lightRange * 2.2;
-      score += m.satRange * 1.8;
-
+      score += m.satRange * 1.7;
       score += hueDistance(palette[2].h, palette[3].h) * 0.8;
-      score += hueDistance(palette[3].h, palette[4].h) * 0.9;
+      score += hueDistance(palette[3].h, palette[4].h) * 0.7;
 
-      if(palette[0].l >= 94) score += 16;
-      if(palette[4].l <= 24) score += 20;
-      if(palette[2].s >= 50) score += 16;
-      if(palette[3].s >= 34) score += 10;
+      if (palette[0].l >= 94) score += 14;
+      if (palette[4].l <= 24) score += 18;
+      if (palette[2].s >= 45) score += 12;
 
-      if(vibe === 'playful'){
-        score += palette[2].s * 0.8;
-        score += palette[3].s * 0.5;
-        if(hueDistance(palette[2].h, palette[3].h) > 55) score += 25;
-        if(palette[3].l >= 58 && palette[3].l <= 74) score += 12;
-        if(palette[1].s > 34) score -= 10; // keep supporting color softer than accents
-        if(palette[0].s > 18) score -= 18;
-        if(palette[2].s - palette[1].s < 22) score -= 25;
+      if (vibe === "playful") {
+        if (palette[2].s >= 58) score += 24;
+        if (palette[3].s >= 42) score += 16;
+        if (hueDistance(palette[2].h, palette[3].h) >= 45) score += 20;
       }
 
-      if(vibe === 'cozy'){
-        if([10,20,30,40,350,340].some(h => hueDistance(palette[2].h, h) < 28)) score += 14;
-        if([85,95,105,205,215].some(h => hueDistance(palette[3].h, h) < 24)) score += 14;
-        if(palette[2].s > 60) score -= 12;
-      }
-
-      if(vibe === 'moody'){
-        if(palette[2].s >= 28 && palette[2].s <= 44) score += 18;
-        if(palette[3].s <= 30) score += 12;
-        if(palette[2].s > 50) score -= 24;
-      }
-
-      if(vibe === 'fresh'){
-        if([180,190,200,210,100,110].some(h => hueDistance(palette[2].h, h) < 24)) score += 14;
-        if(palette[3].s >= 28 && palette[3].s <= 48) score += 12;
+      if (vibe === "moody") {
+        if (palette[2].s <= 48 && palette[2].s >= 24) score += 18;
+        if (palette[2].s > 55) score -= 40;
       }
 
       return score;
     }
 
-    function chooseCorePalette(seedContext, vibe){
+    function palettePasses(palette, vibe) {
+      const m = metrics(palette);
+
+      if (m.lightRange < 54) return false;
+      if (m.satRange < 26) return false;
+      if (palette[0].l < 90) return false;
+      if (palette[4].l > 32) return false;
+      if (hueDistance(palette[2].h, palette[3].h) < 28) return false;
+
+      if (vibe === "playful") {
+        if (palette[2].s < 55) return false;
+        if (palette[3].s < 38) return false;
+        if (m.satRange < 36) return false;
+      }
+
+      if (vibe === "moody") {
+        if (palette[2].s > 52) return false;
+        if (palette[2].l < 32 || palette[2].l > 62) return false;
+      }
+
+      return true;
+    }
+
+    function paletteSignature(palette) {
+      return palette.map(c => ({
+        h: Math.round(c.h / 30) * 30,
+        s: c.s < 25 ? "soft" : c.s < 50 ? "mid" : "bold",
+        l: c.l < 35 ? "dark" : c.l > 80 ? "light" : "mid"
+      }));
+    }
+
+    function tooSimilarToHistory(palette, vibe) {
+      const history = state.history[vibe] || [];
+      const sig = paletteSignature(palette);
+
+      for (const old of history) {
+        let roleMatches = 0;
+
+        sig.forEach((role, i) => {
+          const oldRole = old[i];
+          if (!oldRole) return;
+
+          const hueClose = hueDistance(role.h, oldRole.h) <= 30;
+          const satSame = role.s === oldRole.s;
+          const lightSame = role.l === oldRole.l;
+
+          if (hueClose && (satSame || lightSame)) {
+            roleMatches++;
+          }
+        });
+
+        if (roleMatches >= 3) return true;
+      }
+
+      return false;
+    }
+
+    function rememberPalette(palette, vibe) {
+      if (!state.history[vibe]) state.history[vibe] = [];
+
+      state.history[vibe].push(paletteSignature(palette));
+
+      if (state.history[vibe].length > 12) {
+        state.history[vibe].shift();
+      }
+    }
+
+    function chooseCorePalette(seedContext, vibe) {
       const candidates = [];
 
-      for(let i=0; i<220; i++){
-        const candidate = buildCorePalette(seedContext, vibe).map(c => ({
+      for (let i = 0; i < 260; i++) {
+        const palette = buildCorePalette(seedContext, vibe).map(c => ({
           h: Math.round(wrapHue(c.h)),
           s: Math.round(c.s),
           l: Math.round(c.l)
         }));
 
-        if(!passesRules(candidate, vibe)) continue;
+        if (!palettePasses(palette, vibe)) continue;
+        if (tooSimilarToHistory(palette, vibe)) continue;
 
-        const score = scorePalette(candidate, vibe);
-        candidates.push({ palette: candidate, score });
+        candidates.push({
+          palette,
+          score: scorePalette(palette, vibe)
+        });
       }
 
-      if(!candidates.length){
-        const fallback = buildCorePalette(seedContext, vibe).map(c => ({
+      if (!candidates.length) {
+        for (let i = 0; i < 80; i++) {
+          const palette = buildCorePalette(seedContext, vibe).map(c => ({
+            h: Math.round(wrapHue(c.h)),
+            s: Math.round(c.s),
+            l: Math.round(c.l)
+          }));
+
+          if (!palettePasses(palette, vibe)) continue;
+
+          candidates.push({
+            palette,
+            score: scorePalette(palette, vibe)
+          });
+        }
+      }
+
+      if (!candidates.length) {
+        return buildCorePalette(seedContext, vibe).map(c => ({
           h: Math.round(wrapHue(c.h)),
           s: Math.round(c.s),
           l: Math.round(c.l)
         }));
-        return fallback;
       }
 
-      candidates.sort((a,b) => b.score - a.score);
-      const top = candidates.slice(0, Math.min(14, candidates.length));
-      return pick(top).palette;
+      candidates.sort((a, b) => b.score - a.score);
+      return pick(candidates.slice(0, Math.min(10, candidates.length))).palette;
     }
 
-    function expandPalette(core, size, vibe){
-      if(size === 5){
-        return core.map(copyColor);
-      }
+    function expandPalette(core, size, vibe) {
+      if (size === 5) return core.map(copyColor);
 
       const [light, soft, accent, balance, dark] = core.map(copyColor);
-      let expanded = [];
 
-      if(size === 10){
-        expanded = [
+      if (size === 10) {
+        return [
           light,
           soft,
-          withShift(soft, rand(-8,8), rand(-4,6), rand(-8,8)),
+          shiftColor(soft, rand(-10, 10), rand(-5, 6), rand(-8, 8)),
           accent,
-          withShift(accent, rand(-8,10), rand(-8,6), rand(8,12)),
-          withShift(accent, rand(10,16), rand(-12,-4), rand(-6,4)),
+          shiftColor(accent, rand(-10, 10), rand(-10, 8), rand(8, 12)),
+          shiftColor(accent, rand(12, 22), rand(-12, 4), rand(-8, 6)),
           balance,
-          withShift(balance, rand(-10,10), rand(-8,6), rand(6,12)),
+          shiftColor(balance, rand(-10, 10), rand(-8, 6), rand(8, 12)),
           dark,
-          withShift(dark, rand(-6,6), rand(-4,6), rand(6,10))
+          shiftColor(dark, rand(-8, 8), rand(-4, 8), rand(6, 10))
         ];
       }
 
-      if(size === 20){
-        expanded = [
-          light,
-          withShift(light, 0, rand(1,4), rand(-3,2)),
-          soft,
-          withShift(soft, rand(-8,8), rand(-5,5), rand(-8,4)),
-          withShift(soft, rand(8,16), rand(-4,8), rand(2,10)),
-          accent,
-          withShift(accent, rand(-8,8), rand(-10,8), rand(8,14)),
-          withShift(accent, rand(8,14), rand(-12,-2), rand(-4,8)),
-          withShift(accent, rand(-14,-8), rand(-16,-6), rand(2,12)),
-          withShift(accent, rand(18,26), rand(-8,4), rand(-4,4)),
-          balance,
-          withShift(balance, rand(-10,10), rand(-8,6), rand(8,12)),
-          withShift(balance, rand(10,18), rand(-10,2), rand(-2,10)),
-          withShift(balance, rand(-18,-10), rand(-8,4), rand(4,12)),
-          withShift(balance, rand(18,28), rand(-12,-2), rand(-4,6)),
-          dark,
-          withShift(dark, rand(-8,8), rand(-4,6), rand(6,10)),
-          withShift(dark, rand(10,18), rand(-6,2), rand(10,14)),
-          withShift(dark, rand(-14,-8), rand(0,8), rand(2,8)),
-          withShift(light, rand(0,8), rand(4,10), rand(-6,-2))
-        ];
+      return [
+        light,
+        shiftColor(light, 0, 2, -3),
+        soft,
+        shiftColor(soft, -8, 4, -5),
+        shiftColor(soft, 10, 5, 5),
+        accent,
+        shiftColor(accent, -8, -8, 10),
+        shiftColor(accent, 10, -6, -5),
+        shiftColor(accent, 20, -10, 4),
+        shiftColor(accent, -18, -12, 8),
+        balance,
+        shiftColor(balance, -10, -6, 10),
+        shiftColor(balance, 10, 4, -5),
+        shiftColor(balance, 22, -8, 5),
+        shiftColor(balance, -22, -10, 8),
+        dark,
+        shiftColor(dark, 8, 4, 6),
+        shiftColor(dark, -8, 6, 10),
+        shiftColor(dark, 18, -4, 12),
+        shiftColor(light, 8, 6, -6)
+      ];
+    }
+
+    function applyLocks(newPalette) {
+      if (!state.palette.length || state.palette.length !== newPalette.length) {
+        return newPalette;
       }
 
-      // Slight vibe tuning on expanded colors
-      expanded = expanded.map((c, i) => {
-        const color = copyColor(c);
-
-        if(vibe === 'playful'){
-          if(i >= 5 && i <= 14) color.s = clamp(color.s + rand(-2, 10), 0, 100);
-        }
-        if(vibe === 'moody'){
-          if(i !== 0) color.s = clamp(color.s + rand(-6, 2), 0, 100);
-        }
-        return {
-          h: Math.round(color.h),
-          s: Math.round(color.s),
-          l: Math.round(color.l)
-        };
-      });
-
-      return expanded;
+      return newPalette.map((color, i) => state.locked[i] ? copyColor(state.palette[i]) : color);
     }
 
-    function applyLocks(newPalette){
-      if(!state.palette.length || state.palette.length !== newPalette.length) return newPalette;
-
-      return newPalette.map((color, i) => {
-        if(state.locked[i]){
-          return copyColor(state.palette[i]);
-        }
-        return color;
-      });
-    }
-
-    function generatePalette(){
+    function generatePalette() {
       const seedContext = getSeedContext();
       const core = chooseCorePalette(seedContext, state.vibe);
+
+      rememberPalette(core, state.vibe);
+
       let palette = expandPalette(core, state.size, state.vibe);
       palette = applyLocks(palette);
 
-      if(state.palette.length !== palette.length){
+      if (state.palette.length !== palette.length) {
         state.locked = Array(palette.length).fill(false);
       }
 
       state.palette = palette;
+
       renderPalette();
-      setStatus(buildStatusText(seedContext));
+      renderPattern();
+      setStatus(`Generated a ${state.vibe} palette from ${seedContext.label}. Anti-repeat memory is checking recent palettes in this vibe.`);
     }
 
-    function buildStatusText(seedContext){
-      const vibeText = state.vibe.charAt(0).toUpperCase() + state.vibe.slice(1);
-      const sourceText = state.sourceLabel;
-
-      if(state.vibe === 'playful'){
-        return `Generated a ${vibeText} palette from ${sourceText}. Rules emphasized: stronger saturation contrast, clearer light-to-dark range, more daring mid-palette color energy, and better hue spacing so it feels truly playful.`;
-      }
-      if(state.vibe === 'cozy'){
-        return `Generated a ${vibeText} palette from ${sourceText}. Rules emphasized: warm comfort, richer contrast, one inviting accent, a balancing support hue, and a deeper anchor so it doesn’t go flat.`;
-      }
-      if(state.vibe === 'moody'){
-        return `Generated a ${vibeText} palette from ${sourceText}. Rules emphasized: deep contrast, quieter saturation overall, and a lift color instead of a bright pop.`;
-      }
-      return `Generated a ${vibeText} palette from ${sourceText}. Rules emphasized: clean brightness, airy value contrast, and a crisp supporting contrast so the palette feels fresh rather than bland.`;
-    }
-
-    function renderPalette(){
-      paletteGrid.innerHTML = '';
+    function renderPalette() {
+      paletteGrid.innerHTML = "";
 
       state.palette.forEach((color, index) => {
         const hex = hslToHex(color.h, color.s, color.l);
-        const card = document.createElement('div');
-        card.className = 'swatch-card';
 
-        const swatch = document.createElement('div');
-        swatch.className = 'swatch' + (state.locked[index] ? ' locked' : '');
+        const card = document.createElement("div");
+        card.className = "swatch-card";
+
+        const swatch = document.createElement("div");
+        swatch.className = "swatch" + (state.locked[index] ? " locked" : "");
         swatch.style.background = hex;
-        swatch.title = 'Tap to lock/unlock this color';
-        swatch.addEventListener('click', () => toggleLock(index));
+        swatch.addEventListener("click", () => toggleLock(index));
 
-        const hexText = document.createElement('div');
-        hexText.className = 'hex';
+        const hexText = document.createElement("div");
+        hexText.className = "hex";
         hexText.textContent = hex;
 
-        const lockBtn = document.createElement('button');
-        lockBtn.className = 'lock-btn';
-        lockBtn.innerHTML = state.locked[index] ? '♥' : '♡';
-        lockBtn.title = 'Lock / unlock';
-        lockBtn.addEventListener('click', () => toggleLock(index));
+        const heart = document.createElement("button");
+        heart.className = "heart";
+        heart.textContent = state.locked[index] ? "♥" : "♡";
+        heart.addEventListener("click", () => toggleLock(index));
 
         card.appendChild(swatch);
         card.appendChild(hexText);
-        card.appendChild(lockBtn);
+        card.appendChild(heart);
+
         paletteGrid.appendChild(card);
       });
     }
 
-    function toggleLock(index){
+    function renderPattern() {
+      if (!state.palette.length) return;
+
+      const scale = Number(scaleSlider.value);
+      const selectedBg = backgroundSelect.value;
+
+      let bg = "#FFFDF8";
+
+      if (selectedBg === "palette-light") {
+        const light = state.palette.reduce((best, c) => c.l > best.l ? c : best, state.palette[0]);
+        bg = hslToHex(light.h, Math.min(light.s, 18), Math.max(light.l, 92));
+      } else {
+        bg = selectedBg;
+      }
+
+      patternPreview.style.backgroundImage = 'url("pumpkin-pattern.png")';
+      patternPreview.style.backgroundRepeat = "repeat";
+      patternPreview.style.backgroundSize = `${scale * 2}px ${scale * 2}px`;
+      patternPreview.style.backgroundColor = bg;
+    }
+
+    function toggleLock(index) {
       state.locked[index] = !state.locked[index];
       renderPalette();
     }
 
-    function unlockAll(){
+    function unlockAll() {
       state.locked = Array(state.palette.length).fill(false);
       renderPalette();
-      setStatus('All colors unlocked.');
+      setStatus("All colors unlocked.");
     }
 
-    function setStatus(text){
-      statusBox.textContent = text;
+    function setStatus(message) {
+      statusBox.textContent = message;
     }
 
-    sizeButtons.addEventListener('click', e => {
-      const btn = e.target.closest('[data-size]');
-      if(!btn) return;
+    function exportHexCodes() {
+      const codes = state.palette.map(c => hslToHex(c.h, c.s, c.l)).join("\\n");
+      alert(codes);
+    }
 
-      state.size = Number(btn.dataset.size);
-      [...sizeButtons.querySelectorAll('.chip')].forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    sizeButtons.addEventListener("click", event => {
+      const button = event.target.closest("[data-size]");
+      if (!button) return;
 
-      // Clear locks when size changes, so positions don’t get weird
+      state.size = Number(button.dataset.size);
+
+      sizeButtons.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
       state.locked = [];
       generatePalette();
     });
 
-    vibeButtons.addEventListener('click', e => {
-      const btn = e.target.closest('[data-vibe]');
-      if(!btn) return;
+    vibeButtons.addEventListener("click", event => {
+      const button = event.target.closest("[data-vibe]");
+      if (!button) return;
 
-      state.vibe = btn.dataset.vibe;
-      [...vibeButtons.querySelectorAll('.chip')].forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      state.vibe = button.dataset.vibe;
 
+      vibeButtons.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      state.locked = [];
       generatePalette();
     });
 
-    generateBtn.addEventListener('click', generatePalette);
-    unlockBtn.addEventListener('click', unlockAll);
-    unlockTopBtn.addEventListener('click', unlockAll);
+    generateBtn.addEventListener("click", generatePalette);
+    unlockBtn.addEventListener("click", unlockAll);
+    exportBtn.addEventListener("click", exportHexCodes);
+    scaleSlider.addEventListener("input", renderPattern);
+    backgroundSelect.addEventListener("change", renderPattern);
 
-    colorPicker.addEventListener('input', () => {
-      if(!normalizeHex(hexInput.value)){
-        setStatus('Color wheel updated. Generate a new palette to use this seed color.');
-      }
-    });
-
-    hexInput.addEventListener('blur', () => {
+    hexInput.addEventListener("blur", () => {
       const normalized = normalizeHex(hexInput.value);
-      if(normalized){
+
+      if (normalized) {
         hexInput.value = normalized;
-        setStatus('Valid hex recognized. Generate a new palette to use it.');
-      } else if(hexInput.value.trim()){
-        setStatus('That hex is not valid yet. Use a 6-digit hex like #C46F54.');
+        setStatus("Valid hex recognized. Generate a new palette to use it.");
+      } else if (hexInput.value.trim()) {
+        setStatus("That hex is not valid. Use something like #C46F54.");
       }
     });
 
-    // Initial palette
     generatePalette();
   </script>
 </body>
