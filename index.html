@@ -891,64 +891,70 @@ function chooseDarkLightness(vibe, accentSat) {
   const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "playful");
 
   const lightPairOptions = [
-    // warm ivory + peach
-    [
-      { h: rand(36, 48), s: rand(10, 18), l: rand(93, 97) },
-      { h: rand(16, 28), s: rand(34, 48), l: rand(74, 82) }
-    ],
+  // soft blush + warm peach
+  [
+    { h: rand(340, 355), s: rand(20, 34), l: rand(88, 94) },
+    { h: rand(16, 28), s: rand(36, 52), l: rand(73, 82) }
+  ],
 
-    // blush mist + apricot
-    [
-      { h: rand(338, 355), s: rand(12, 20), l: rand(92, 96) },
-      { h: rand(22, 34), s: rand(34, 50), l: rand(74, 82) }
-    ],
+  // pale peach + warm rose
+  [
+    { h: rand(14, 28), s: rand(20, 36), l: rand(88, 94) },
+    { h: rand(340, 354), s: rand(36, 52), l: rand(73, 82) }
+  ],
 
-    // pale peach + warm rose
-    [
-      { h: rand(14, 26), s: rand(14, 22), l: rand(92, 96) },
-      { h: rand(340, 354), s: rand(34, 50), l: rand(74, 82) }
-    ],
+  // pale butter + coral peach
+  [
+    { h: rand(44, 58), s: rand(22, 38), l: rand(88, 94) },
+    { h: rand(8, 22), s: rand(38, 54), l: rand(73, 82) }
+  ],
 
-    // buttercream + golden peach
-    [
-      { h: rand(44, 56), s: rand(14, 22), l: rand(92, 96) },
-      { h: rand(30, 44), s: rand(36, 52), l: rand(74, 82) }
-    ],
+  // light apricot + warm pink
+  [
+    { h: rand(24, 38), s: rand(22, 38), l: rand(88, 94) },
+    { h: rand(334, 350), s: rand(36, 52), l: rand(73, 82) }
+  ],
 
-    // pale lavender + warm peach
-    [
-      { h: rand(265, 288), s: rand(12, 20), l: rand(91, 96) },
-      { h: rand(16, 30), s: rand(34, 50), l: rand(74, 82) }
-    ],
+  // soft lavender + warm peach
+  [
+    { h: rand(260, 288), s: rand(18, 32), l: rand(88, 94) },
+    { h: rand(16, 30), s: rand(36, 52), l: rand(73, 82) }
+  ],
 
-    // pale mint + apricot
-    [
-      { h: rand(125, 155), s: rand(12, 20), l: rand(91, 96) },
-      { h: rand(20, 34), s: rand(34, 50), l: rand(74, 82) }
-    ],
+  // pale mint + apricot
+  [
+    { h: rand(125, 155), s: rand(18, 32), l: rand(88, 94) },
+    { h: rand(20, 34), s: rand(38, 54), l: rand(73, 82) }
+  ],
 
-    // powder aqua + warm blush
-    [
-      { h: rand(185, 205), s: rand(12, 20), l: rand(91, 96) },
-      { h: rand(342, 356), s: rand(34, 50), l: rand(74, 82) }
-    ],
+  // powder aqua + blush
+  [
+    { h: rand(185, 205), s: rand(18, 32), l: rand(88, 94) },
+    { h: rand(342, 356), s: rand(36, 52), l: rand(73, 82) }
+  ],
 
-    // pale butter + warm pink
-    [
-      { h: rand(46, 58), s: rand(14, 22), l: rand(91, 96) },
-      { h: rand(336, 352), s: rand(34, 50), l: rand(74, 82) }
-    ],
+  // soft lilac-pink + golden peach
+  [
+    { h: rand(300, 328), s: rand(18, 32), l: rand(88, 94) },
+    { h: rand(30, 44), s: rand(38, 54), l: rand(73, 82) }
+  ],
 
-    // cream + soft coral
-    [
-      { h: rand(38, 50), s: rand(10, 18), l: rand(93, 97) },
-      { h: rand(4, 18), s: rand(36, 52), l: rand(73, 82) }
-    ]
-  ];
+  // warm cream + soft coral
+  [
+    { h: rand(38, 50), s: rand(18, 30), l: rand(89, 95) },
+    { h: rand(4, 18), s: rand(38, 54), l: rand(73, 82) }
+  ],
 
-  const chosenLightPair = pick(lightPairOptions);
-  const lightColor = chosenLightPair[0];
-  const softColor = chosenLightPair[1];
+  // very light candy pink + buttercream
+  [
+    { h: rand(330, 348), s: rand(20, 34), l: rand(88, 94) },
+    { h: rand(42, 56), s: rand(36, 52), l: rand(73, 82) }
+  ]
+];
+
+const chosenLightPair = pick(lightPairOptions);
+const lightColor = chosenLightPair[0];
+const softColor = chosenLightPair[1];
 
   return [
     lightColor,
