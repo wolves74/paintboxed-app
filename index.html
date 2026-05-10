@@ -933,14 +933,53 @@ function chooseDarkLightness(vibe, accentSat) {
 ];
 
   const softOptions = [
-    { h: softHue, s: rand(16, 30), l: rand(72, 84) },
-    { h: wrapHue(accentHue + rand(-18, 18)), s: rand(18, 34), l: rand(70, 82) },
-    { h: wrapHue(balanceHue + rand(-18, 18)), s: rand(14, 28), l: rand(74, 86) },
-    { h: wrapHue(lightHue + rand(-12, 12)), s: rand(12, 26), l: rand(76, 88) }
-  ];
+  // warm blush support
+  { h: rand(345, 360), s: rand(24, 38), l: rand(76, 84) },
+
+  // soft peach / apricot support
+  { h: rand(12, 30), s: rand(24, 42), l: rand(74, 84) },
+
+  // pale butter / warm yellow support
+  { h: rand(42, 58), s: rand(24, 40), l: rand(76, 86) },
+
+  // warm lavender-pink support
+  { h: rand(305, 335), s: rand(20, 36), l: rand(74, 84) },
+
+  // gentle coral-pink related to accent
+  { h: wrapHue(accentHue + rand(-12, 12)), s: rand(24, 40), l: rand(72, 84) },
+
+  // soft candy contrast related to balance
+  { h: wrapHue(balanceHue + rand(-16, 16)), s: rand(20, 34), l: rand(74, 86) }
+];
 
   const lightColor = pick(lightOptions);
-  const softColor = pick(softOptions);
+
+let softColor = pick(softOptions);
+let softTries = 0;
+
+while (
+  softTries < 20 &&
+  (
+    Math.abs(softColor.l - lightColor.l) < 8 ||
+    softColor.s - lightColor.s < 8 ||
+    hueDistance(softColor.h, lightColor.h) < 18
+  )
+) {
+  softColor = pick(softOptions);
+  softTries++;
+}
+
+// If swatch 2 still lands too close to swatch 1, force it warmer/richer.
+if (
+  Math.abs(softColor.l - lightColor.l) < 8 ||
+  softColor.s - lightColor.s < 8
+) {
+  softColor = {
+    h: pick([12, 22, 34, 48, 325, 345]),
+    s: rand(28, 42),
+    l: clamp(lightColor.l - rand(9, 16), 72, 84)
+  };
+}
 
   return [
     lightColor,
