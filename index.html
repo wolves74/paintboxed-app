@@ -836,40 +836,96 @@
     }
 
     function tooSimilarToHistory(palette, vibe) {
-      const history = state.history[vibe] || [];
-      const sig = paletteSignature(palette);
+  const history = state.history[vibe] || [];
+  if (!history.length) return false;
 
-      for (const old of history) {
-        let roleMatches = 0;
+  const newSig = makePaletteMemorySignature(palette, vibe);
 
-        sig.forEach((role, i) => {
-          const oldRole = old[i];
-          if (!oldRole) return;
+  for (const oldSig of history) {
+    let similarity = 0;
 
-          const hueClose = hueDistance(role.h, oldRole.h) <= 30;
-          const satSame = role.s === oldRole.s;
-          const lightSame = role.l === oldRole.l;
+    if (newSig.mainAccentFamily === oldSig.mainAccentFamily) similarity += 2;
+    if (newSig.balanceFamily === oldSig.balanceFamily) similarity += 2;
+    if (newSig.darkFamily === oldSig.darkFamily) similarity += 2;
+    if (newSig.saturationPattern === oldSig.saturationPattern) similarity += 1;
+    if (newSig.valuePattern === oldSig.valuePattern) similarity += 1;
 
-          if (hueClose && (satSame || lightSame)) {
-            roleMatches++;
-          }
-        });
+    const accentGap = hueDistance(newSig.mainAccentHue, oldSig.mainAccentHue);
+    const balanceGap = hueDistance(newSig.balanceHue, oldSig.balanceHue);
+    const darkGap = hueDistance(newSig.darkHue, oldSig.darkHue);
 
-        if (roleMatches >= 3) return true;
-      }
+    if (accentGap < 28) similarity += 2;
+    if (balanceGap < 28) similarity += 2;
+    if (darkGap < 32) similarity += 2;
 
-      return false;
+    if (vibe === "playful" && similarity >= 6) {
+      return true;
     }
+
+    if (vibe !== "playful" && similarity >= 7) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function makePaletteMemorySignature(palette, vibe) {
+  const mainAccent = palette[2];
+  const balance = palette[3];
+  const dark = palette[4];
+
+  return {
+    mainAccentHue: mainAccent.h,
+    balanceHue: balance.h,
+    darkHue: dark.h,
+
+    mainAccentFamily: hueFamily(mainAccent.h),
+    balanceFamily: hueFamily(balance.h),
+    darkFamily: hueFamily(dark.h),
+
+    saturationPattern: palette.map(c => {
+      if (c.s < 22) return "soft";
+      if (c.s < 50) return "medium";
+      return "bold";
+    }).join("-"),
+
+    valuePattern: palette.map(c => {
+      if (c.l < 35) return "dark";
+      if (c.l > 82) return "light";
+      return "mid";
+    }).join("-")
+  };
+}
+
+function hueFamily(h) {
+  h = wrapHue(h);
+
+  if (h >= 345 || h < 12) return "red";
+  if (h >= 12 && h < 28) return "coral";
+  if (h >= 28 && h < 48) return "orange-yellow";
+  if (h >= 48 && h < 70) return "yellow";
+  if (h >= 70 && h < 100) return "lime";
+  if (h >= 100 && h < 145) return "green";
+  if (h >= 145 && h < 175) return "mint";
+  if (h >= 175 && h < 200) return "aqua";
+  if (h >= 200 && h < 225) return "sky-blue";
+  if (h >= 225 && h < 255) return "blue";
+  if (h >= 255 && h < 285) return "purple";
+  if (h >= 285 && h < 320) return "violet";
+  if (h >= 320 && h < 345) return "pink";
+  return "neutral";
+}
 
     function rememberPalette(palette, vibe) {
-      if (!state.history[vibe]) state.history[vibe] = [];
+  if (!state.history[vibe]) state.history[vibe] = [];
 
-      state.history[vibe].push(paletteSignature(palette));
+  state.history[vibe].push(makePaletteMemorySignature(palette, vibe));
 
-      if (state.history[vibe].length > 12) {
-        state.history[vibe].shift();
-      }
-    }
+  if (state.history[vibe].length > 12) {
+    state.history[vibe].shift();
+  }
+}
 
     function chooseCorePalette(seedContext, vibe) {
       const candidates = [];
