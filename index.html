@@ -42,7 +42,7 @@
     .subhead {
       text-align: center;
       color: var(--muted);
-      max-width: 620px;
+      max-width: 680px;
       margin: 0 auto 28px;
       line-height: 1.45;
       font-size: 1.05rem;
@@ -294,7 +294,7 @@
   <div class="wrap">
     <h1>Paintboxed</h1>
     <p class="subhead">
-      Create balanced, thoughtful palettes with strong light/dark contrast, saturation contrast, and vibe-based color logic.
+      Create balanced, thoughtful palettes with light-to-dark contrast, warm-to-cool balance, and pattern-friendly color logic.
     </p>
 
     <div class="grid">
@@ -382,124 +382,35 @@
       </div>
 
       <p class="helper">
-        This uses <strong>pumpkin-pattern.png</strong> as a repeating PNG background. SVG role-based recoloring can come later.
+        This uses <strong>pumpkin-pattern.png</strong> as a repeating PNG background.
       </p>
     </section>
   </div>
 
   <script>
     /*
-PAINTBOXED MASTER PALETTE DNA
---------------------------------
-Every generated palette should feel intentional, collectible, balanced, and usable
-for pattern design — never random, neon, muddy, repetitive, or overly formulaic.
+    PAINTBOXED MASTER PALETTE DNA
+    --------------------------------
+    Every generated palette should feel intentional, collectible, balanced, and usable
+    for pattern design — never random, neon, muddy, repetitive, or overly formulaic.
 
-CORE GOALS
-1. Healthy balance of light-to-dark.
-2. Healthy balance of warm-to-cool.
-3. Clear contrast without harshness.
-4. No neon / no primary-marker feeling.
-5. No repeated palette stories.
-6. No swatches too close in value, especially swatch 1 vs swatch 2.
-7. Every swatch should feel like it has a role.
+    CORE GOALS
+    1. Healthy balance of light-to-dark.
+    2. Healthy balance of warm-to-cool.
+    3. Clear contrast without harshness.
+    4. No neon / no primary-marker feeling.
+    5. No repeated palette stories.
+    6. No swatches too close in value, especially swatch 1 vs swatch 2.
+    7. Every swatch should feel like it has a role.
 
-GENERAL RULES
-- Avoid palettes that feel flat, bland, overly samey, or over-structured.
-- Avoid repeated hue stories even if exact hex codes differ.
-- Avoid using multiple swatches that are too similar in lightness, saturation, or temperature.
-- Avoid all colors drifting too pastel, too muddy, too gray, or too saturated.
-- Avoid colors that feel fluorescent, loud, sharp, or synthetic.
-- Favor softened, curated, tasteful color.
+    SWATCH ROLES
+    Swatch 1: light opener / breathing room.
+    Swatch 2: soft support, warmer/deeper/more distinct than swatch 1.
+    Swatch 3: expressive accent.
+    Swatch 4: balancing color.
+    Swatch 5: relationship-based dark anchor.
+    */
 
-SATURATION RULES
-- Never allow any swatch to push into near-neon saturation.
-- Purples, pinks, magentas, electric blues, and lime greens must be especially controlled.
-- Bright colors are allowed, but they must feel softened, rounded, and design-friendly.
-- Saturation should feel lively, not screaming.
-
-VALUE / CONTRAST RULES
-- Each palette must contain:
-  - at least one clearly light swatch
-  - at least one clearly dark anchor
-  - enough value spread across the set to avoid flatness
-- Do not let all 5 swatches cluster in similar value ranges.
-- Swatch 1 and swatch 2 must have visible separation in value and/or temperature.
-- If swatch 1 is very light, swatch 2 must not feel like a barely-shifted duplicate.
-
-ANTI-REPEAT RULES
-- Reject palettes that are too similar to recent accepted palettes.
-- Similarity should be judged by:
-  - hue family structure
-  - warm/cool structure
-  - value structure
-  - saturation pattern
-  - dark anchor family
-  - overall palette story / emotional feel
-- Example of repeated story to avoid:
-  pale neutral + blush support + coral accent + cool balancing color + navy/plum dark
-- The generator should vary not just hex codes, but the entire palette relationship.
-
-SWATCH ROLE RULES
-Swatch 1: LIGHT OPENER
-- Should provide air, breathing room, and softness.
-- Usually light, but not always just white/off-white.
-- Can be soft cream, pale pink, pale butter, misty sage, powder blue, faded lilac, warm ivory, etc.
-- Must not recycle the same whitish family too often.
-- Should not be too close to swatch 2.
-
-Swatch 2: SOFT SUPPORT
-- Should be clearly distinct from swatch 1.
-- Should usually feel a touch warmer, deeper, or more colored than swatch 1.
-- Should not constantly default to the same nude/blush/apricot family.
-- Can act as a bridge between light softness and the bolder middle palette colors.
-- Must avoid being flat, boring, or nearly identical to swatch 1.
-
-Swatch 3: EXPRESSIVE ACCENT
-- Main personality color.
-- Can be colorful and playful, but must stay controlled.
-- Should not feel neon, primary, or toy-like.
-- Must avoid repeated overuse of the same hot pink, bright purple, or overly sharp coral behavior.
-
-Swatch 4: BALANCING COLOR
-- Should support or counterbalance swatch 3.
-- May be cooler, earthier, fresher, dustier, or moodier depending on palette direction.
-- Should add balance, not chaos.
-- Should not become another version of swatch 3.
-- Should not feel random or disconnected.
-
-Swatch 5: DARK ANCHOR
-- Must ground the palette.
-- Should be relationship-based, not a fixed repeating dark lane.
-- Dark anchor should respond to the accent:
-  - if accent is warm and bold, dark anchor often shifts cooler / slate / forest / deep teal / plum / inky blue
-  - if accent is cool, dark anchor may shift warmer / olive / espresso / berry / earthy brown
-- Must not overpower the palette.
-- Must not keep repeating the same dark brown / same navy / same dark purple story.
-
-WARM / COOL BALANCE RULES
-- Most palettes should contain both warm and cool influence, even if one side dominates.
-- Avoid all-warm or all-cool palettes unless intentionally appropriate for the vibe.
-- Aim for pleasing temperature interplay, not random opposites.
-
-PATTERN-FRIENDLY RULE
-- All palette decisions should support beautiful repeat patterns.
-- Palettes should feel harmonious when assigned to intentional roles in pattern previews.
-- Colors should look good together in repeated use, not just as isolated swatches.
-
-FINAL QUALITY TEST
-Before accepting a palette, ask:
-- Does it feel balanced from light to dark?
-- Does it have healthy warm/cool interplay?
-- Is there enough contrast?
-- Are any swatches too similar?
-- Is anything too neon, too primary, or too loud?
-- Does swatch 1 repeat the same pale story too often?
-- Does swatch 2 feel distinct and useful?
-- Does the palette avoid recent repeated stories?
-- Does the palette feel tasteful, collectible, and premium?
-
-If the answer to any of those is no, regenerate or adjust.
-*/
     const state = {
       size: 5,
       vibe: "playful",
@@ -555,21 +466,28 @@ If the answer to any of those is no, regenerate or adjust.
 
     function normalizeHex(value) {
       if (!value) return null;
+
       let v = value.trim().replace(/^#/, "");
+
       if (v.length === 3) {
         v = v.split("").map(ch => ch + ch).join("");
       }
+
       if (!/^[0-9a-fA-F]{6}$/.test(v)) return null;
+
       return "#" + v.toUpperCase();
     }
 
     function rgbToHex(r, g, b) {
-      return "#" + [r, g, b].map(v => v.toString(16).padStart(2, "0")).join("").toUpperCase();
+      return "#" + [r, g, b].map(v => {
+        return Math.round(v).toString(16).padStart(2, "0");
+      }).join("").toUpperCase();
     }
 
     function hexToRgb(hex) {
       const h = normalizeHex(hex);
       const clean = h.slice(1);
+
       return {
         r: parseInt(clean.slice(0, 2), 16),
         g: parseInt(clean.slice(2, 4), 16),
@@ -661,6 +579,36 @@ If the answer to any of those is no, regenerate or adjust.
         s: clamp(Math.round(color.s + ds), 0, 100),
         l: clamp(Math.round(color.l + dl), 0, 100)
       };
+    }
+
+    function hueFamily(h) {
+      h = wrapHue(h);
+
+      if (h >= 345 || h < 12) return "red";
+      if (h >= 12 && h < 28) return "coral";
+      if (h >= 28 && h < 48) return "orange";
+      if (h >= 48 && h < 70) return "yellow";
+      if (h >= 70 && h < 100) return "olive";
+      if (h >= 100 && h < 145) return "green";
+      if (h >= 145 && h < 175) return "mint";
+      if (h >= 175 && h < 200) return "aqua";
+      if (h >= 200 && h < 225) return "sky";
+      if (h >= 225 && h < 255) return "blue";
+      if (h >= 255 && h < 285) return "purple";
+      if (h >= 285 && h < 320) return "violet";
+      if (h >= 320 && h < 345) return "pink";
+
+      return "neutral";
+    }
+
+    function isWarmHueFamily(h) {
+      h = wrapHue(h);
+      return h >= 340 || h <= 55;
+    }
+
+    function isCoolHueFamily(h) {
+      h = wrapHue(h);
+      return h >= 170 && h <= 275;
     }
 
     function getSeedContext() {
@@ -784,142 +732,126 @@ If the answer to any of those is no, regenerate or adjust.
 
       img.src = url;
     });
-    function isWarmHueFamily(h) {
-  h = wrapHue(h);
-  return h >= 340 || h <= 55;
-}
 
-function isCoolHueFamily(h) {
-  h = wrapHue(h);
-  return h >= 170 && h <= 275;
-}
+    function getRecentDarkFamilies(vibe) {
+      const history = state.history[vibe] || [];
 
-function getRecentDarkFamilies(vibe) {
-  const history = state.history[vibe] || [];
-  return history
-    .slice(-8)
-    .map(item => item.darkFamily)
-    .filter(Boolean);
-}
-
-function chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, vibe) {
-  const recentDarkFamilies = getRecentDarkFamilies(vibe);
-
-  const darkPools = {
-    playful: {
-      cool: [190, 205, 218, 232, 248, 270, 292],
-      warm: [320, 335, 345, 12, 24, 108, 130],
-      neutral: [205, 220, 240, 280, 320]
-    },
-
-    cozy: {
-      cool: [105, 122, 205, 220, 235, 300, 325],
-      warm: [18, 26, 34, 92, 108, 330, 342],
-      neutral: [24, 105, 215, 230, 325]
-    },
-
-    moody: {
-      cool: [185, 205, 225, 245, 275, 305],
-      warm: [18, 28, 330, 342, 95, 115],
-      neutral: [210, 235, 285, 320, 105]
-    },
-
-    nature: {
-      cool: [105, 125, 150, 190, 210, 225],
-      warm: [18, 28, 38, 90, 110, 330],
-      neutral: [105, 125, 205, 220, 28]
-    },
-
-    coastal: {
-      cool: [185, 198, 210, 225, 238],
-      warm: [18, 28, 38, 105, 125, 320],
-      neutral: [195, 210, 225, 235]
-    },
-
-    vintage: {
-      cool: [195, 210, 225, 245, 320, 340],
-      warm: [18, 26, 34, 90, 105, 330],
-      neutral: [24, 95, 205, 220, 330]
-    }
-  };
-
-  const pools = darkPools[vibe] || darkPools.playful;
-
-  let candidates;
-
-  const accentIsWarmAndBold = isWarmHueFamily(accentHue) && accentSat >= 48;
-  const accentIsCool = isCoolHueFamily(accentHue);
-
-  if (accentIsWarmAndBold) {
-    candidates = pools.cool;
-  } else if (accentIsCool) {
-    candidates = pools.warm;
-  } else {
-    candidates = pools.neutral;
-  }
-
-  let best = null;
-  let bestScore = -999;
-
-  candidates.forEach(baseHue => {
-    const trialHue = wrapHue(baseHue + rand(-7, 7));
-    const family = hueFamily(trialHue);
-
-    let score = 0;
-
-    score += hueDistance(trialHue, accentHue) * 1.2;
-    score += hueDistance(trialHue, balanceHue) * 0.8;
-
-    if (!recentDarkFamilies.includes(family)) {
-      score += 45;
-    } else {
-      score -= 60;
+      return history
+        .slice(-8)
+        .map(item => item.darkFamily)
+        .filter(Boolean);
     }
 
-    if (hueDistance(trialHue, accentHue) < 28) {
-      score -= 80;
+    function chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, vibe) {
+      const recentDarkFamilies = getRecentDarkFamilies(vibe);
+
+      const darkPools = {
+        playful: {
+          cool: [190, 205, 218, 232, 248, 270, 292],
+          warm: [320, 335, 345, 12, 24, 108, 130],
+          neutral: [205, 220, 240, 280, 320]
+        },
+
+        cozy: {
+          cool: [105, 122, 205, 220, 235, 300, 325],
+          warm: [18, 26, 34, 92, 108, 330, 342],
+          neutral: [24, 105, 215, 230, 325]
+        },
+
+        moody: {
+          cool: [185, 205, 225, 245, 275, 305],
+          warm: [18, 28, 330, 342, 95, 115],
+          neutral: [210, 235, 285, 320, 105]
+        },
+
+        nature: {
+          cool: [105, 125, 150, 190, 210, 225],
+          warm: [18, 28, 38, 90, 110, 330],
+          neutral: [105, 125, 205, 220, 28]
+        },
+
+        coastal: {
+          cool: [185, 198, 210, 225, 238],
+          warm: [18, 28, 38, 105, 125, 320],
+          neutral: [195, 210, 225, 235]
+        },
+
+        vintage: {
+          cool: [195, 210, 225, 245, 320, 340],
+          warm: [18, 26, 34, 90, 105, 330],
+          neutral: [24, 95, 205, 220, 330]
+        }
+      };
+
+      const pools = darkPools[vibe] || darkPools.playful;
+
+      let candidates;
+
+      const accentIsWarmAndBold = isWarmHueFamily(accentHue) && accentSat >= 48;
+      const accentIsCool = isCoolHueFamily(accentHue);
+
+      if (accentIsWarmAndBold) {
+        candidates = pools.cool;
+      } else if (accentIsCool) {
+        candidates = pools.warm;
+      } else {
+        candidates = pools.neutral;
+      }
+
+      let best = null;
+      let bestScore = -999;
+
+      candidates.forEach(baseHue => {
+        const trialHue = wrapHue(baseHue + rand(-7, 7));
+        const family = hueFamily(trialHue);
+
+        let score = 0;
+
+        score += hueDistance(trialHue, accentHue) * 1.2;
+        score += hueDistance(trialHue, balanceHue) * 0.8;
+
+        if (!recentDarkFamilies.includes(family)) {
+          score += 45;
+        } else {
+          score -= 60;
+        }
+
+        if (hueDistance(trialHue, accentHue) < 28) {
+          score -= 80;
+        }
+
+        if (hueDistance(trialHue, balanceHue) < 22) {
+          score -= 45;
+        }
+
+        if (score > bestScore) {
+          bestScore = score;
+          best = trialHue;
+        }
+      });
+
+      return best !== null ? best : wrapHue(accentHue + 180);
     }
 
-    if (hueDistance(trialHue, balanceHue) < 22) {
-      score -= 45;
+    function chooseDarkSaturation(vibe, accentSat) {
+      if (vibe === "playful") return accentSat >= 58 ? rand(28, 42) : rand(30, 48);
+      if (vibe === "cozy") return rand(18, 36);
+      if (vibe === "moody") return rand(16, 34);
+      if (vibe === "coastal") return rand(22, 46);
+      if (vibe === "nature") return rand(22, 46);
+      if (vibe === "vintage") return rand(18, 38);
+      return rand(20, 44);
     }
 
-    if (vibe === "playful" && family === "neutral") {
-      score -= 20;
+    function chooseDarkLightness(vibe, accentSat) {
+      if (vibe === "playful") return accentSat >= 58 ? rand(20, 32) : rand(16, 28);
+      if (vibe === "cozy") return rand(12, 26);
+      if (vibe === "moody") return rand(9, 22);
+      if (vibe === "coastal") return rand(14, 30);
+      if (vibe === "nature") return rand(10, 28);
+      if (vibe === "vintage") return rand(12, 28);
+      return rand(12, 30);
     }
-
-    if (vibe === "cozy" && (family === "red" || family === "coral") && accentIsWarmAndBold) {
-      score -= 35;
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      best = trialHue;
-    }
-  });
-
-  return best !== null ? best : wrapHue(accentHue + 180);
-}
-
-function chooseDarkSaturation(vibe, accentSat) {
-  if (vibe === "playful") return accentSat >= 58 ? rand(30, 48) : rand(34, 54);
-  if (vibe === "cozy") return rand(18, 36);
-  if (vibe === "moody") return rand(16, 34);
-  if (vibe === "coastal") return rand(22, 46);
-  if (vibe === "nature") return rand(22, 46);
-  if (vibe === "vintage") return rand(18, 38);
-  return rand(20, 44);
-}
-
-function chooseDarkLightness(vibe, accentSat) {
-  if (vibe === "playful") return accentSat >= 58 ? rand(20, 32) : rand(16, 28);
-  if (vibe === "cozy") return rand(12, 26);
-  if (vibe === "moody") return rand(9, 22);
-  if (vibe === "coastal") return rand(14, 30);
-  if (vibe === "nature") return rand(10, 28);
-  if (vibe === "vintage") return rand(12, 28);
-  return rand(12, 30);
-}
 
     function buildCorePalette(seedContext, vibe) {
       if (vibe === "playful") return buildPlayful(seedContext);
@@ -930,280 +862,296 @@ function chooseDarkLightness(vibe, accentSat) {
       return buildVintage(seedContext);
     }
 
-   function buildPlayful(seedContext) {
-  const playfulRecipes = [
-    { name: "coral-aqua", accent: [8, 20], balance: [175, 200] },
-    { name: "pink-lemon", accent: [325, 345], balance: [48, 62] },
-    { name: "lavender-lime", accent: [265, 292], balance: [88, 122] },
-    { name: "peach-cobalt", accent: [18, 34], balance: [220, 248] },
-    { name: "mint-berry", accent: [155, 178], balance: [320, 345] },
-    { name: "butter-periwinkle", accent: [48, 62], balance: [225, 255] },
-    { name: "watermelon-sky", accent: [350, 8], balance: [198, 220] },
-    { name: "orange-violet", accent: [24, 42], balance: [275, 305] }
-  ];
+    function hueFromRange(range) {
+      if (range[0] <= range[1]) {
+        return wrapHue(rand(range[0], range[1]));
+      }
 
-  function hueFromRange(range) {
-    if (range[0] <= range[1]) {
-      return wrapHue(rand(range[0], range[1]));
+      return Math.random() < 0.5
+        ? wrapHue(rand(range[0], 360))
+        : wrapHue(rand(0, range[1]));
     }
 
-    return Math.random() < 0.5
-      ? wrapHue(rand(range[0], 360))
-      : wrapHue(rand(0, range[1]));
-  }
+    function buildPlayful(seedContext) {
+      const playfulRecipes = [
+        { name: "coral-aqua", accent: [8, 20], balance: [175, 200] },
+        { name: "pink-lemon", accent: [325, 345], balance: [48, 62] },
+        { name: "lavender-lime", accent: [265, 292], balance: [88, 122] },
+        { name: "peach-cobalt", accent: [18, 34], balance: [220, 248] },
+        { name: "mint-berry", accent: [155, 178], balance: [320, 345] },
+        { name: "butter-periwinkle", accent: [48, 62], balance: [225, 255] },
+        { name: "watermelon-sky", accent: [350, 8], balance: [198, 220] },
+        { name: "orange-violet", accent: [24, 42], balance: [275, 305] }
+      ];
 
-  const recipe = pick(playfulRecipes);
+      const recipe = pick(playfulRecipes);
 
-  let accentHue = hueFromRange(recipe.accent);
-  let balanceHue = hueFromRange(recipe.balance);
+      let accentHue = hueFromRange(recipe.accent);
+      let balanceHue = hueFromRange(recipe.balance);
 
-  const seedContextHasInput = seedContext && seedContext.seeds && seedContext.seeds.length;
+      const seedContextHasInput = seedContext && seedContext.seeds && seedContext.seeds.length;
 
-  if (seedContextHasInput && Math.random() < 0.25) {
-    const seedHue = getSeedHue(seedContext, [accentHue]);
-    accentHue = wrapHue(seedHue + rand(-10, 10));
-    balanceHue = wrapHue(accentHue + pick([85, 105, 135, 155, -85, -105, -135, -155]));
-  }
+      if (seedContextHasInput && Math.random() < 0.25) {
+        const seedHue = getSeedHue(seedContext, [accentHue]);
+        accentHue = wrapHue(seedHue + rand(-10, 10));
+        balanceHue = wrapHue(accentHue + pick([85, 105, 135, 155, -85, -105, -135, -155]));
+      }
 
-  const lightPairOptions = [
-    // airy cream + warm peach
-    [
-      { h: rand(36, 50), s: rand(14, 24), l: rand(92, 96) },
-      { h: rand(16, 30), s: rand(32, 46), l: rand(76, 84) }
-    ],
+      const lightPairOptions = [
+        [
+          { h: rand(36, 50), s: rand(14, 24), l: rand(92, 96) },
+          { h: rand(16, 30), s: rand(32, 46), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(340, 356), s: rand(16, 26), l: rand(92, 96) },
+          { h: rand(28, 42), s: rand(34, 48), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(198, 220), s: rand(14, 24), l: rand(92, 96) },
+          { h: rand(340, 356), s: rand(32, 46), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(125, 155), s: rand(14, 24), l: rand(92, 96) },
+          { h: rand(20, 34), s: rand(34, 50), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(265, 288), s: rand(14, 24), l: rand(92, 96) },
+          { h: rand(16, 30), s: rand(34, 48), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(48, 60), s: rand(16, 28), l: rand(91, 96) },
+          { h: rand(338, 354), s: rand(34, 48), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(95, 125), s: rand(12, 22), l: rand(92, 96) },
+          { h: rand(18, 34), s: rand(30, 44), l: rand(76, 84) }
+        ],
+        [
+          { h: rand(300, 328), s: rand(14, 24), l: rand(92, 96) },
+          { h: rand(38, 52), s: rand(34, 48), l: rand(76, 84) }
+        ]
+      ];
 
-    // pale blush + golden peach
-    [
-      { h: rand(340, 356), s: rand(16, 26), l: rand(92, 96) },
-      { h: rand(28, 42), s: rand(34, 48), l: rand(76, 84) }
-    ],
+      const recentSupportFamilies = (state.history.playful || [])
+        .slice(-8)
+        .map(item => item.supportFamily)
+        .filter(Boolean);
 
-    // powder blue + warm blush
-    [
-      { h: rand(198, 220), s: rand(14, 24), l: rand(92, 96) },
-      { h: rand(340, 356), s: rand(32, 46), l: rand(76, 84) }
-    ],
+      let possiblePairs = lightPairOptions.filter(pair => {
+        const supportFamily = hueFamily(pair[1].h);
+        return !recentSupportFamilies.includes(supportFamily);
+      });
 
-    // pale mint + apricot
-    [
-      { h: rand(125, 155), s: rand(14, 24), l: rand(92, 96) },
-      { h: rand(20, 34), s: rand(34, 50), l: rand(76, 84) }
-    ],
+      if (!possiblePairs.length) {
+        possiblePairs = lightPairOptions;
+      }
 
-    // pale lavender + warm peach
-    [
-      { h: rand(265, 288), s: rand(14, 24), l: rand(92, 96) },
-      { h: rand(16, 30), s: rand(34, 48), l: rand(76, 84) }
-    ],
+      let chosenLightPair = pick(possiblePairs);
+      let lightColor = chosenLightPair[0];
+      let softColor = chosenLightPair[1];
 
-    // pale butter + warm pink
-    [
-      { h: rand(48, 60), s: rand(16, 28), l: rand(91, 96) },
-      { h: rand(338, 354), s: rand(34, 48), l: rand(76, 84) }
-    ],
+      let pairTries = 0;
 
-    // soft sage light + peachy nude
-    [
-      { h: rand(95, 125), s: rand(12, 22), l: rand(92, 96) },
-      { h: rand(18, 34), s: rand(30, 44), l: rand(76, 84) }
-    ],
+      while (
+        pairTries < 30 &&
+        (
+          Math.abs(lightColor.l - softColor.l) < 10 ||
+          softColor.s - lightColor.s < 10 ||
+          hueDistance(lightColor.h, softColor.h) < 18
+        )
+      ) {
+        chosenLightPair = pick(possiblePairs);
+        lightColor = chosenLightPair[0];
+        softColor = chosenLightPair[1];
+        pairTries++;
+      }
 
-    // pale lilac-pink + honey cream
-    [
-      { h: rand(300, 328), s: rand(14, 24), l: rand(92, 96) },
-      { h: rand(38, 52), s: rand(34, 48), l: rand(76, 84) }
-    ]
-  ];
+      let accentSat = rand(42, 58);
+      let accentLight = rand(52, 62);
 
-  const recentSupportFamilies = (state.history.playful || [])
-    .slice(-8)
-    .map(item => item.supportFamily)
-    .filter(Boolean);
+      if (accentHue >= 250 && accentHue <= 315) {
+        accentSat = rand(34, 48);
+        accentLight = rand(54, 64);
+      }
 
-  let possiblePairs = lightPairOptions.filter(pair => {
-    const supportFamily = hueFamily(pair[1].h);
-    return !recentSupportFamilies.includes(supportFamily);
-  });
+      if (accentHue >= 45 && accentHue <= 135) {
+        accentSat = rand(36, 50);
+        accentLight = rand(54, 66);
+      }
 
-  if (!possiblePairs.length) {
-    possiblePairs = lightPairOptions;
-  }
+      let refinedBalanceHue = balanceHue;
+      let balanceTries = 0;
 
-  let chosenLightPair = pick(possiblePairs);
-  let lightColor = chosenLightPair[0];
-  let softColor = chosenLightPair[1];
+      while (
+        balanceTries < 24 &&
+        hueDistance(refinedBalanceHue, accentHue) < 52
+      ) {
+        refinedBalanceHue = wrapHue(
+          accentHue + pick([75, 95, 115, 135, 155, -75, -95, -115, -135, -155])
+        );
+        balanceTries++;
+      }
 
-  let pairTries = 0;
+      let balanceSat = accentSat >= 54 ? rand(28, 42) : rand(32, 48);
+      let balanceLight = accentSat >= 54 ? rand(56, 68) : rand(54, 68);
 
-  while (
-    pairTries < 30 &&
-    (
-      Math.abs(lightColor.l - softColor.l) < 10 ||
-      softColor.s - lightColor.s < 10 ||
-      hueDistance(lightColor.h, softColor.h) < 18
-    )
-  ) {
-    chosenLightPair = pick(possiblePairs);
-    lightColor = chosenLightPair[0];
-    softColor = chosenLightPair[1];
-    pairTries++;
-  }
+      if (refinedBalanceHue >= 250 && refinedBalanceHue <= 315) {
+        balanceSat = rand(24, 38);
+        balanceLight = rand(58, 70);
+      }
 
-  // Swatch 3: playful accent, colorful but not neon.
-  let accentSat = rand(42, 58);
-  let accentLight = rand(52, 62);
+      if (refinedBalanceHue >= 45 && refinedBalanceHue <= 135) {
+        balanceSat = rand(28, 42);
+        balanceLight = rand(56, 70);
+      }
 
-  // Purple / violet / blue-violet feels extra saturated, so soften it more.
-  if (accentHue >= 250 && accentHue <= 315) {
-    accentSat = rand(34, 48);
-    accentLight = rand(54, 64);
-  }
+      const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, refinedBalanceHue, "playful");
+      const darkSat = chooseDarkSaturation("playful", accentSat);
+      const darkLight = chooseDarkLightness("playful", accentSat);
 
-  // Yellow / lime / green can become acidic, so soften it too.
-  if (accentHue >= 45 && accentHue <= 135) {
-    accentSat = rand(36, 50);
-    accentLight = rand(54, 66);
-  }
+      return [
+        lightColor,
+        softColor,
+        { h: accentHue, s: accentSat, l: accentLight },
+        { h: refinedBalanceHue, s: balanceSat, l: balanceLight },
+        { h: darkHue, s: darkSat, l: darkLight }
+      ];
+    }
 
-    // Swatch 4: cozy support color — earthy/muted only, never grassy/neon
-  const cozySupportFamilies = [
-  // warm cozy supports
-  { hueMin: 18, hueMax: 30, satMin: 24, satMax: 38, lightMin: 58, lightMax: 70 }, // dusty clay
-  { hueMin: 32, hueMax: 46, satMin: 22, satMax: 36, lightMin: 56, lightMax: 68 }, // caramel / tan
-  { hueMin: 42, hueMax: 56, satMin: 24, satMax: 38, lightMin: 56, lightMax: 66 }, // antique gold
+    function buildCozy(seedContext) {
+      const warmHue = wrapHue(getSeedHue(seedContext, [12, 20, 28, 36, 350]) + rand(-8, 8));
 
-  // muted cozy greens — expanded
-  { hueMin: 62, hueMax: 72, satMin: 12, satMax: 22, lightMin: 44, lightMax: 56 }, // mossy olive
-  { hueMin: 72, hueMax: 84, satMin: 10, satMax: 22, lightMin: 48, lightMax: 62 }, // lichen / khaki green
-  { hueMin: 84, hueMax: 96, satMin: 10, satMax: 22, lightMin: 52, lightMax: 66 }, // dusty sage
-  { hueMin: 96, hueMax: 108, satMin: 10, satMax: 20, lightMin: 50, lightMax: 64 }, // herbal sage
-  { hueMin: 108, hueMax: 122, satMin: 10, satMax: 20, lightMin: 46, lightMax: 60 }, // muted eucalyptus
-  { hueMin: 122, hueMax: 138, satMin: 8, satMax: 18, lightMin: 42, lightMax: 56 }, // smoky forest-sage
-  { hueMin: 145, hueMax: 165, satMin: 8, satMax: 18, lightMin: 40, lightMax: 56 }, // green-blue slate
+      const lightColor = {
+        h: rand(32, 46),
+        s: rand(8, 16),
+        l: rand(93, 97)
+      };
 
-  // other cozy contrast options
-  { hueMin: 200, hueMax: 222, satMin: 18, satMax: 32, lightMin: 48, lightMax: 62 }, // dusty blue
-  { hueMin: 220, hueMax: 238, satMin: 14, satMax: 28, lightMin: 42, lightMax: 56 }, // denim slate
-  { hueMin: 280, hueMax: 305, satMin: 16, satMax: 30, lightMin: 42, lightMax: 56 }, // muted plum
-  { hueMin: 320, hueMax: 340, satMin: 16, satMax: 30, lightMin: 46, lightMax: 60 }  // dusty berry
-];
+      const softColor = {
+        h: wrapHue(warmHue - rand(2, 8)),
+        s: rand(16, 28),
+        l: rand(70, 80)
+      };
 
-const supportFamily = pick(cozySupportFamilies);
+      const accentSat = rand(34, 52);
+      const accentLight = rand(46, 60);
 
-let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
-let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
-let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
+      const cozySupportFamilies = [
+        { hueMin: 18, hueMax: 30, satMin: 24, satMax: 38, lightMin: 58, lightMax: 70 },
+        { hueMin: 32, hueMax: 46, satMin: 22, satMax: 36, lightMin: 56, lightMax: 68 },
+        { hueMin: 42, hueMax: 56, satMin: 24, satMax: 38, lightMin: 56, lightMax: 66 },
 
-// Extra Cozy safety rule: any green must stay muted/earthy.
-if (balanceHue >= 58 && balanceHue <= 165) {
-  balanceSat = Math.min(balanceSat, 22);
+        { hueMin: 62, hueMax: 72, satMin: 12, satMax: 22, lightMin: 44, lightMax: 56 },
+        { hueMin: 72, hueMax: 84, satMin: 10, satMax: 22, lightMin: 48, lightMax: 62 },
+        { hueMin: 84, hueMax: 96, satMin: 10, satMax: 22, lightMin: 52, lightMax: 66 },
+        { hueMin: 96, hueMax: 108, satMin: 10, satMax: 20, lightMin: 50, lightMax: 64 },
+        { hueMin: 108, hueMax: 122, satMin: 10, satMax: 20, lightMin: 46, lightMax: 60 },
+        { hueMin: 122, hueMax: 138, satMin: 8, satMax: 18, lightMin: 42, lightMax: 56 },
+        { hueMin: 145, hueMax: 165, satMin: 8, satMax: 18, lightMin: 40, lightMax: 56 },
 
-  // keep bright spring greens from happening
-  if (balanceHue >= 95 && balanceHue <= 140) {
-    balanceSat = Math.min(balanceSat, 18);
-    balanceLight = Math.min(balanceLight, 62);
-  }
+        { hueMin: 200, hueMax: 222, satMin: 18, satMax: 32, lightMin: 48, lightMax: 62 },
+        { hueMin: 220, hueMax: 238, satMin: 14, satMax: 28, lightMin: 42, lightMax: 56 },
+        { hueMin: 280, hueMax: 305, satMin: 16, satMax: 30, lightMin: 42, lightMax: 56 },
+        { hueMin: 320, hueMax: 340, satMin: 16, satMax: 30, lightMin: 46, lightMax: 60 }
+      ];
 
-  // olive/moss can go a little deeper
-  if (balanceHue >= 58 && balanceHue <= 85) {
-    balanceLight = Math.min(balanceLight, 58);
-  }
-}
+      const supportFamily = pick(cozySupportFamilies);
 
-  // Swatch 5: relationship-based dark anchor.
-  const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, refinedBalanceHue, "playful");
-  const darkSat = chooseDarkSaturation("playful", accentSat);
-  const darkLight = chooseDarkLightness("playful", accentSat);
+      let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
+      let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
+      let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
 
-  return [
-    lightColor,
-    softColor,
-    { h: accentHue, s: accentSat, l: accentLight },
-    { h: refinedBalanceHue, s: balanceSat, l: balanceLight },
-    { h: darkHue, s: darkSat, l: darkLight }
-  ];
-}
-function buildCozy(seedContext) {
-  const warmHue = wrapHue(getSeedHue(seedContext, [12, 20, 28, 36, 350]) + rand(-8, 8));
-  const balanceHue = pick([88, 100, 112, 205, 214]);
+      if (balanceHue >= 58 && balanceHue <= 165) {
+        balanceSat = Math.min(balanceSat, 22);
 
-  const accentSat = rand(38, 60);
-  const darkHue = chooseRelationshipDarkHue(warmHue, accentSat, balanceHue, "cozy");
+        if (balanceHue >= 95 && balanceHue <= 140) {
+          balanceSat = Math.min(balanceSat, 18);
+          balanceLight = Math.min(balanceLight, 62);
+        }
 
-  return [
-    { h: 38, s: rand(4, 10), l: rand(94, 98) },
-    { h: wrapHue(warmHue - 6), s: rand(16, 28), l: rand(70, 80) },
-    { h: warmHue, s: accentSat, l: rand(46, 62) },
-    { h: balanceHue, s: rand(20, 38), l: rand(44, 64) },
-    { h: darkHue, s: chooseDarkSaturation("cozy", accentSat), l: chooseDarkLightness("cozy", accentSat) }
-  ];
-}
+        if (balanceHue >= 58 && balanceHue <= 85) {
+          balanceLight = Math.min(balanceLight, 58);
+        }
+      }
 
-function buildMoody(seedContext) {
-  const liftHue = wrapHue(getSeedHue(seedContext, [18, 36, 205, 318, 330]) + rand(-12, 12));
-  const balanceHue = wrapHue(liftHue + pick([75, 105, 135, 160, -75, -105]));
+      const darkHue = chooseRelationshipDarkHue(warmHue, accentSat, balanceHue, "cozy");
+      const darkSat = chooseDarkSaturation("cozy", accentSat);
+      const darkLight = chooseDarkLightness("cozy", accentSat);
 
-  const accentSat = rand(24, 46);
-  const darkHue = chooseRelationshipDarkHue(liftHue, accentSat, balanceHue, "moody");
+      return [
+        lightColor,
+        softColor,
+        { h: warmHue, s: accentSat, l: accentLight },
+        { h: balanceHue, s: balanceSat, l: balanceLight },
+        { h: darkHue, s: darkSat, l: darkLight }
+      ];
+    }
 
-  return [
-    { h: wrapHue(liftHue - 10), s: rand(4, 10), l: rand(84, 93) },
-    { h: wrapHue(liftHue - 4), s: rand(10, 22), l: rand(58, 75) },
-    { h: liftHue, s: accentSat, l: rand(38, 58) },
-    { h: balanceHue, s: rand(18, 34), l: rand(30, 48) },
-    { h: darkHue, s: chooseDarkSaturation("moody", accentSat), l: chooseDarkLightness("moody", accentSat) }
-  ];
-}
+    function buildMoody(seedContext) {
+      const liftHue = wrapHue(getSeedHue(seedContext, [18, 36, 205, 318, 330]) + rand(-12, 12));
+      const balanceHue = wrapHue(liftHue + pick([75, 105, 135, 160, -75, -105]));
 
-function buildNature(seedContext) {
-  const greenHue = wrapHue(getSeedHue(seedContext, [92, 105, 118, 132]) + rand(-12, 12));
-  const warmHue = pick([18, 36, 48, 345]);
-  const coolHue = pick([195, 205, 215]);
+      const accentSat = rand(24, 46);
+      const darkHue = chooseRelationshipDarkHue(liftHue, accentSat, balanceHue, "moody");
 
-  const accentSat = rand(36, 62);
-  const darkHue = chooseRelationshipDarkHue(greenHue, accentSat, coolHue, "nature");
+      return [
+        { h: wrapHue(liftHue - 10), s: rand(4, 10), l: rand(84, 93) },
+        { h: wrapHue(liftHue - 4), s: rand(10, 22), l: rand(58, 75) },
+        { h: liftHue, s: accentSat, l: rand(38, 58) },
+        { h: balanceHue, s: rand(18, 34), l: rand(30, 48) },
+        { h: darkHue, s: chooseDarkSaturation("moody", accentSat), l: chooseDarkLightness("moody", accentSat) }
+      ];
+    }
 
-  return [
-    { h: 42, s: rand(4, 12), l: rand(94, 98) },
-    { h: warmHue, s: rand(20, 40), l: rand(70, 84) },
-    { h: greenHue, s: accentSat, l: rand(40, 66) },
-    { h: coolHue, s: rand(26, 48), l: rand(54, 74) },
-    { h: darkHue, s: chooseDarkSaturation("nature", accentSat), l: chooseDarkLightness("nature", accentSat) }
-  ];
-}
+    function buildNature(seedContext) {
+      const greenHue = wrapHue(getSeedHue(seedContext, [92, 105, 118, 132]) + rand(-12, 12));
+      const warmHue = pick([18, 36, 48, 345]);
+      const coolHue = pick([195, 205, 215]);
 
-function buildCoastal(seedContext) {
-  const waterHue = wrapHue(getSeedHue(seedContext, [180, 190, 200, 210]) + rand(-10, 10));
-  const warmHue = pick([14, 28, 38, 45]);
-  const balanceHue = wrapHue(waterHue + rand(18, 38));
+      const accentSat = rand(36, 62);
+      const darkHue = chooseRelationshipDarkHue(greenHue, accentSat, coolHue, "nature");
 
-  const accentSat = rand(42, 72);
-  const darkHue = chooseRelationshipDarkHue(waterHue, accentSat, balanceHue, "coastal");
+      return [
+        { h: 42, s: rand(4, 12), l: rand(94, 98) },
+        { h: warmHue, s: rand(20, 40), l: rand(70, 84) },
+        { h: greenHue, s: accentSat, l: rand(40, 66) },
+        { h: coolHue, s: rand(26, 48), l: rand(54, 74) },
+        { h: darkHue, s: chooseDarkSaturation("nature", accentSat), l: chooseDarkLightness("nature", accentSat) }
+      ];
+    }
 
-  return [
-    { h: 42, s: rand(3, 10), l: rand(95, 99) },
-    { h: warmHue, s: rand(16, 32), l: rand(70, 84) },
-    { h: waterHue, s: accentSat, l: rand(50, 76) },
-    { h: balanceHue, s: rand(28, 54), l: rand(48, 70) },
-    { h: darkHue, s: chooseDarkSaturation("coastal", accentSat), l: chooseDarkLightness("coastal", accentSat) }
-  ];
-}
+    function buildCoastal(seedContext) {
+      const waterHue = wrapHue(getSeedHue(seedContext, [180, 190, 200, 210]) + rand(-10, 10));
+      const warmHue = pick([14, 28, 38, 45]);
+      const balanceHue = wrapHue(waterHue + rand(18, 38));
 
-function buildVintage(seedContext) {
-  const accentHue = wrapHue(getSeedHue(seedContext, [350, 12, 36, 190, 205, 88]) + rand(-10, 10));
-  const balanceHue = pick([82, 98, 205, 215, 335]);
+      const accentSat = rand(42, 62);
+      const darkHue = chooseRelationshipDarkHue(waterHue, accentSat, balanceHue, "coastal");
 
-  const accentSat = rand(26, 54);
-  const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "vintage");
+      return [
+        { h: 42, s: rand(3, 10), l: rand(95, 99) },
+        { h: warmHue, s: rand(16, 32), l: rand(70, 84) },
+        { h: waterHue, s: accentSat, l: rand(50, 76) },
+        { h: balanceHue, s: rand(24, 48), l: rand(48, 70) },
+        { h: darkHue, s: chooseDarkSaturation("coastal", accentSat), l: chooseDarkLightness("coastal", accentSat) }
+      ];
+    }
 
-  return [
-    { h: 38, s: rand(8, 18), l: rand(90, 98) },
-    { h: wrapHue(accentHue - 8), s: rand(18, 34), l: rand(64, 80) },
-    { h: accentHue, s: accentSat, l: rand(44, 68) },
-    { h: balanceHue, s: rand(18, 38), l: rand(40, 64) },
-    { h: darkHue, s: chooseDarkSaturation("vintage", accentSat), l: chooseDarkLightness("vintage", accentSat) }
-  ];
-}
+    function buildVintage(seedContext) {
+      const accentHue = wrapHue(getSeedHue(seedContext, [350, 12, 36, 190, 205, 88]) + rand(-10, 10));
+      const balanceHue = pick([82, 98, 205, 215, 335]);
+
+      const accentSat = rand(26, 50);
+      const darkHue = chooseRelationshipDarkHue(accentHue, accentSat, balanceHue, "vintage");
+
+      return [
+        { h: 38, s: rand(8, 18), l: rand(90, 98) },
+        { h: wrapHue(accentHue - 8), s: rand(18, 34), l: rand(64, 80) },
+        { h: accentHue, s: accentSat, l: rand(44, 68) },
+        { h: balanceHue, s: rand(18, 38), l: rand(40, 64) },
+        { h: darkHue, s: chooseDarkSaturation("vintage", accentSat), l: chooseDarkLightness("vintage", accentSat) }
+      ];
+    }
 
     function metrics(palette) {
       const sats = palette.map(c => c.s);
@@ -1224,20 +1172,9 @@ function buildVintage(seedContext) {
       score += hueDistance(palette[2].h, palette[3].h) * 0.8;
       score += hueDistance(palette[3].h, palette[4].h) * 0.7;
 
-      if (palette[0].l >= 94) score += 14;
-      if (palette[4].l <= 24) score += 18;
-      if (palette[2].s >= 45) score += 12;
-
-      if (vibe === "playful") {
-        if (palette[2].s >= 58) score += 24;
-        if (palette[3].s >= 42) score += 16;
-        if (hueDistance(palette[2].h, palette[3].h) >= 45) score += 20;
-      }
-
-      if (vibe === "moody") {
-        if (palette[2].s <= 48 && palette[2].s >= 24) score += 18;
-        if (palette[2].s > 55) score -= 40;
-      }
+      if (palette[0].l >= 88) score += 14;
+      if (palette[4].l <= 30) score += 18;
+      if (palette[2].s >= 32) score += 12;
 
       return score;
     }
@@ -1245,16 +1182,19 @@ function buildVintage(seedContext) {
     function palettePasses(palette, vibe) {
       const m = metrics(palette);
 
-      if (m.lightRange < 54) return false;
-      if (m.satRange < 26) return false;
-      if (palette[0].l < 90) return false;
-      if (palette[4].l > 32) return false;
-      if (hueDistance(palette[2].h, palette[3].h) < 28) return false;
+      if (m.lightRange < 48) return false;
+      if (m.satRange < 20) return false;
+      if (palette[0].l < 84) return false;
+      if (palette[4].l > 34) return false;
+      if (hueDistance(palette[2].h, palette[3].h) < 24) return false;
 
       if (vibe === "playful") {
-        if (palette[2].s < 55) return false;
-        if (palette[3].s < 38) return false;
-        if (m.satRange < 36) return false;
+        if (palette[2].s > 62) return false;
+        if (palette[3].s > 56) return false;
+      }
+
+      if (vibe === "cozy") {
+        if (palette[3].h >= 58 && palette[3].h <= 165 && palette[3].s > 22) return false;
       }
 
       if (vibe === "moody") {
@@ -1265,111 +1205,100 @@ function buildVintage(seedContext) {
       return true;
     }
 
-    function paletteSignature(palette) {
-      return palette.map(c => ({
-        h: Math.round(c.h / 30) * 30,
-        s: c.s < 25 ? "soft" : c.s < 50 ? "mid" : "bold",
-        l: c.l < 35 ? "dark" : c.l > 80 ? "light" : "mid"
-      }));
+    function makePaletteMemorySignature(palette, vibe) {
+      const light = palette[0];
+      const support = palette[1];
+      const mainAccent = palette[2];
+      const balance = palette[3];
+      const dark = palette[4];
+
+      return {
+        lightHue: light.h,
+        supportHue: support.h,
+        mainAccentHue: mainAccent.h,
+        balanceHue: balance.h,
+        darkHue: dark.h,
+
+        lightFamily: hueFamily(light.h),
+        supportFamily: hueFamily(support.h),
+        mainAccentFamily: hueFamily(mainAccent.h),
+        balanceFamily: hueFamily(balance.h),
+        darkFamily: hueFamily(dark.h),
+
+        saturationPattern: palette.map(c => {
+          if (c.s < 22) return "soft";
+          if (c.s < 50) return "medium";
+          return "bold";
+        }).join("-"),
+
+        valuePattern: palette.map(c => {
+          if (c.l < 35) return "dark";
+          if (c.l > 82) return "light";
+          return "mid";
+        }).join("-")
+      };
     }
 
     function tooSimilarToHistory(palette, vibe) {
-  const history = state.history[vibe] || [];
-  if (!history.length) return false;
+      const history = state.history[vibe] || [];
+      if (!history.length) return false;
 
-  const newSig = makePaletteMemorySignature(palette, vibe);
+      const newSig = makePaletteMemorySignature(palette, vibe);
 
-  for (const oldSig of history) {
-    let similarity = 0;
+      for (const oldSig of history) {
+        let similarity = 0;
 
-    if (newSig.mainAccentFamily === oldSig.mainAccentFamily) similarity += 2;
-    if (newSig.balanceFamily === oldSig.balanceFamily) similarity += 2;
-    if (newSig.darkFamily === oldSig.darkFamily) similarity += 2;
-    if (newSig.saturationPattern === oldSig.saturationPattern) similarity += 1;
-    if (newSig.valuePattern === oldSig.valuePattern) similarity += 1;
+        if (newSig.lightFamily === oldSig.lightFamily) similarity += 1;
+        if (newSig.supportFamily === oldSig.supportFamily) similarity += 2;
+        if (newSig.mainAccentFamily === oldSig.mainAccentFamily) similarity += 3;
+        if (newSig.balanceFamily === oldSig.balanceFamily) similarity += 3;
+        if (newSig.darkFamily === oldSig.darkFamily) similarity += 3;
 
-    const accentGap = hueDistance(newSig.mainAccentHue, oldSig.mainAccentHue);
-    const balanceGap = hueDistance(newSig.balanceHue, oldSig.balanceHue);
-    const darkGap = hueDistance(newSig.darkHue, oldSig.darkHue);
+        if (hueDistance(newSig.supportHue, oldSig.supportHue) < 28) similarity += 2;
+        if (hueDistance(newSig.mainAccentHue, oldSig.mainAccentHue) < 34) similarity += 3;
+        if (hueDistance(newSig.balanceHue, oldSig.balanceHue) < 34) similarity += 3;
+        if (hueDistance(newSig.darkHue, oldSig.darkHue) < 38) similarity += 3;
 
-    if (accentGap < 28) similarity += 2;
-    if (balanceGap < 28) similarity += 2;
-    if (darkGap < 32) similarity += 2;
+        if (newSig.saturationPattern === oldSig.saturationPattern) similarity += 1;
+        if (newSig.valuePattern === oldSig.valuePattern) similarity += 1;
 
-    if (vibe === "playful" && similarity >= 6) {
-      return true;
+        if (vibe === "playful") {
+          const sameAccentBalance =
+            newSig.mainAccentFamily === oldSig.mainAccentFamily &&
+            newSig.balanceFamily === oldSig.balanceFamily;
+
+          const sameSupportAccent =
+            newSig.supportFamily === oldSig.supportFamily &&
+            newSig.mainAccentFamily === oldSig.mainAccentFamily;
+
+          const sameBalanceDark =
+            newSig.balanceFamily === oldSig.balanceFamily &&
+            newSig.darkFamily === oldSig.darkFamily;
+
+          if ((sameAccentBalance || sameSupportAccent || sameBalanceDark) && similarity >= 7) {
+            return true;
+          }
+
+          if (similarity >= 10) return true;
+        }
+
+        if (vibe !== "playful" && similarity >= 12) {
+          return true;
+        }
+      }
+
+      return false;
     }
-
-    if (vibe !== "playful" && similarity >= 7) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function makePaletteMemorySignature(palette, vibe) {
-  const light = palette[0];
-  const support = palette[1];
-  const mainAccent = palette[2];
-  const balance = palette[3];
-  const dark = palette[4];
-
-  return {
-    lightHue: light.h,
-    supportHue: support.h,
-    mainAccentHue: mainAccent.h,
-    balanceHue: balance.h,
-    darkHue: dark.h,
-
-    lightFamily: hueFamily(light.h),
-    supportFamily: hueFamily(support.h),
-    mainAccentFamily: hueFamily(mainAccent.h),
-    balanceFamily: hueFamily(balance.h),
-    darkFamily: hueFamily(dark.h),
-
-    saturationPattern: palette.map(c => {
-      if (c.s < 22) return "soft";
-      if (c.s < 50) return "medium";
-      return "bold";
-    }).join("-"),
-
-    valuePattern: palette.map(c => {
-      if (c.l < 35) return "dark";
-      if (c.l > 82) return "light";
-      return "mid";
-    }).join("-")
-  };
-}
-
-function hueFamily(h) {
-  h = wrapHue(h);
-
-  if (h >= 345 || h < 12) return "red";
-  if (h >= 12 && h < 28) return "coral";
-  if (h >= 28 && h < 48) return "orange-yellow";
-  if (h >= 48 && h < 70) return "yellow";
-  if (h >= 70 && h < 100) return "lime";
-  if (h >= 100 && h < 145) return "green";
-  if (h >= 145 && h < 175) return "mint";
-  if (h >= 175 && h < 200) return "aqua";
-  if (h >= 200 && h < 225) return "sky-blue";
-  if (h >= 225 && h < 255) return "blue";
-  if (h >= 255 && h < 285) return "purple";
-  if (h >= 285 && h < 320) return "violet";
-  if (h >= 320 && h < 345) return "pink";
-  return "neutral";
-}
 
     function rememberPalette(palette, vibe) {
-  if (!state.history[vibe]) state.history[vibe] = [];
+      if (!state.history[vibe]) state.history[vibe] = [];
 
-  state.history[vibe].push(makePaletteMemorySignature(palette, vibe));
+      state.history[vibe].push(makePaletteMemorySignature(palette, vibe));
 
-  if (state.history[vibe].length > 12) {
-    state.history[vibe].shift();
-  }
-}
+      if (state.history[vibe].length > 12) {
+        state.history[vibe].shift();
+      }
+    }
 
     function chooseCorePalette(seedContext, vibe) {
       const candidates = [];
@@ -1381,12 +1310,14 @@ function hueFamily(h) {
           l: Math.round(c.l)
         }));
 
-        if (!palettePasses(palette, vibe)) continue;
-        if (tooSimilarToHistory(palette, vibe)) continue;
+        const filtered = softenNeonPalette(palette, vibe);
+
+        if (!palettePasses(filtered, vibe)) continue;
+        if (tooSimilarToHistory(filtered, vibe)) continue;
 
         candidates.push({
-          palette,
-          score: scorePalette(palette, vibe)
+          palette: filtered,
+          score: scorePalette(filtered, vibe)
         });
       }
 
@@ -1398,21 +1329,19 @@ function hueFamily(h) {
             l: Math.round(c.l)
           }));
 
-          if (!palettePasses(palette, vibe)) continue;
+          const filtered = softenNeonPalette(palette, vibe);
+
+          if (!palettePasses(filtered, vibe)) continue;
 
           candidates.push({
-            palette,
-            score: scorePalette(palette, vibe)
+            palette: filtered,
+            score: scorePalette(filtered, vibe)
           });
         }
       }
 
       if (!candidates.length) {
-        return buildCorePalette(seedContext, vibe).map(c => ({
-          h: Math.round(wrapHue(c.h)),
-          s: Math.round(c.s),
-          l: Math.round(c.l)
-        }));
+        return softenNeonPalette(buildCorePalette(seedContext, vibe), vibe);
       }
 
       candidates.sort((a, b) => b.score - a.score);
@@ -1463,6 +1392,65 @@ function hueFamily(h) {
       ];
     }
 
+    function softenNeonColor(color, vibe) {
+      const softened = copyColor(color);
+
+      if (softened.l >= 86) {
+        softened.s = Math.min(softened.s, 34);
+        return softened;
+      }
+
+      if (softened.l <= 34) {
+        softened.s = Math.min(softened.s, 52);
+        return softened;
+      }
+
+      if (vibe === "playful") {
+        softened.s = Math.min(softened.s, 64);
+
+        if (softened.h >= 45 && softened.h <= 135) {
+          softened.s = Math.min(softened.s, 54);
+          softened.l = clamp(softened.l, 48, 70);
+        }
+
+        if (softened.h >= 220 && softened.h <= 315) {
+          softened.s = Math.min(softened.s, 52);
+          softened.l = clamp(softened.l, 44, 70);
+        }
+
+        if (softened.h >= 300 && softened.h <= 345) {
+          softened.s = Math.min(softened.s, 58);
+          softened.l = clamp(softened.l, 46, 68);
+        }
+
+        return softened;
+      }
+
+      if (vibe === "cozy") {
+        softened.s = Math.min(softened.s, 52);
+
+        if (softened.h >= 58 && softened.h <= 165) {
+          softened.s = Math.min(softened.s, 22);
+
+          if (softened.h >= 95 && softened.h <= 140) {
+            softened.s = Math.min(softened.s, 18);
+            softened.l = Math.min(softened.l, 62);
+          }
+        }
+      }
+
+      if (vibe === "moody") softened.s = Math.min(softened.s, 48);
+      if (vibe === "nature") softened.s = Math.min(softened.s, 56);
+      if (vibe === "coastal") softened.s = Math.min(softened.s, 54);
+      if (vibe === "vintage") softened.s = Math.min(softened.s, 50);
+
+      return softened;
+    }
+
+    function softenNeonPalette(palette, vibe) {
+      return palette.map(color => softenNeonColor(color, vibe));
+    }
+
     function applyLocks(newPalette) {
       if (!state.palette.length || state.palette.length !== newPalette.length) {
         return newPalette;
@@ -1478,6 +1466,7 @@ function hueFamily(h) {
       rememberPalette(core, state.vibe);
 
       let palette = expandPalette(core, state.size, state.vibe);
+      palette = softenNeonPalette(palette, state.vibe);
       palette = applyLocks(palette);
 
       if (state.palette.length !== palette.length) {
@@ -1559,7 +1548,7 @@ function hueFamily(h) {
     }
 
     function exportHexCodes() {
-      const codes = state.palette.map(c => hslToHex(c.h, c.s, c.l)).join("\\n");
+      const codes = state.palette.map(c => hslToHex(c.h, c.s, c.l)).join("\n");
       alert(codes);
     }
 
