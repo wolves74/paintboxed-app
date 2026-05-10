@@ -1019,73 +1019,96 @@
     }
 
     function buildCozy(seedContext) {
-      const warmHue = wrapHue(getSeedHue(seedContext, [12, 20, 28, 36, 350]) + rand(-8, 8));
+  const warmHue = wrapHue(getSeedHue(seedContext, [12, 20, 28, 36, 350]) + rand(-8, 8));
 
-      const lightColor = {
-        h: rand(32, 46),
-        s: rand(8, 16),
-        l: rand(93, 97)
-      };
+  const lightColor = {
+    h: rand(32, 46),
+    s: rand(8, 16),
+    l: rand(93, 97)
+  };
 
-      const softColor = {
-        h: wrapHue(warmHue - rand(2, 8)),
-        s: rand(16, 28),
-        l: rand(70, 80)
-      };
+  const softColor = {
+    h: wrapHue(warmHue - rand(2, 8)),
+    s: rand(16, 28),
+    l: rand(70, 80)
+  };
 
-      const accentSat = rand(34, 52);
-      const accentLight = rand(46, 60);
+  const accentSat = rand(34, 52);
+  const accentLight = rand(46, 60);
 
-      const cozySupportFamilies = [
-        { hueMin: 18, hueMax: 30, satMin: 24, satMax: 38, lightMin: 58, lightMax: 70 },
-        { hueMin: 32, hueMax: 46, satMin: 22, satMax: 36, lightMin: 56, lightMax: 68 },
-        { hueMin: 42, hueMax: 56, satMin: 24, satMax: 38, lightMin: 56, lightMax: 66 },
+  const cozySupportFamilies = [
+    // warm cozy supports
+    { hueMin: 18, hueMax: 30, satMin: 24, satMax: 38, lightMin: 58, lightMax: 70 }, // dusty clay
+    { hueMin: 32, hueMax: 46, satMin: 22, satMax: 36, lightMin: 56, lightMax: 68 }, // caramel / tan
+    { hueMin: 42, hueMax: 54, satMin: 20, satMax: 34, lightMin: 54, lightMax: 66 }, // antique gold
 
-        { hueMin: 62, hueMax: 72, satMin: 12, satMax: 22, lightMin: 44, lightMax: 56 },
-        { hueMin: 72, hueMax: 84, satMin: 10, satMax: 22, lightMin: 48, lightMax: 62 },
-        { hueMin: 84, hueMax: 96, satMin: 10, satMax: 22, lightMin: 52, lightMax: 66 },
-        { hueMin: 96, hueMax: 108, satMin: 10, satMax: 20, lightMin: 50, lightMax: 64 },
-        { hueMin: 108, hueMax: 122, satMin: 10, satMax: 20, lightMin: 46, lightMax: 60 },
-        { hueMin: 122, hueMax: 138, satMin: 8, satMax: 18, lightMin: 42, lightMax: 56 },
-        { hueMin: 145, hueMax: 165, satMin: 8, satMax: 18, lightMin: 40, lightMax: 56 },
+    // mossy yellow-green-brown families
+    { hueMin: 52, hueMax: 60, satMin: 14, satMax: 26, lightMin: 44, lightMax: 58 }, // brown olive
+    { hueMin: 58, hueMax: 66, satMin: 12, satMax: 24, lightMin: 42, lightMax: 56 }, // muddy moss
+    { hueMin: 64, hueMax: 72, satMin: 12, satMax: 24, lightMin: 46, lightMax: 60 }, // khaki moss
+    { hueMin: 70, hueMax: 78, satMin: 10, satMax: 22, lightMin: 48, lightMax: 62 }, // lichen olive
+    { hueMin: 76, hueMax: 84, satMin: 10, satMax: 22, lightMin: 50, lightMax: 64 }, // soft olive sage
 
-        { hueMin: 200, hueMax: 222, satMin: 18, satMax: 32, lightMin: 48, lightMax: 62 },
-        { hueMin: 220, hueMax: 238, satMin: 14, satMax: 28, lightMin: 42, lightMax: 56 },
-        { hueMin: 280, hueMax: 305, satMin: 16, satMax: 30, lightMin: 42, lightMax: 56 },
-        { hueMin: 320, hueMax: 340, satMin: 16, satMax: 30, lightMin: 46, lightMax: 60 }
-      ];
+    // softer sage / eucalyptus families
+    { hueMin: 84, hueMax: 94, satMin: 8, satMax: 20, lightMin: 52, lightMax: 66 }, // dusty sage
+    { hueMin: 94, hueMax: 104, satMin: 8, satMax: 18, lightMin: 50, lightMax: 64 }, // gray sage
+    { hueMin: 104, hueMax: 114, satMin: 8, satMax: 18, lightMin: 48, lightMax: 62 }, // eucalyptus
+    { hueMin: 114, hueMax: 126, satMin: 8, satMax: 18, lightMin: 46, lightMax: 60 }, // muted herb green
 
-      const supportFamily = pick(cozySupportFamilies);
+    // deeper green-gray families
+    { hueMin: 126, hueMax: 140, satMin: 6, satMax: 16, lightMin: 42, lightMax: 56 }, // forest sage
+    { hueMin: 140, hueMax: 158, satMin: 6, satMax: 16, lightMin: 40, lightMax: 54 }, // green slate
+    { hueMin: 158, hueMax: 170, satMin: 6, satMax: 16, lightMin: 38, lightMax: 52 }, // blue-green gray
 
-      let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
-      let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
-      let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
+    // non-green cozy contrast options
+    { hueMin: 200, hueMax: 222, satMin: 16, satMax: 30, lightMin: 48, lightMax: 62 }, // dusty blue
+    { hueMin: 220, hueMax: 238, satMin: 14, satMax: 26, lightMin: 42, lightMax: 56 }, // denim slate
+    { hueMin: 280, hueMax: 305, satMin: 14, satMax: 28, lightMin: 42, lightMax: 56 }, // muted plum
+    { hueMin: 320, hueMax: 340, satMin: 14, satMax: 28, lightMin: 46, lightMax: 60 }  // dusty berry
+  ];
 
-      if (balanceHue >= 58 && balanceHue <= 165) {
-        balanceSat = Math.min(balanceSat, 22);
+  const supportFamily = pick(cozySupportFamilies);
 
-        if (balanceHue >= 95 && balanceHue <= 140) {
-          balanceSat = Math.min(balanceSat, 18);
-          balanceLight = Math.min(balanceLight, 62);
-        }
+  let balanceHue = rand(supportFamily.hueMin, supportFamily.hueMax);
+  let balanceSat = rand(supportFamily.satMin, supportFamily.satMax);
+  let balanceLight = rand(supportFamily.lightMin, supportFamily.lightMax);
 
-        if (balanceHue >= 58 && balanceHue <= 85) {
-          balanceLight = Math.min(balanceLight, 58);
-        }
-      }
+  // Cozy green safety rule:
+  // Greens are allowed, but they must stay earthy, mossy, gray-sage, or olive.
+  if (balanceHue >= 52 && balanceHue <= 170) {
+    balanceSat = Math.min(balanceSat, 24);
 
-      const darkHue = chooseRelationshipDarkHue(warmHue, accentSat, balanceHue, "cozy");
-      const darkSat = chooseDarkSaturation("cozy", accentSat);
-      const darkLight = chooseDarkLightness("cozy", accentSat);
-
-      return [
-        lightColor,
-        softColor,
-        { h: warmHue, s: accentSat, l: accentLight },
-        { h: balanceHue, s: balanceSat, l: balanceLight },
-        { h: darkHue, s: darkSat, l: darkLight }
-      ];
+    // yellow-green / moss can be a little richer but not bright
+    if (balanceHue >= 52 && balanceHue <= 82) {
+      balanceSat = Math.min(balanceSat, 24);
+      balanceLight = Math.min(balanceLight, 62);
     }
+
+    // sage / eucalyptus should stay soft and gray
+    if (balanceHue > 82 && balanceHue <= 126) {
+      balanceSat = Math.min(balanceSat, 20);
+      balanceLight = Math.min(balanceLight, 66);
+    }
+
+    // deeper green-slate should stay muted
+    if (balanceHue > 126 && balanceHue <= 170) {
+      balanceSat = Math.min(balanceSat, 18);
+      balanceLight = Math.min(balanceLight, 56);
+    }
+  }
+
+  const darkHue = chooseRelationshipDarkHue(warmHue, accentSat, balanceHue, "cozy");
+  const darkSat = chooseDarkSaturation("cozy", accentSat);
+  const darkLight = chooseDarkLightness("cozy", accentSat);
+
+  return [
+    lightColor,
+    softColor,
+    { h: warmHue, s: accentSat, l: accentLight },
+    { h: balanceHue, s: balanceSat, l: balanceLight },
+    { h: darkHue, s: darkSat, l: darkLight }
+  ];
+}
 
     function buildMoody(seedContext) {
       const liftHue = wrapHue(getSeedHue(seedContext, [18, 36, 205, 318, 330]) + rand(-12, 12));
