@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paintboxed Palette Creator</title>
-
   <style>
     :root {
       --bg: #f6f1e8;
@@ -15,9 +14,7 @@
       --shadow: #d9cdb7;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -125,9 +122,7 @@
       cursor: pointer;
     }
 
-    .chip {
-      min-width: 120px;
-    }
+    .chip { min-width: 120px; }
 
     .chip.active {
       background: var(--ink);
@@ -173,9 +168,7 @@
       margin-top: 14px;
     }
 
-    .swatch-card {
-      text-align: center;
-    }
+    .swatch-card { text-align: center; }
 
     .swatch {
       width: 100%;
@@ -248,9 +241,7 @@
       color: var(--muted);
     }
 
-    input[type="range"] {
-      width: 100%;
-    }
+    input[type="range"] { width: 100%; }
 
     .preview-img {
       width: 110px;
@@ -274,18 +265,9 @@
     }
 
     @media (max-width: 640px) {
-      .chip {
-        flex: 1 1 calc(50% - 10px);
-      }
-
-      .main-btn,
-      .secondary-btn {
-        width: 100%;
-      }
-
-      .pattern-preview {
-        min-height: 330px;
-      }
+      .chip { flex: 1 1 calc(50% - 10px); }
+      .main-btn, .secondary-btn { width: 100%; }
+      .pattern-preview { min-height: 330px; }
     }
   </style>
 </head>
@@ -294,7 +276,7 @@
   <div class="wrap">
     <h1>Paintboxed</h1>
     <p class="subhead">
-      Create balanced palettes with clear light-to-dark contrast, warm-to-cool harmony, and intentional color roles.
+      Create balanced palettes with light-to-dark contrast, warm-to-cool harmony, and intentional color roles.
     </p>
 
     <div class="grid">
@@ -346,8 +328,8 @@
     </section>
 
     <div class="actions">
-      <button id="generateBtn" class="main-btn">Generate Palette ✨</button>
-      <button id="unlockBtn" class="secondary-btn">Unlock All ♡</button>
+      <button id="generateBtn" class="main-btn">Generate Palette â¨</button>
+      <button id="unlockBtn" class="secondary-btn">Unlock All â¡</button>
       <button id="exportBtn" class="secondary-btn">Export Hex Codes</button>
     </div>
 
@@ -388,25 +370,6 @@
   </div>
 
   <script>
-    /*
-      PAINTBOXED MASTER RULES
-
-      Every palette uses 5 intentional roles:
-      1. light relief
-      2. support color
-      3. main personality color
-      4. balancing color
-      5. dark anchor
-
-      Global rules:
-      - healthy light-to-dark spread
-      - healthy warm-to-cool balance
-      - no neon
-      - no harsh marker-bright primary colors
-      - no repeated hue families within one 5-color palette
-      - recent-history anti-repeat per vibe
-    */
-
     const state = {
       size: 5,
       vibe: "playful",
@@ -465,14 +428,6 @@
       return Math.random() < 0.5 ? rand(a, 360) : rand(0, b);
     }
 
-    function makeColor(range) {
-      return {
-        h: wrapHue(hueFromRange(range.h1, range.h2)),
-        s: rand(range.s1, range.s2),
-        l: rand(range.l1, range.l2)
-      };
-    }
-
     function copyColor(c) {
       return {
         h: Math.round(wrapHue(c.h)),
@@ -492,11 +447,7 @@
     function normalizeHex(value) {
       if (!value) return null;
       let v = value.trim().replace(/^#/, "");
-
-      if (v.length === 3) {
-        v = v.split("").map(ch => ch + ch).join("");
-      }
-
+      if (v.length === 3) v = v.split("").map(ch => ch + ch).join("");
       if (!/^[0-9a-fA-F]{6}$/.test(v)) return null;
       return "#" + v.toUpperCase();
     }
@@ -509,7 +460,6 @@
 
     function hexToRgb(hex) {
       const clean = normalizeHex(hex).slice(1);
-
       return {
         r: parseInt(clean.slice(0, 2), 16),
         g: parseInt(clean.slice(2, 4), 16),
@@ -592,7 +542,6 @@
 
     function hueFamily(h) {
       h = wrapHue(h);
-
       if (h >= 345 || h < 12) return "red";
       if (h >= 12 && h < 28) return "coral";
       if (h >= 28 && h < 45) return "orange";
@@ -607,7 +556,6 @@
       if (h >= 255 && h < 285) return "periwinkle";
       if (h >= 285 && h < 320) return "purple";
       if (h >= 320 && h < 345) return "pink";
-
       return "neutral";
     }
 
@@ -621,6 +569,14 @@
       return h >= 165 && h <= 285;
     }
 
+    function makeColor(range) {
+      return {
+        h: wrapHue(hueFromRange(range.h1, range.h2)),
+        s: rand(range.s1, range.s2),
+        l: rand(range.l1, range.l2)
+      };
+    }
+
     const vibeRanges = {
       playful: {
         light: [
@@ -629,8 +585,7 @@
           { h1: 258, h2: 286, s1: 24, s2: 42, l1: 88, l2: 95 },
           { h1: 135, h2: 165, s1: 24, s2: 42, l1: 88, l2: 95 },
           { h1: 200, h2: 222, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 48, h2: 62, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 14, h2: 30, s1: 22, s2: 40, l1: 88, l2: 95 }
+          { h1: 48, h2: 62, s1: 24, s2: 42, l1: 88, l2: 95 }
         ],
         support: [
           { h1: 46, h2: 60, s1: 44, s2: 64, l1: 70, l2: 82 },
@@ -898,29 +853,19 @@
       const hex = normalizeHex(hexInput.value);
 
       if (hex) {
-        return {
-          label: "hex input",
-          seeds: [hexToHsl(hex)]
-        };
+        return { label: "hex input", seeds: [hexToHsl(hex)] };
       }
 
       if (state.imageSeeds.length) {
-        return {
-          label: "uploaded image",
-          seeds: state.imageSeeds.map(copyColor)
-        };
+        return { label: "uploaded image", seeds: state.imageSeeds.map(copyColor) };
       }
 
-      return {
-        label: "color wheel",
-        seeds: [hexToHsl(colorPicker.value)]
-      };
+      return { label: "color wheel", seeds: [hexToHsl(colorPicker.value)] };
     }
 
     function extractImageSeeds(img) {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
       const maxSide = 80;
       const scale = Math.min(maxSide / img.width, maxSide / img.height, 1);
 
@@ -1093,17 +1038,9 @@
       if (vibe === "coastal") c.s = Math.min(c.s, 50);
       if (vibe === "vintage") c.s = Math.min(c.s, 52);
 
-      if (vibe === "cozy" && c.h >= 52 && c.h <= 170) {
-        c.s = Math.min(c.s, 24);
-      }
-
-      if (vibe === "cozy" && c.h >= 38 && c.h <= 68) {
-        c.s = Math.min(c.s, 34);
-      }
-
-      if (vibe === "cozy" && c.h >= 270 && c.h <= 335) {
-        c.s = Math.min(c.s, 24);
-      }
+      if (vibe === "cozy" && c.h >= 52 && c.h <= 170) c.s = Math.min(c.s, 24);
+      if (vibe === "cozy" && c.h >= 38 && c.h <= 68) c.s = Math.min(c.s, 34);
+      if (vibe === "cozy" && c.h >= 270 && c.h <= 335) c.s = Math.min(c.s, 24);
 
       return c;
     }
@@ -1153,7 +1090,6 @@
         if (blueCount > 1) return false;
 
         if (hueDistance(support.h, balance.h) < 34) return false;
-
         if (Math.abs(light.l - support.l) < 12 && hueDistance(light.h, support.h) < 24) return false;
 
         if (support.s > 34) return false;
@@ -1184,10 +1120,7 @@
       }
 
       if (vibe === "vintage") {
-        const warmCount = palette.filter(c =>
-          isWarmHue(c.h) || (c.h >= 65 && c.h <= 110)
-        ).length;
-
+        const warmCount = palette.filter(c => isWarmHue(c.h) || (c.h >= 65 && c.h <= 110)).length;
         if (warmCount < 2) return false;
       }
 
@@ -1239,10 +1172,7 @@
 
     function rememberPalette(palette, vibe) {
       state.history[vibe].push(makeSignature(palette));
-
-      if (state.history[vibe].length > 16) {
-        state.history[vibe].shift();
-      }
+      if (state.history[vibe].length > 16) state.history[vibe].shift();
     }
 
     function scorePalette(palette, vibe) {
@@ -1260,7 +1190,7 @@
         const mid = [palette[1], palette[2], palette[3]];
         const hasYellow = mid.some(c => c.h >= 38 && c.h <= 72);
         const hasWarm = mid.some(c => isWarmHue(c.h));
-        const hasCool = mid.some(c => isCoolHue(c.h));
+        const hasCool = mid.some(c => isCoolHue(c.h) || (c.h >= 80 && c.h <= 170));
 
         if (hasYellow) score += 35;
         if (hasWarm && hasCool) score += 22;
@@ -1276,7 +1206,153 @@
       return score;
     }
 
+    function chooseCozyPalette() {
+      const cozyStories = [
+        {
+          name: "linen-honey-blue-bark",
+          colors: [
+            { h: rand(36, 50), s: rand(5, 13), l: rand(92, 97) },
+            { h: rand(42, 58), s: rand(18, 32), l: rand(54, 70) },
+            { h: rand(190, 220), s: rand(10, 22), l: rand(42, 58) },
+            { h: rand(18, 34), s: rand(14, 28), l: rand(40, 56) },
+            { h: rand(18, 35), s: rand(20, 34), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "mushroom-ochre-rose-olive",
+          colors: [
+            { h: rand(25, 38), s: rand(4, 12), l: rand(88, 94) },
+            { h: rand(46, 64), s: rand(16, 30), l: rand(48, 64) },
+            { h: rand(345, 360), s: rand(12, 24), l: rand(48, 64) },
+            { h: rand(82, 108), s: rand(7, 18), l: rand(40, 56) },
+            { h: rand(70, 100), s: rand(18, 32), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "pale-sage-camel-clay-slate",
+          colors: [
+            { h: rand(80, 108), s: rand(4, 12), l: rand(88, 94) },
+            { h: rand(28, 42), s: rand(16, 30), l: rand(56, 72) },
+            { h: rand(14, 30), s: rand(26, 42), l: rand(42, 58) },
+            { h: rand(205, 230), s: rand(8, 20), l: rand(38, 54) },
+            { h: rand(190, 230), s: rand(18, 32), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "blue-gray-wheat-plum-brown",
+          colors: [
+            { h: rand(200, 222), s: rand(4, 12), l: rand(88, 94) },
+            { h: rand(35, 52), s: rand(16, 30), l: rand(56, 72) },
+            { h: rand(285, 320), s: rand(8, 20), l: rand(40, 56) },
+            { h: rand(24, 40), s: rand(14, 28), l: rand(40, 56) },
+            { h: rand(285, 325), s: rand(16, 30), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "parchment-gold-eucalyptus-espresso",
+          colors: [
+            { h: rand(40, 56), s: rand(7, 16), l: rand(90, 96) },
+            { h: rand(50, 68), s: rand(14, 28), l: rand(44, 60) },
+            { h: rand(112, 150), s: rand(6, 16), l: rand(40, 56) },
+            { h: rand(330, 350), s: rand(10, 22), l: rand(40, 56) },
+            { h: rand(18, 35), s: rand(20, 34), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "putty-caramel-periwinkle-bark",
+          colors: [
+            { h: rand(0, 360), s: rand(0, 6), l: rand(86, 93) },
+            { h: rand(22, 38), s: rand(16, 32), l: rand(52, 68) },
+            { h: rand(225, 252), s: rand(7, 18), l: rand(40, 56) },
+            { h: rand(44, 60), s: rand(16, 30), l: rand(42, 58) },
+            { h: rand(18, 35), s: rand(20, 34), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "blush-wheat-blue-olive",
+          colors: [
+            { h: rand(345, 358), s: rand(6, 14), l: rand(88, 95) },
+            { h: rand(35, 52), s: rand(16, 30), l: rand(56, 72) },
+            { h: rand(190, 222), s: rand(10, 22), l: rand(42, 58) },
+            { h: rand(60, 82), s: rand(9, 22), l: rand(38, 56) },
+            { h: rand(70, 100), s: rand(18, 32), l: rand(12, 24) }
+          ]
+        },
+        {
+          name: "stone-clay-honey-navy",
+          colors: [
+            { h: rand(18, 34), s: rand(5, 14), l: rand(87, 94) },
+            { h: rand(14, 30), s: rand(18, 34), l: rand(52, 68) },
+            { h: rand(44, 60), s: rand(20, 36), l: rand(42, 58) },
+            { h: rand(205, 230), s: rand(8, 20), l: rand(40, 56) },
+            { h: rand(190, 230), s: rand(18, 32), l: rand(12, 24) }
+          ]
+        }
+      ];
+
+      let tries = 0;
+
+      while (tries < 100) {
+        const story = pick(cozyStories);
+        let palette = story.colors.map(copyColor);
+        palette = softenPalette(palette, "cozy").map(copyColor);
+
+        if (cozyPaletteLooksBalanced(palette) && !tooSimilarToHistory(palette, "cozy")) {
+          return palette;
+        }
+
+        tries++;
+      }
+
+      const fallback = pick(cozyStories).colors.map(copyColor);
+      return softenPalette(fallback, "cozy").map(copyColor);
+    }
+
+    function cozyPaletteLooksBalanced(palette) {
+      const light = palette[0];
+      const support = palette[1];
+      const accent = palette[2];
+      const balance = palette[3];
+      const dark = palette[4];
+      const mid = [support, accent, balance];
+
+      if (light.l < 84) return false;
+      if (dark.l > 28) return false;
+      if (Math.abs(light.l - support.l) < 10) return false;
+
+      const families = mid.map(c => hueFamily(c.h));
+      if (new Set(families).size < 3) return false;
+
+      const greenCount = mid.filter(c => c.h >= 52 && c.h <= 170).length;
+      const blueCount = mid.filter(c => c.h >= 190 && c.h <= 252).length;
+      const purpleCount = mid.filter(c => c.h >= 270 && c.h <= 335).length;
+
+      if (greenCount > 1) return false;
+      if (blueCount > 1) return false;
+      if (purpleCount > 1) return false;
+
+      const hasWarm = mid.some(c => (c.h >= 12 && c.h <= 72) || c.h >= 340);
+      if (!hasWarm) return false;
+
+      const hasCoolOrBotanical = mid.some(c =>
+        (c.h >= 80 && c.h <= 170) ||
+        (c.h >= 190 && c.h <= 252) ||
+        (c.h >= 270 && c.h <= 335)
+      );
+      if (!hasCoolOrBotanical) return false;
+
+      if (hueDistance(support.h, balance.h) < 36) return false;
+      if (Math.abs(support.l - balance.l) < 8 && hueDistance(support.h, balance.h) < 48) return false;
+      if (mid.some(c => c.s > 38)) return false;
+
+      return true;
+    }
+
     function choosePalette(vibe) {
+      if (vibe === "cozy") {
+        return chooseCozyPalette();
+      }
+
       const candidates = [];
 
       for (let i = 0; i < 500; i++) {
@@ -1294,9 +1370,7 @@
       if (!candidates.length) {
         for (let i = 0; i < 200; i++) {
           const palette = buildCorePalette(vibe);
-
           if (!palettePasses(palette, vibe)) continue;
-
           candidates.push({
             palette,
             score: scorePalette(palette, vibe)
@@ -1304,9 +1378,7 @@
         }
       }
 
-      if (!candidates.length) {
-        return buildCorePalette(vibe);
-      }
+      if (!candidates.length) return buildCorePalette(vibe);
 
       candidates.sort((a, b) => b.score - a.score);
       return pick(candidates.slice(0, Math.min(12, candidates.length))).palette;
@@ -1357,19 +1429,14 @@
     }
 
     function applyLocks(newPalette) {
-      if (!state.palette.length || state.palette.length !== newPalette.length) {
-        return newPalette;
-      }
-
-      return newPalette.map((color, i) =>
-        state.locked[i] ? copyColor(state.palette[i]) : color
-      );
+      if (!state.palette.length || state.palette.length !== newPalette.length) return newPalette;
+      return newPalette.map((color, i) => state.locked[i] ? copyColor(state.palette[i]) : color);
     }
 
     function generatePalette() {
-      const seedContext = getSeedContext();
-      let core = choosePalette(state.vibe);
+      getSeedContext();
 
+      let core = choosePalette(state.vibe);
       rememberPalette(core, state.vibe);
 
       let palette = expandPalette(core, state.size, state.vibe);
@@ -1408,13 +1475,12 @@
 
         const heart = document.createElement("button");
         heart.className = "heart";
-        heart.textContent = state.locked[index] ? "♥" : "♡";
+        heart.textContent = state.locked[index] ? "â¥" : "â¡";
         heart.addEventListener("click", () => toggleLock(index));
 
         card.appendChild(swatch);
         card.appendChild(hexText);
         card.appendChild(heart);
-
         paletteGrid.appendChild(card);
       });
     }
@@ -1424,15 +1490,10 @@
 
       const scale = Number(scaleSlider.value);
       const selectedBg = backgroundSelect.value;
-
       let bg = "#FFFDF8";
 
       if (selectedBg === "palette-light") {
-        const light = state.palette.reduce((best, c) =>
-          c.l > best.l ? c : best,
-          state.palette[0]
-        );
-
+        const light = state.palette.reduce((best, c) => c.l > best.l ? c : best, state.palette[0]);
         bg = hslToHex(light.h, Math.min(light.s, 18), Math.max(light.l, 92));
       } else {
         bg = selectedBg;
@@ -1469,14 +1530,9 @@
       if (!button) return;
 
       state.size = Number(button.dataset.size);
-
-      sizeButtons.querySelectorAll(".chip").forEach(btn => {
-        btn.classList.remove("active");
-      });
-
+      sizeButtons.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
       state.locked = [];
-
       generatePalette();
     });
 
@@ -1485,14 +1541,9 @@
       if (!button) return;
 
       state.vibe = button.dataset.vibe;
-
-      vibeButtons.querySelectorAll(".chip").forEach(btn => {
-        btn.classList.remove("active");
-      });
-
+      vibeButtons.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
       state.locked = [];
-
       generatePalette();
     });
 
@@ -1523,18 +1574,15 @@
       img.onload = () => {
         imagePreview.src = url;
         imagePreview.style.display = "block";
-
         state.imageSeeds = extractImageSeeds(img);
         seedList.innerHTML = "";
 
         state.imageSeeds.forEach(seed => {
           const hex = hslToHex(seed.h, seed.s, seed.l);
-
           const pill = document.createElement("span");
           pill.className = "seed-pill";
           pill.textContent = hex;
           pill.style.background = hslToHex(seed.h, Math.max(18, seed.s), Math.min(88, Math.max(72, seed.l)));
-
           seedList.appendChild(pill);
         });
 
