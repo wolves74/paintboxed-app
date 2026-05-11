@@ -1350,6 +1350,111 @@
       return true;
     }
 
+    function neutralBridgeForVibe(vibe, palette) {
+      const accent = palette && palette[2] ? palette[2] : { h: 24, s: 28, l: 60 };
+
+      const neutralRanges = {
+        playful: [
+          { h1: 18, h2: 34, s1: 16, s2: 30, l1: 60, l2: 78 },  // peach beige
+          { h1: 28, h2: 44, s1: 14, s2: 28, l1: 58, l2: 76 },  // camel / warm tan
+          { h1: 38, h2: 54, s1: 14, s2: 26, l1: 60, l2: 78 },  // honey cream
+          { h1: 345, h2: 8, s1: 12, s2: 26, l1: 60, l2: 78 }   // rosy warm neutral
+        ],
+
+        cozy: [
+          { h1: 22, h2: 38, s1: 10, s2: 24, l1: 54, l2: 72 },  // warm mushroom
+          { h1: 30, h2: 46, s1: 12, s2: 26, l1: 54, l2: 72 },  // oatmeal / camel
+          { h1: 40, h2: 58, s1: 12, s2: 26, l1: 52, l2: 70 },  // wheat / honey neutral
+          { h1: 80, h2: 108, s1: 5, s2: 14, l1: 52, l2: 70 },  // sage-gray neutral
+          { h1: 200, h2: 225, s1: 5, s2: 14, l1: 52, l2: 70 }, // blue-gray neutral
+          { h1: 330, h2: 350, s1: 8, s2: 18, l1: 52, l2: 70 }  // rosy taupe neutral
+        ],
+
+        moody: [
+          { h1: 25, h2: 42, s1: 6, s2: 18, l1: 42, l2: 62 },   // smoky taupe
+          { h1: 80, h2: 115, s1: 5, s2: 16, l1: 42, l2: 62 },  // olive gray
+          { h1: 200, h2: 230, s1: 6, s2: 18, l1: 40, l2: 60 }, // blue gray
+          { h1: 300, h2: 330, s1: 6, s2: 18, l1: 40, l2: 60 }  // mauve gray
+        ],
+
+        nature: [
+          { h1: 25, h2: 42, s1: 8, s2: 20, l1: 52, l2: 70 },   // mushroom / bark beige
+          { h1: 38, h2: 54, s1: 10, s2: 24, l1: 52, l2: 70 },  // flax / wheat
+          { h1: 78, h2: 115, s1: 6, s2: 18, l1: 48, l2: 66 },  // lichen neutral
+          { h1: 200, h2: 230, s1: 6, s2: 18, l1: 48, l2: 66 }  // mineral blue-gray
+        ],
+
+        coastal: [
+          { h1: 25, h2: 42, s1: 8, s2: 20, l1: 58, l2: 76 },   // driftwood sand
+          { h1: 35, h2: 52, s1: 8, s2: 20, l1: 60, l2: 78 },   // shell beige
+          { h1: 90, h2: 120, s1: 5, s2: 16, l1: 58, l2: 76 },  // coastal sage-gray
+          { h1: 195, h2: 220, s1: 6, s2: 18, l1: 58, l2: 76 }  // misty blue-gray
+        ],
+
+        vintage: [
+          { h1: 28, h2: 44, s1: 10, s2: 24, l1: 54, l2: 74 },  // aged tan
+          { h1: 38, h2: 55, s1: 12, s2: 26, l1: 54, l2: 74 },  // antique wheat
+          { h1: 340, h2: 10, s1: 10, s2: 24, l1: 54, l2: 72 }, // faded rose neutral
+          { h1: 80, h2: 110, s1: 7, s2: 18, l1: 48, l2: 66 },  // vintage olive neutral
+          { h1: 205, h2: 230, s1: 7, s2: 18, l1: 48, l2: 66 }  // dusty blue neutral
+        ]
+      };
+
+      const ranges = neutralRanges[vibe] || neutralRanges.cozy;
+      let best = null;
+      let bestScore = -9999;
+
+      for (let i = 0; i < 60; i++) {
+        const candidate = softenColor(makeColor(pick(ranges)), vibe);
+        let score = 0;
+
+        // Neutral bridge should be visibly different from the hero/accent and balance colors.
+        score += hueDistance(candidate.h, palette[2].h) * 0.55;
+        score += hueDistance(candidate.h, palette[3].h) * 0.35;
+
+        // It should be a middle-value neutral, not another white/off-white and not a dark anchor.
+        if (candidate.l >= 48 && candidate.l <= 78) score += 45;
+        if (candidate.s >= 6 && candidate.s <= 30) score += 35;
+        if (candidate.s > 38) score -= 80;
+        if (candidate.l > 82) score -= 90;
+        if (candidate.l < 38) score -= 60;
+
+        // Playful specifically needs a warm neutral bridge.
+        if (vibe === "playful" && isWarmHue(candidate.h)) score += 40;
+
+        // Cozy likes wheat/honey/oat/mushroom/soft gray-neutral bridges.
+        if (vibe === "cozy" && candidate.h >= 35 && candidate.h <= 62) score += 35;
+
+        if (score > bestScore) {
+          best = candidate;
+          bestScore = score;
+        }
+      }
+
+      return copyColor(best || makeColor(pick(ranges)));
+    }
+
+    function hasNeutralBridge(palette) {
+      // Looks for a middle-value low/moderate-saturation neutral that is NOT the light swatch.
+      return palette.slice(1, 4).some(c =>
+        c.l >= 42 &&
+        c.l <= 78 &&
+        c.s <= 30
+      );
+    }
+
+    function enforceNeutralBridge(palette, vibe) {
+      const next = palette.map(copyColor);
+
+      if (hasNeutralBridge(next)) return next;
+
+      // Swatch 2 is the support/bridge role. Keep swatch 1 as light relief,
+      // swatch 3 as personality, swatch 4 as balance, swatch 5 as anchor.
+      next[1] = neutralBridgeForVibe(vibe, next);
+
+      return next.map(copyColor);
+    }
+
     function choosePalette(vibe) {
       if (vibe === "cozy") {
         return chooseCozyPalette();
@@ -1439,6 +1544,7 @@
       getSeedContext();
 
       let core = choosePalette(state.vibe);
+      core = enforceNeutralBridge(core, state.vibe);
       rememberPalette(core, state.vibe);
 
       let palette = expandPalette(core, state.size, state.vibe);
