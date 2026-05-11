@@ -202,10 +202,12 @@
     .heart {
       border: none;
       background: transparent;
-      font-size: 1.7rem;
+      font-size: .95rem;
       cursor: pointer;
       color: var(--ink);
-      line-height: 1;
+      line-height: 1.2;
+      margin-top: 4px;
+      font-family: Georgia, "Times New Roman", serif;
     }
 
     .pattern-shell {
@@ -328,8 +330,8 @@
     </section>
 
     <div class="actions">
-      <button id="generateBtn" class="main-btn">Generate Palette â¨</button>
-      <button id="unlockBtn" class="secondary-btn">Unlock All â¡</button>
+      <button id="generateBtn" class="main-btn">Generate Palette</button>
+      <button id="unlockBtn" class="secondary-btn">Unlock All</button>
       <button id="exportBtn" class="secondary-btn">Export Hex Codes</button>
     </div>
 
@@ -1387,214 +1389,45 @@
     function expandPalette(core, size, vibe) {
       if (size === 5) return core.map(copyColor);
 
-      // 10/20-color palettes should NOT be made from tiny shifts of the same 5 colors.
-      // Tiny shifts created repeated swatch syndrome.
-      // Expanded palettes now pull from the vibe's full role families and reject near-duplicates.
+      const [light, support, accent, balance, dark] = core.map(copyColor);
+
       if (size === 10) {
-        return buildExpandedPalette(vibe, 10);
+        return softenPalette([
+          light,
+          shiftColor(light, 4, 3, -4),
+          support,
+          shiftColor(support, -8, 4, -6),
+          accent,
+          shiftColor(accent, 10, -6, 8),
+          balance,
+          shiftColor(balance, -10, -5, 8),
+          dark,
+          shiftColor(dark, 8, 4, 10)
+        ], vibe).map(copyColor);
       }
 
-      return buildExpandedPalette(vibe, 20);
-    }
-
-    function roleRangesForVibe(vibe) {
-      if (vibe === "cozy") {
-        return {
-          lights: [
-            { h1: 35, h2: 50, s1: 4, s2: 13, l1: 91, l2: 97 },
-            { h1: 25, h2: 38, s1: 3, s2: 11, l1: 87, l2: 94 },
-            { h1: 65, h2: 86, s1: 3, s2: 10, l1: 86, l2: 94 },
-            { h1: 200, h2: 222, s1: 3, s2: 11, l1: 86, l2: 94 },
-            { h1: 280, h2: 315, s1: 3, s2: 11, l1: 86, l2: 94 },
-            { h1: 0, h2: 360, s1: 0, s2: 6, l1: 86, l2: 93 }
-          ],
-          supports: [
-            { h1: 28, h2: 42, s1: 14, s2: 28, l1: 55, l2: 72 },
-            { h1: 35, h2: 52, s1: 14, s2: 30, l1: 54, l2: 72 },
-            { h1: 42, h2: 58, s1: 16, s2: 34, l1: 48, l2: 66 },
-            { h1: 52, h2: 72, s1: 12, s2: 28, l1: 44, l2: 62 },
-            { h1: 14, h2: 30, s1: 14, s2: 28, l1: 50, l2: 68 },
-            { h1: 345, h2: 360, s1: 10, s2: 22, l1: 50, l2: 68 },
-            { h1: 280, h2: 318, s1: 8, s2: 18, l1: 46, l2: 64 },
-            { h1: 205, h2: 230, s1: 6, s2: 16, l1: 48, l2: 66 },
-            { h1: 225, h2: 252, s1: 7, s2: 18, l1: 46, l2: 64 }
-          ],
-          accents: [
-            { h1: 14, h2: 30, s1: 24, s2: 42, l1: 42, l2: 60 },
-            { h1: 24, h2: 40, s1: 22, s2: 40, l1: 42, l2: 60 },
-            { h1: 36, h2: 52, s1: 20, s2: 36, l1: 42, l2: 60 },
-            { h1: 44, h2: 60, s1: 18, s2: 34, l1: 42, l2: 60 },
-            { h1: 72, h2: 100, s1: 10, s2: 22, l1: 38, l2: 56 },
-            { h1: 105, h2: 135, s1: 8, s2: 20, l1: 38, l2: 56 },
-            { h1: 190, h2: 222, s1: 10, s2: 22, l1: 38, l2: 56 },
-            { h1: 285, h2: 320, s1: 8, s2: 20, l1: 38, l2: 56 },
-            { h1: 330, h2: 348, s1: 10, s2: 22, l1: 38, l2: 56 }
-          ],
-          darks: [
-            { h1: 18, h2: 35, s1: 18, s2: 34, l1: 12, l2: 26 },
-            { h1: 35, h2: 52, s1: 16, s2: 30, l1: 14, l2: 28 },
-            { h1: 65, h2: 100, s1: 16, s2: 32, l1: 12, l2: 26 },
-            { h1: 100, h2: 140, s1: 16, s2: 32, l1: 12, l2: 26 },
-            { h1: 190, h2: 230, s1: 16, s2: 32, l1: 12, l2: 26 },
-            { h1: 285, h2: 325, s1: 16, s2: 30, l1: 12, l2: 26 }
-          ]
-        };
-      }
-
-      const r = vibeRanges[vibe];
-
-      return {
-        lights: r.light,
-        supports: r.support,
-        accents: r.accent.concat(r.balance),
-        darks: r.dark
-      };
-    }
-
-    function rangeToColor(range, vibe) {
-      return softenColor(makeColor(range), vibe);
-    }
-
-    function colorDistanceScore(a, b) {
-      const hueScore = hueDistance(a.h, b.h);
-      const lightScore = Math.abs(a.l - b.l) * 2.2;
-      const satScore = Math.abs(a.s - b.s) * 0.7;
-      return hueScore + lightScore + satScore;
-    }
-
-    function tooCloseToExisting(candidate, colors, vibe) {
-      for (const existing of colors) {
-        const sameFamily = hueFamily(candidate.h) === hueFamily(existing.h);
-        const hueClose = hueDistance(candidate.h, existing.h) < 18;
-        const valueClose = Math.abs(candidate.l - existing.l) < 9;
-        const satClose = Math.abs(candidate.s - existing.s) < 10;
-
-        if (sameFamily && valueClose) return true;
-        if (hueClose && valueClose) return true;
-        if (hueClose && valueClose && satClose) return true;
-
-        if (vibe === "cozy") {
-          const candidateGreen = candidate.h >= 52 && candidate.h <= 170;
-          const existingGreen = existing.h >= 52 && existing.h <= 170;
-          const candidatePurple = candidate.h >= 270 && candidate.h <= 335;
-          const existingPurple = existing.h >= 270 && existing.h <= 335;
-          const candidateBlue = candidate.h >= 190 && candidate.h <= 252;
-          const existingBlue = existing.h >= 190 && existing.h <= 252;
-
-          if (candidateGreen && existingGreen && valueClose) return true;
-          if (candidatePurple && existingPurple && valueClose) return true;
-          if (candidateBlue && existingBlue && valueClose) return true;
-        }
-      }
-
-      return false;
-    }
-
-    function addDistinctColor(colors, ranges, vibe, label) {
-      let best = null;
-      let bestScore = -9999;
-
-      for (let i = 0; i < 90; i++) {
-        const candidate = rangeToColor(pick(ranges), vibe);
-        if (tooCloseToExisting(candidate, colors, vibe)) continue;
-
-        let score = 0;
-
-        for (const existing of colors) {
-          score += Math.min(colorDistanceScore(candidate, existing), 130);
-        }
-
-        const fam = hueFamily(candidate.h);
-        const familyCount = colors.filter(c => hueFamily(c.h) === fam).length;
-        score -= familyCount * 75;
-
-        if (label === "light" && candidate.l >= 84) score += 40;
-        if (label === "dark" && candidate.l <= 30) score += 40;
-        if (label === "accent" && candidate.s >= 14 && candidate.l >= 36 && candidate.l <= 70) score += 25;
-
-        if (vibe === "cozy") {
-          if (candidate.h >= 38 && candidate.h <= 72) score += 34; // wheat / honey / ochre
-          if (candidate.h >= 52 && candidate.h <= 170 && familyCount > 0) score -= 110;
-          if (candidate.h >= 270 && candidate.h <= 335 && familyCount > 0) score -= 110;
-          if (candidate.h >= 190 && candidate.h <= 252 && familyCount > 0) score -= 110;
-        }
-
-        if (score > bestScore) {
-          best = candidate;
-          bestScore = score;
-        }
-      }
-
-      if (best) {
-        colors.push(copyColor(best));
-        return true;
-      }
-
-      // Softer fallback: still try to avoid visual twins.
-      for (let i = 0; i < 90; i++) {
-        const candidate = rangeToColor(pick(ranges), vibe);
-        if (!tooCloseToExisting(candidate, colors, vibe)) {
-          colors.push(copyColor(candidate));
-          return true;
-        }
-      }
-
-      colors.push(copyColor(rangeToColor(pick(ranges), vibe)));
-      return true;
-    }
-
-    function buildExpandedPalette(vibe, size) {
-      const roles = roleRangesForVibe(vibe);
-      const colors = [];
-
-      const recipe10 = [
-        ["light", roles.lights],
-        ["light", roles.lights],
-        ["support", roles.supports],
-        ["support", roles.supports],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["dark", roles.darks],
-        ["dark", roles.darks]
-      ];
-
-      const recipe20 = [
-        ["light", roles.lights],
-        ["light", roles.lights],
-        ["light", roles.lights],
-        ["support", roles.supports],
-        ["support", roles.supports],
-        ["support", roles.supports],
-        ["support", roles.supports],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["accent", roles.accents],
-        ["dark", roles.darks],
-        ["dark", roles.darks],
-        ["dark", roles.darks],
-        ["accent", roles.accents],
-        ["support", roles.supports]
-      ];
-
-      const recipe = size === 10 ? recipe10 : recipe20;
-
-      for (const [label, ranges] of recipe) {
-        addDistinctColor(colors, ranges, vibe, label);
-      }
-
-      const final = softenPalette(colors, vibe).map(copyColor);
-
-      // Keep expanded palettes readable: lighter colors first, anchors last.
-      final.sort((a, b) => b.l - a.l);
-
-      return final;
+      return softenPalette([
+        light,
+        shiftColor(light, 0, 2, -3),
+        shiftColor(light, 8, 5, -6),
+        support,
+        shiftColor(support, -8, 4, -5),
+        shiftColor(support, 10, 5, 5),
+        accent,
+        shiftColor(accent, -8, -8, 10),
+        shiftColor(accent, 10, -6, -5),
+        shiftColor(accent, 20, -10, 4),
+        balance,
+        shiftColor(balance, -10, -6, 10),
+        shiftColor(balance, 10, 4, -5),
+        shiftColor(balance, 22, -8, 5),
+        dark,
+        shiftColor(dark, 8, 4, 6),
+        shiftColor(dark, -8, 6, 10),
+        shiftColor(dark, 18, -4, 12),
+        shiftColor(accent, -18, -12, 8),
+        shiftColor(balance, -22, -10, 8)
+      ], vibe).map(copyColor);
     }
 
     function applyLocks(newPalette) {
@@ -1644,7 +1477,7 @@
 
         const heart = document.createElement("button");
         heart.className = "heart";
-        heart.textContent = state.locked[index] ? "â¥" : "â¡";
+        heart.textContent = state.locked[index] ? "Locked" : "Lock";
         heart.addEventListener("click", () => toggleLock(index));
 
         card.appendChild(swatch);
