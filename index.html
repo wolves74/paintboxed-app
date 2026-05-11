@@ -1351,52 +1351,73 @@
     }
 
     function neutralBridgeForVibe(vibe, palette) {
-      const accent = palette && palette[2] ? palette[2] : { h: 24, s: 28, l: 60 };
+      // Neutral bridge DNA:
+      // This is intentionally broader than "medium beige."
+      // It rotates through nude, oatmeal, tan, camel, peach-beige, rosy taupe,
+      // mushroom, putty, warm gray, sage-gray, blue-gray, lavender-gray, and dusty mauve.
+      // It should be visible as a neutral bridge, not white/off-white and not a loud accent.
 
       const neutralRanges = {
         playful: [
-          { h1: 18, h2: 34, s1: 16, s2: 30, l1: 60, l2: 78 },  // peach beige
-          { h1: 28, h2: 44, s1: 14, s2: 28, l1: 58, l2: 76 },  // camel / warm tan
-          { h1: 38, h2: 54, s1: 14, s2: 26, l1: 60, l2: 78 },  // honey cream
-          { h1: 345, h2: 8, s1: 12, s2: 26, l1: 60, l2: 78 }   // rosy warm neutral
+          { h1: 16, h2: 28, s1: 16, s2: 32, l1: 66, l2: 82 },  // peach nude
+          { h1: 24, h2: 38, s1: 14, s2: 30, l1: 58, l2: 76 },  // tan / camel
+          { h1: 34, h2: 48, s1: 12, s2: 28, l1: 60, l2: 78 },  // honey beige
+          { h1: 345, h2: 8, s1: 12, s2: 28, l1: 60, l2: 78 },  // rosy nude
+          { h1: 0, h2: 18, s1: 10, s2: 24, l1: 54, l2: 72 },   // dusty blush taupe
+          { h1: 25, h2: 45, s1: 7, s2: 18, l1: 50, l2: 68 },   // mushroom tan
+          { h1: 210, h2: 235, s1: 5, s2: 14, l1: 58, l2: 76 }, // soft blue-gray neutral
+          { h1: 285, h2: 315, s1: 6, s2: 16, l1: 56, l2: 74 }  // lavender-gray neutral
         ],
 
         cozy: [
-          { h1: 22, h2: 38, s1: 10, s2: 24, l1: 54, l2: 72 },  // warm mushroom
-          { h1: 30, h2: 46, s1: 12, s2: 26, l1: 54, l2: 72 },  // oatmeal / camel
-          { h1: 40, h2: 58, s1: 12, s2: 26, l1: 52, l2: 70 },  // wheat / honey neutral
-          { h1: 80, h2: 108, s1: 5, s2: 14, l1: 52, l2: 70 },  // sage-gray neutral
-          { h1: 200, h2: 225, s1: 5, s2: 14, l1: 52, l2: 70 }, // blue-gray neutral
-          { h1: 330, h2: 350, s1: 8, s2: 18, l1: 52, l2: 70 }  // rosy taupe neutral
+          { h1: 18, h2: 32, s1: 9, s2: 22, l1: 58, l2: 76 },   // soft nude peach-beige
+          { h1: 24, h2: 38, s1: 9, s2: 22, l1: 50, l2: 68 },   // warm mushroom
+          { h1: 30, h2: 46, s1: 10, s2: 24, l1: 52, l2: 72 },  // oatmeal / camel
+          { h1: 40, h2: 58, s1: 10, s2: 24, l1: 50, l2: 70 },  // wheat / honey neutral
+          { h1: 345, h2: 8, s1: 8, s2: 20, l1: 56, l2: 74 },   // blush nude
+          { h1: 330, h2: 350, s1: 7, s2: 18, l1: 50, l2: 68 }, // rosy taupe
+          { h1: 0, h2: 360, s1: 0, s2: 8, l1: 48, l2: 68 },    // putty / warm gray
+          { h1: 70, h2: 108, s1: 4, s2: 13, l1: 50, l2: 70 },  // sage-gray neutral
+          { h1: 200, h2: 225, s1: 4, s2: 13, l1: 50, l2: 70 }, // blue-gray neutral
+          { h1: 280, h2: 315, s1: 4, s2: 13, l1: 50, l2: 68 }  // lavender-gray neutral
         ],
 
         moody: [
-          { h1: 25, h2: 42, s1: 6, s2: 18, l1: 42, l2: 62 },   // smoky taupe
-          { h1: 80, h2: 115, s1: 5, s2: 16, l1: 42, l2: 62 },  // olive gray
-          { h1: 200, h2: 230, s1: 6, s2: 18, l1: 40, l2: 60 }, // blue gray
-          { h1: 300, h2: 330, s1: 6, s2: 18, l1: 40, l2: 60 }  // mauve gray
+          { h1: 20, h2: 38, s1: 6, s2: 18, l1: 42, l2: 62 },   // smoky taupe
+          { h1: 345, h2: 10, s1: 6, s2: 18, l1: 42, l2: 62 },  // dusty mauve taupe
+          { h1: 0, h2: 360, s1: 0, s2: 9, l1: 38, l2: 58 },    // stone gray
+          { h1: 80, h2: 115, s1: 4, s2: 14, l1: 40, l2: 60 },  // olive gray
+          { h1: 200, h2: 230, s1: 5, s2: 16, l1: 40, l2: 60 }, // blue gray
+          { h1: 290, h2: 330, s1: 5, s2: 16, l1: 40, l2: 60 }  // plum gray
         ],
 
         nature: [
-          { h1: 25, h2: 42, s1: 8, s2: 20, l1: 52, l2: 70 },   // mushroom / bark beige
-          { h1: 38, h2: 54, s1: 10, s2: 24, l1: 52, l2: 70 },  // flax / wheat
-          { h1: 78, h2: 115, s1: 6, s2: 18, l1: 48, l2: 66 },  // lichen neutral
-          { h1: 200, h2: 230, s1: 6, s2: 18, l1: 48, l2: 66 }  // mineral blue-gray
+          { h1: 20, h2: 38, s1: 8, s2: 20, l1: 52, l2: 70 },   // mushroom / bark beige
+          { h1: 34, h2: 52, s1: 9, s2: 22, l1: 52, l2: 72 },   // flax / wheat
+          { h1: 0, h2: 360, s1: 0, s2: 8, l1: 48, l2: 66 },    // stone / putty
+          { h1: 75, h2: 115, s1: 5, s2: 16, l1: 48, l2: 66 },  // lichen neutral
+          { h1: 200, h2: 230, s1: 5, s2: 16, l1: 48, l2: 66 }, // mineral blue-gray
+          { h1: 330, h2: 350, s1: 7, s2: 18, l1: 50, l2: 68 }  // dried rose taupe
         ],
 
         coastal: [
-          { h1: 25, h2: 42, s1: 8, s2: 20, l1: 58, l2: 76 },   // driftwood sand
+          { h1: 24, h2: 42, s1: 8, s2: 20, l1: 58, l2: 76 },   // driftwood sand
           { h1: 35, h2: 52, s1: 8, s2: 20, l1: 60, l2: 78 },   // shell beige
-          { h1: 90, h2: 120, s1: 5, s2: 16, l1: 58, l2: 76 },  // coastal sage-gray
-          { h1: 195, h2: 220, s1: 6, s2: 18, l1: 58, l2: 76 }  // misty blue-gray
+          { h1: 12, h2: 26, s1: 9, s2: 22, l1: 62, l2: 80 },   // shell peach nude
+          { h1: 345, h2: 8, s1: 7, s2: 18, l1: 62, l2: 80 },   // shell pink neutral
+          { h1: 90, h2: 120, s1: 4, s2: 14, l1: 58, l2: 76 },  // coastal sage-gray
+          { h1: 195, h2: 220, s1: 5, s2: 16, l1: 58, l2: 76 }  // misty blue-gray
         ],
 
         vintage: [
-          { h1: 28, h2: 44, s1: 10, s2: 24, l1: 54, l2: 74 },  // aged tan
-          { h1: 38, h2: 55, s1: 12, s2: 26, l1: 54, l2: 74 },  // antique wheat
-          { h1: 340, h2: 10, s1: 10, s2: 24, l1: 54, l2: 72 }, // faded rose neutral
-          { h1: 80, h2: 110, s1: 7, s2: 18, l1: 48, l2: 66 },  // vintage olive neutral
-          { h1: 205, h2: 230, s1: 7, s2: 18, l1: 48, l2: 66 }  // dusty blue neutral
+          { h1: 24, h2: 40, s1: 9, s2: 22, l1: 54, l2: 74 },   // aged tan
+          { h1: 36, h2: 55, s1: 10, s2: 24, l1: 54, l2: 74 },  // antique wheat
+          { h1: 12, h2: 28, s1: 10, s2: 24, l1: 54, l2: 72 },  // peachy vintage nude
+          { h1: 340, h2: 10, s1: 9, s2: 22, l1: 54, l2: 72 },  // faded rose neutral
+          { h1: 0, h2: 360, s1: 0, s2: 8, l1: 48, l2: 66 },    // aged putty
+          { h1: 78, h2: 110, s1: 6, s2: 17, l1: 48, l2: 66 },  // vintage olive neutral
+          { h1: 205, h2: 230, s1: 6, s2: 17, l1: 48, l2: 66 }, // dusty blue neutral
+          { h1: 285, h2: 320, s1: 6, s2: 17, l1: 48, l2: 66 }  // dusty violet gray
         ]
       };
 
@@ -1404,26 +1425,43 @@
       let best = null;
       let bestScore = -9999;
 
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i < 100; i++) {
         const candidate = softenColor(makeColor(pick(ranges)), vibe);
         let score = 0;
 
-        // Neutral bridge should be visibly different from the hero/accent and balance colors.
-        score += hueDistance(candidate.h, palette[2].h) * 0.55;
-        score += hueDistance(candidate.h, palette[3].h) * 0.35;
+        // Must look like a neutral bridge, not white, not anchor, not main pop.
+        if (candidate.l >= 48 && candidate.l <= 78) score += 60;
+        if (candidate.s >= 4 && candidate.s <= 30) score += 50;
+        if (candidate.s > 34) score -= 120;
+        if (candidate.l > 82) score -= 130;
+        if (candidate.l < 38) score -= 90;
 
-        // It should be a middle-value neutral, not another white/off-white and not a dark anchor.
-        if (candidate.l >= 48 && candidate.l <= 78) score += 45;
-        if (candidate.s >= 6 && candidate.s <= 30) score += 35;
-        if (candidate.s > 38) score -= 80;
-        if (candidate.l > 82) score -= 90;
-        if (candidate.l < 38) score -= 60;
+        // Keep it distinct from swatch 1, 3, and 4.
+        if (palette && palette[0]) {
+          if (Math.abs(candidate.l - palette[0].l) < 12) score -= 80;
+          if (hueDistance(candidate.h, palette[0].h) < 16) score -= 30;
+        }
 
-        // Playful specifically needs a warm neutral bridge.
-        if (vibe === "playful" && isWarmHue(candidate.h)) score += 40;
+        if (palette && palette[2]) {
+          score += hueDistance(candidate.h, palette[2].h) * 0.35;
+          if (hueFamily(candidate.h) === hueFamily(palette[2].h) && Math.abs(candidate.l - palette[2].l) < 12) score -= 70;
+        }
 
-        // Cozy likes wheat/honey/oat/mushroom/soft gray-neutral bridges.
-        if (vibe === "cozy" && candidate.h >= 35 && candidate.h <= 62) score += 35;
+        if (palette && palette[3]) {
+          score += hueDistance(candidate.h, palette[3].h) * 0.25;
+          if (hueFamily(candidate.h) === hueFamily(palette[3].h) && Math.abs(candidate.l - palette[3].l) < 12) score -= 70;
+        }
+
+        // Playful needs a warm nude neutral most of the time.
+        if (vibe === "playful" && isWarmHue(candidate.h)) score += 65;
+
+        // Cozy should rotate beyond medium beige into wheat, rosy taupe, sage-gray, blue-gray, putty.
+        if (vibe === "cozy") {
+          if (candidate.h >= 18 && candidate.h <= 62) score += 25;
+          if (candidate.h >= 70 && candidate.h <= 108) score += 18;
+          if (candidate.h >= 200 && candidate.h <= 225) score += 18;
+          if (candidate.h >= 280 && candidate.h <= 315) score += 12;
+        }
 
         if (score > bestScore) {
           best = candidate;
