@@ -1579,11 +1579,11 @@
       const h = wrapHue(color.h);
 
       return (
-        ((h >= 16 && h <= 62) || h >= 345) &&
-        color.s >= 8 &&
-        color.s <= 32 &&
-        color.l >= 48 &&
-        color.l <= 80
+        ((h >= 14 && h <= 64) || h >= 345) &&
+        color.s >= 10 &&
+        color.s <= 34 &&
+        color.l >= 54 &&
+        color.l <= 82
       );
     }
 
@@ -1608,41 +1608,60 @@
     }
 
     function makeCozyRequiredWarmBridge(existing) {
-      // This is the required Cozy middle warmth lane.
-      // It is NOT allowed to be mauve-gray, blue-gray, green-gray, or chilly putty.
+      // STRICT Cozy Swatch 2 rule:
+      // This is not just "a neutral." It must visibly read WARM.
+      // Allowed: oat, camel, wheat, honey beige, clay beige, warm mushroom,
+      // warm greige, peach beige, soft tan, blush-beige.
+      //
+      // Not allowed here: deep gray, cool gray, sage-gray, blue-gray,
+      // mauve-gray, purple-taupe, generic medium neutral, or dark anchor color.
+
       const ranges = [
-        { h1: 18, h2: 32, s1: 14, s2: 28, l1: 60, l2: 78 },  // peach beige / warm nude
-        { h1: 24, h2: 38, s1: 12, s2: 26, l1: 56, l2: 74 },  // warm mushroom / tan
-        { h1: 30, h2: 46, s1: 14, s2: 28, l1: 58, l2: 76 },  // oatmeal / camel
-        { h1: 38, h2: 56, s1: 14, s2: 30, l1: 56, l2: 74 },  // wheat / honey greige
-        { h1: 46, h2: 64, s1: 12, s2: 26, l1: 54, l2: 72 },  // muted ochre beige
-        { h1: 12, h2: 26, s1: 12, s2: 26, l1: 58, l2: 76 },  // clay beige / apricot beige
-        { h1: 345, h2: 8, s1: 10, s2: 22, l1: 58, l2: 76 },   // warm blush beige
-        { h1: 26, h2: 42, s1: 8, s2: 18, l1: 52, l2: 70 }     // warm greige / mushroom
+        { h1: 20, h2: 32, s1: 16, s2: 30, l1: 62, l2: 78 },  // peach beige / warm nude
+        { h1: 26, h2: 38, s1: 14, s2: 28, l1: 58, l2: 74 },  // warm mushroom / tan
+        { h1: 32, h2: 46, s1: 16, s2: 30, l1: 60, l2: 76 },  // oatmeal / camel
+        { h1: 38, h2: 54, s1: 16, s2: 30, l1: 58, l2: 76 },  // wheat / honey beige
+        { h1: 46, h2: 62, s1: 14, s2: 28, l1: 56, l2: 74 },  // muted ochre-beige
+        { h1: 14, h2: 26, s1: 14, s2: 28, l1: 60, l2: 76 },  // clay beige / apricot beige
+        { h1: 345, h2: 8, s1: 12, s2: 24, l1: 60, l2: 76 },   // warm blush-beige
+        { h1: 28, h2: 42, s1: 10, s2: 22, l1: 56, l2: 72 }    // warm greige / mushroom beige
       ];
 
       let best = null;
       let bestScore = -9999;
 
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 140; i++) {
         const candidate = softenColor(makeColor(pick(ranges)), "cozy");
         let score = 0;
 
+        const h = wrapHue(candidate.h);
+
+        // Required visual warmth: strongly reward true warm neutral range.
+        if ((h >= 14 && h <= 64) || h >= 345) score += 220;
+        if (h >= 28 && h <= 58) score += 80; // oat/camel/wheat/honey sweet spot
+        if (candidate.s >= 12 && candidate.s <= 30) score += 90;
+        if (candidate.l >= 58 && candidate.l <= 78) score += 90;
+
+        // Must not be too close to light swatch, but also must not get dark/gray.
+        if (candidate.l < 54) score -= 220;
+        if (candidate.l > 82) score -= 130;
+        if (candidate.s < 9) score -= 240;   // prevents generic gray/putty
+        if (candidate.s > 34) score -= 120;
+
         existing.forEach(other => {
-          score += hueDistance(candidate.h, other.h) * 0.25;
-          score += Math.abs(candidate.l - other.l) * 0.7;
+          score += hueDistance(candidate.h, other.h) * 0.18;
+          score += Math.abs(candidate.l - other.l) * 0.45;
 
           if (hueFamily(candidate.h) === hueFamily(other.h) && Math.abs(candidate.l - other.l) < 10) {
-            score -= 90;
+            score -= 65;
           }
         });
 
-        if (candidate.h >= 28 && candidate.h <= 58) score += 40;
-        if (candidate.s >= 12 && candidate.s <= 28) score += 35;
-        if (candidate.l >= 56 && candidate.l <= 76) score += 35;
-        if (candidate.h >= 285 && candidate.h <= 340) score -= 500;
-        if (candidate.h >= 180 && candidate.h <= 255) score -= 500;
-        if (candidate.h >= 85 && candidate.h <= 150) score -= 260;
+        // Hard reject zones for Swatch 2 in Cozy.
+        if (h >= 70 && h <= 170) score -= 800;   // sage/green-gray/eucalyptus
+        if (h >= 180 && h <= 255) score -= 900;  // blue-gray/periwinkle gray
+        if (h >= 285 && h <= 340) score -= 900;  // mauve/purple taupe
+        if (candidate.l <= 48) score -= 900;     // no deep/medium-dark gray
 
         if (score > bestScore) {
           best = candidate;
@@ -1650,7 +1669,12 @@
         }
       }
 
-      return copyColor(best || softenColor(makeColor(pick(ranges)), "cozy"));
+      // Safety fallback is explicitly warm. No gray fallback.
+      return copyColor(best || {
+        h: 36,
+        s: 20,
+        l: 66
+      });
     }
 
     function makeCozyRequiredWarmMiddle(existing) {
@@ -1710,8 +1734,18 @@
 
       // Non-negotiable Cozy rule:
       // Warmth may NOT live only in the dark anchor.
-      // Swatch 2 must be visibly warm-neutral every time.
+      // Swatch 2 must be visibly WARM-neutral every time.
       next[1] = makeCozyRequiredWarmBridge(next);
+
+      // Final safety check: if Swatch 2 somehow still reads gray/cool/mauve/dark,
+      // replace it with an unmistakable warm neutral.
+      if (!isCozyWarmNeutral(next[1]) || isCozyCoolOrMauve(next[1]) || next[1].l < 54 || next[1].s < 10) {
+        next[1] = {
+          h: rand(30, 48),
+          s: rand(16, 26),
+          l: rand(60, 74)
+        };
+      }
 
       const visibleMiddleWarmCount = [next[1], next[2], next[3]].filter(isCozyVisibleWarm).length;
       const coolMiddleCount = [next[2], next[3]].filter(isCozyCoolOrMauve).length;
@@ -1873,7 +1907,7 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Cozy middle-warmth correction is active.`);
+      setStatus(`Generated a ${label} palette. Strict Cozy warm-neutral bridge is active.`);
     }
 
     function renderPalette() {
