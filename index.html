@@ -1275,8 +1275,48 @@
       if (hueDistance(palette[2].h, palette[3].h) < 20) return false;
 
       if (vibe === "cozy") {
-        if (palette[3].h >= 52 && palette[3].h <= 170 && palette[3].s > 24) return false;
-      }
+  const light = palette[0];
+  const support = palette[1];
+  const accent = palette[2];
+  const balance = palette[3];
+  const dark = palette[4];
+
+  // Cozy greens are allowed, but must stay muted.
+  if (balance.h >= 52 && balance.h <= 170 && balance.s > 24) return false;
+
+  // Do not allow swatch 2 and swatch 4 to sit in nearly the same olive/sage/green-gray lane.
+  if (hueDistance(support.h, balance.h) < 34) return false;
+
+  // Avoid same-family repetition between support, accent, and balance.
+  if (hueFamily(support.h) === hueFamily(balance.h)) return false;
+  if (hueFamily(accent.h) === hueFamily(balance.h)) return false;
+
+  // Avoid the repeated cozy problem: mauve/purple + green + mauve/green loop.
+  const midFamilies = [
+    hueFamily(support.h),
+    hueFamily(accent.h),
+    hueFamily(balance.h)
+  ];
+
+  const uniqueMidFamilies = new Set(midFamilies);
+
+  if (uniqueMidFamilies.size < 3) return false;
+
+  // Swatch 2 should not be too dull or muddy.
+  if (support.s < 8 && support.l < 62) return false;
+
+  // Swatch 3 should carry some personality.
+  if (accent.s < 18) return false;
+
+  // Swatch 4 should balance the palette, not duplicate the support color.
+  if (Math.abs(support.l - balance.l) < 8 && hueDistance(support.h, balance.h) < 45) return false;
+
+  // If swatch 2 is olive/sage/green, swatch 4 should move elsewhere.
+  if (support.h >= 52 && support.h <= 170 && balance.h >= 52 && balance.h <= 170) return false;
+
+  // If swatch 2 is mauve/purple, swatch 4 should not also be mauve/purple.
+  if (support.h >= 270 && support.h <= 335 && balance.h >= 270 && balance.h <= 335) return false;
+}
 
       if (vibe === "moody") {
         if (palette[2].s > 48 || palette[3].s > 44) return false;
@@ -1377,8 +1417,8 @@
         if (similarity >= 12) return true;
 
         if (vibe === "playful" && similarity >= 10) return true;
-        if (vibe === "vintage" && similarity >= 11) return true;
-        if (vibe === "cozy" && similarity >= 11) return true;
+if (vibe === "vintage" && similarity >= 11) return true;
+if (vibe === "cozy" && similarity >= 9) return true;
       }
 
       return false;
