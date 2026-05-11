@@ -1575,6 +1575,175 @@
       return copyColor(best || makeColor(pick(ranges)));
     }
 
+    function isCozyWarmNeutral(color) {
+      const h = wrapHue(color.h);
+
+      return (
+        ((h >= 16 && h <= 62) || h >= 345) &&
+        color.s >= 8 &&
+        color.s <= 32 &&
+        color.l >= 48 &&
+        color.l <= 80
+      );
+    }
+
+    function isCozyVisibleWarm(color) {
+      const h = wrapHue(color.h);
+
+      return (
+        ((h >= 10 && h <= 70) || h >= 345) &&
+        color.s >= 12 &&
+        color.l >= 28 &&
+        color.l <= 82
+      );
+    }
+
+    function isCozyCoolOrMauve(color) {
+      const h = wrapHue(color.h);
+
+      return (
+        (h >= 85 && h <= 255) ||
+        (h >= 285 && h <= 340)
+      );
+    }
+
+    function makeCozyRequiredWarmBridge(existing) {
+      // This is the required Cozy middle warmth lane.
+      // It is NOT allowed to be mauve-gray, blue-gray, green-gray, or chilly putty.
+      const ranges = [
+        { h1: 18, h2: 32, s1: 14, s2: 28, l1: 60, l2: 78 },  // peach beige / warm nude
+        { h1: 24, h2: 38, s1: 12, s2: 26, l1: 56, l2: 74 },  // warm mushroom / tan
+        { h1: 30, h2: 46, s1: 14, s2: 28, l1: 58, l2: 76 },  // oatmeal / camel
+        { h1: 38, h2: 56, s1: 14, s2: 30, l1: 56, l2: 74 },  // wheat / honey greige
+        { h1: 46, h2: 64, s1: 12, s2: 26, l1: 54, l2: 72 },  // muted ochre beige
+        { h1: 12, h2: 26, s1: 12, s2: 26, l1: 58, l2: 76 },  // clay beige / apricot beige
+        { h1: 345, h2: 8, s1: 10, s2: 22, l1: 58, l2: 76 },   // warm blush beige
+        { h1: 26, h2: 42, s1: 8, s2: 18, l1: 52, l2: 70 }     // warm greige / mushroom
+      ];
+
+      let best = null;
+      let bestScore = -9999;
+
+      for (let i = 0; i < 100; i++) {
+        const candidate = softenColor(makeColor(pick(ranges)), "cozy");
+        let score = 0;
+
+        existing.forEach(other => {
+          score += hueDistance(candidate.h, other.h) * 0.25;
+          score += Math.abs(candidate.l - other.l) * 0.7;
+
+          if (hueFamily(candidate.h) === hueFamily(other.h) && Math.abs(candidate.l - other.l) < 10) {
+            score -= 90;
+          }
+        });
+
+        if (candidate.h >= 28 && candidate.h <= 58) score += 40;
+        if (candidate.s >= 12 && candidate.s <= 28) score += 35;
+        if (candidate.l >= 56 && candidate.l <= 76) score += 35;
+        if (candidate.h >= 285 && candidate.h <= 340) score -= 500;
+        if (candidate.h >= 180 && candidate.h <= 255) score -= 500;
+        if (candidate.h >= 85 && candidate.h <= 150) score -= 260;
+
+        if (score > bestScore) {
+          best = candidate;
+          bestScore = score;
+        }
+      }
+
+      return copyColor(best || softenColor(makeColor(pick(ranges)), "cozy"));
+    }
+
+    function makeCozyRequiredWarmMiddle(existing) {
+      // This gives Cozy visible warmth outside the dark anchor.
+      // Used when swatch 3 or 4 went too green/blue/mauve.
+      const ranges = [
+        { h1: 14, h2: 28, s1: 22, s2: 38, l1: 44, l2: 62 },  // soft clay
+        { h1: 24, h2: 38, s1: 20, s2: 36, l1: 42, l2: 60 },  // camel / tan
+        { h1: 34, h2: 52, s1: 20, s2: 36, l1: 44, l2: 64 },  // wheat / honey
+        { h1: 46, h2: 64, s1: 18, s2: 32, l1: 42, l2: 60 },  // muted ochre
+        { h1: 345, h2: 8, s1: 16, s2: 30, l1: 44, l2: 62 },  // warm blush / dried petal
+        { h1: 330, h2: 346, s1: 14, s2: 26, l1: 40, l2: 58 }  // rosy taupe, not purple-gray
+      ];
+
+      let best = null;
+      let bestScore = -9999;
+
+      for (let i = 0; i < 100; i++) {
+        const candidate = softenColor(makeColor(pick(ranges)), "cozy");
+        let score = 0;
+
+        existing.forEach(other => {
+          score += hueDistance(candidate.h, other.h) * 0.3;
+          score += Math.abs(candidate.l - other.l) * 0.8;
+
+          if (hueFamily(candidate.h) === hueFamily(other.h) && Math.abs(candidate.l - other.l) < 12) {
+            score -= 80;
+          }
+        });
+
+        if (candidate.h >= 34 && candidate.h <= 64) score += 55;
+        if (candidate.s >= 16 && candidate.s <= 34) score += 30;
+        if (candidate.l >= 40 && candidate.l <= 64) score += 25;
+
+        if (score > bestScore) {
+          best = candidate;
+          bestScore = score;
+        }
+      }
+
+      return copyColor(best || softenColor(makeColor(pick(ranges)), "cozy"));
+    }
+
+    function makeCozyWarmAnchor(existing) {
+      const ranges = [
+        { h1: 18, h2: 36, s1: 18, s2: 34, l1: 12, l2: 26 },  // espresso / bark
+        { h1: 28, h2: 46, s1: 18, s2: 32, l1: 14, l2: 28 },  // warm tobacco brown
+        { h1: 340, h2: 12, s1: 16, s2: 30, l1: 12, l2: 26 }, // aubergine-brown
+        { h1: 75, h2: 105, s1: 16, s2: 30, l1: 12, l2: 26 }  // warm olive-bark
+      ];
+
+      return copyColor(softenColor(makeColor(pick(ranges)), "cozy"));
+    }
+
+    function enforceCozyWarmth(palette) {
+      const next = palette.map(copyColor);
+
+      // Non-negotiable Cozy rule:
+      // Warmth may NOT live only in the dark anchor.
+      // Swatch 2 must be visibly warm-neutral every time.
+      next[1] = makeCozyRequiredWarmBridge(next);
+
+      const visibleMiddleWarmCount = [next[1], next[2], next[3]].filter(isCozyVisibleWarm).length;
+      const coolMiddleCount = [next[2], next[3]].filter(isCozyCoolOrMauve).length;
+
+      // If swatch 3 and 4 are both cool/mauve/green/blue, force swatch 3 warm.
+      if (coolMiddleCount >= 2) {
+        next[2] = makeCozyRequiredWarmMiddle(next);
+      }
+
+      // If swatch 3 is cool and swatch 4 is not visibly warm, force swatch 4 warm.
+      if (isCozyCoolOrMauve(next[2]) && !isCozyVisibleWarm(next[3])) {
+        next[3] = makeCozyRequiredWarmMiddle(next);
+      }
+
+      // If warmth is still only coming from swatch 2, add a second visible warm middle color.
+      const updatedMiddleWarmCount = [next[1], next[2], next[3]].filter(isCozyVisibleWarm).length;
+      if (updatedMiddleWarmCount < 2) {
+        if (isCozyCoolOrMauve(next[2])) {
+          next[2] = makeCozyRequiredWarmMiddle(next);
+        } else {
+          next[3] = makeCozyRequiredWarmMiddle(next);
+        }
+      }
+
+      // Anchor can be warm, but it does not count as "enough" Cozy warmth by itself.
+      if (!isCozyVisibleWarm(next[4]) && [next[1], next[2], next[3]].filter(isCozyVisibleWarm).length < 2) {
+        next[4] = makeCozyWarmAnchor(next);
+      }
+
+      return next.map(copyColor);
+    }
+
     function enforceNeutralBridge(palette, vibe) {
       const next = palette.map(copyColor);
 
@@ -1684,6 +1853,11 @@
 
       let core = choosePalette(state.vibe);
       core = enforceNeutralBridge(core, state.vibe);
+
+      if (state.vibe === "cozy") {
+        core = enforceCozyWarmth(core);
+      }
+
       rememberPalette(core, state.vibe);
 
       let palette = expandPalette(core, state.size, state.vibe);
@@ -1699,7 +1873,7 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Cozy warm-neutral correction is active.`);
+      setStatus(`Generated a ${label} palette. Cozy middle-warmth correction is active.`);
     }
 
     function renderPalette() {
