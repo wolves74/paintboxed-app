@@ -387,6 +387,8 @@
       palette: [],
       locked: [],
       imageSeeds: [],
+      isGenerating: false,
+      pendingGenerate: false,
       history: {
         playful: [],
         cozy: [],
@@ -1336,7 +1338,7 @@
 
       let tries = 0;
 
-      while (tries < 100) {
+      while (tries < 35) {
         const story = pick(cozyStories);
         let palette = story.colors.map(copyColor);
         palette = softenPalette(palette, "cozy").map(copyColor);
@@ -1597,7 +1599,7 @@
 
       const candidates = [];
 
-      for (let i = 0; i < 500; i++) {
+      for (let i = 0; i < 90; i++) {
         const palette = buildCorePalette(vibe);
 
         if (!palettePasses(palette, vibe)) continue;
@@ -1610,7 +1612,7 @@
       }
 
       if (!candidates.length) {
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 40; i++) {
           const palette = buildCorePalette(vibe);
           if (!palettePasses(palette, vibe)) continue;
           candidates.push({
@@ -1672,7 +1674,7 @@
       let best = null;
       let bestScore = -999999;
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 16; i++) {
         const candidate = makeLightExpansion(vibe, core, existing);
         let score = 0;
 
@@ -1696,7 +1698,7 @@
       let best = null;
       let bestScore = -999999;
 
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 18; i++) {
         const candidate = neutralForExpanded(vibe, existing.concat([softTint]), core);
         let score = 0;
 
@@ -1721,7 +1723,7 @@
       let best = null;
       let bestScore = -999999;
 
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 18; i++) {
         const candidate = warmNudeNeutralForExpanded(vibe, existing);
         let score = 0;
 
@@ -1757,7 +1759,7 @@
         }
       });
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 16; i++) {
         const candidate = randomFromRanges(ranges.length ? ranges : vibeRanges[vibe].accent, vibe);
         if (!predicate || predicate(candidate)) return copyColor(candidate);
       }
@@ -2271,7 +2273,7 @@
       return newPalette.map((color, i) => state.locked[i] ? copyColor(state.palette[i]) : color);
     }
 
-    function generatePalette() {
+    function runPaletteGeneration() {
       getSeedContext();
 
       let core = choosePalette(state.vibe);
@@ -2292,7 +2294,30 @@
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
       const modeLabel = state.size === 5 ? '5-color' : state.size === 10 ? '10-color expanded' : '20-color expanded';
-      setStatus(`Generated a ${modeLabel} ${label} palette. Optimized generation is active.`);
+      setStatus(`Generated a ${modeLabel} ${label} palette. Fast mode is active.`);
+    }
+
+    function generatePalette() {
+      if (state.isGenerating) {
+        state.pendingGenerate = true;
+        return;
+      }
+
+      state.isGenerating = true;
+      setStatus("Generating palette...");
+
+      requestAnimationFrame(() => {
+        try {
+          runPaletteGeneration();
+        } finally {
+          state.isGenerating = false;
+
+          if (state.pendingGenerate) {
+            state.pendingGenerate = false;
+            generatePalette();
+          }
+        }
+      });
     }
 
     function getRoleLabel(index, size) {
@@ -2486,7 +2511,4 @@
       img.src = url;
     });
 
-    generatePalette();
-  </script>
-</body>
-</html>
+    generateP
