@@ -199,6 +199,15 @@
       font-size: .95rem;
     }
 
+    .role-label {
+      margin-top: 8px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      font-size: .78rem;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
     .heart {
       border: none;
       background: transparent;
@@ -444,6 +453,33 @@
         s: clamp(color.s + ds, 0, 100),
         l: clamp(color.l + dl, 0, 100)
       };
+    }
+
+    function tuneColor(color, vibe, dh = 0, ds = 0, dl = 0) {
+      return softenColor(shiftColor(color, dh, ds, dl), vibe);
+    }
+
+    function mixHsl(a, b, t) {
+      const radA = a.h * Math.PI / 180;
+      const radB = b.h * Math.PI / 180;
+      const x = (1 - t) * Math.cos(radA) + t * Math.cos(radB);
+      const y = (1 - t) * Math.sin(radA) + t * Math.sin(radB);
+      let h = Math.atan2(y, x) * 180 / Math.PI;
+      if (h < 0) h += 360;
+
+      return {
+        h: wrapHue(h),
+        s: (1 - t) * a.s + t * b.s,
+        l: (1 - t) * a.l + t * b.l
+      };
+    }
+
+    function colorDistance(a, b) {
+      return (
+        hueDistance(a.h, b.h) * 0.7 +
+        Math.abs(a.s - b.s) * 0.45 +
+        Math.abs(a.l - b.l) * 0.8
+      );
     }
 
     function normalizeHex(value) {
@@ -1584,48 +1620,235 @@
       return pick(candidates.slice(0, Math.min(12, candidates.length))).palette;
     }
 
-    function expandPalette(core, size, vibe) {
-      if (size === 5) return core.map(copyColor);
+    function candidatePenalty(candidate, existing) {
+      let penalty = 0;
 
-      const [light, support, accent, balance, dark] = core.map(copyColor);
+      existing.forEach(other => {
+        const hd = hueDistance(candidate.h, other.h);
+        const sd = Math.abs(candidate.s - other.s);
+        const ld = Math.abs(candidate.l - other.l);
+        const dist = colorDistance(candidate, other);
 
-      if (size === 10) {
-        return softenPalette([
-          light,
-          shiftColor(light, 4, 3, -4),
-          support,
-          shiftColor(support, -8, 4, -6),
-          accent,
-          shiftColor(accent, 10, -6, 8),
-          balance,
-          shiftColor(balance, -10, -5, 8),
-          dark,
-          shiftColor(dark, 8, 4, 10)
-        ], vibe).map(copyColor);
+        if (dist < 16) penalty += 280;
+        if (hd < 10 && ld < 10) penalty += 120;
+        if (hd < 14 && sd < 12 && ld < 14) penalty += 120;
+        if (hueFamily(candidate.h) === hueFamily(other.h) && sd < 10 && ld < 10) penalty += 90;
+      });
+
+      return penalty;
+    }
+
+    function chooseBestCandidate(candidates, existing, vibe, role) {
+      let best = null;
+      let bestScore = -99999;
+
+      candidates.forEach(candidate => {
+        const c = copyColor(softenColor(candidate, vibe));
+        let score = 0;
+
+        if (existing.length) {
+          const hueMins = existing.map(e => hueDistance(c.h, e.h));
+          const satMins = existing.map(e => Math.abs(c.s - e.s));
+          const lightMins = existing.map(e => Math.abs(c.l - e.l));
+          const distMins = existing.map(e => colorDistance(c, e));
+
+          score += Math.min(...hueMins) * 1.5;
+          score += Math.min(...satMins) * 0.5;
+          score += Math.min(...lightMins) * 1.2;
+          score += Math.min(...distMins) * 0.9;
+        }
+
+        score -= candidatePenalty(c, existing);
+
+        if (role === 'lightAlt') {
+          if (c.l >= 72 && c.l <= 90) score += 50;
+          if (c.s <= (vibe === 'playful' ? 44 : 34)) score += 16;
+        }
+
+        if (role === 'neutralAlt') {
+          if (c.l >= 46 && c.l <= 78) score += 42;
+          if (c.s >= 4 && c.s <= 30) score += 48;
+          if (c.l > 84 || c.l < 36) score -= 50;
+          if (c.s > 36) score -= 60;
+        }
+
+        if (role === 'accentAlt') {
+          if (c.l >= 38 && c.l <= 70) score += 26;
+          if (c.s >= (vibe === 'playful' ? 34 : 16)) score += 20;
+        }
+
+        if (role === 'contrast') {
+          if (c.l >= 34 && c.l <= 70) score += 24;
+          if (c.s >= 14 && c.s <= (vibe === 'playful' ? 64 : 42)) score += 20;
+        }
+
+        if (role === 'darkAlt') {
+          if (c.l >= 16 && c.l <= 42) score += 36;
+          if (c.l < 12 || c.l > 48) score -= 40;
+        }
+
+        if (score > bestScore) {
+          best = c;
+          bestScore = score;
+        }
+      });
+
+      return best || copyColor(candidates[0]);
+    }
+
+    function buildLightAlt(light, support, vibe, existing) {
+      const candidates = [
+        tuneColor(light, vibe, 8, 4, -6),
+        tuneColor(light, vibe, -10, 5, -8),
+        tuneColor(mixHsl(light, support, 0.2), vibe, 4, 2, 0),
+        tuneColor(mixHsl(light, support, 0.3), vibe, -6, 0, 2),
+        tuneColor(light, vibe, 16, 6, -10)
+      ];
+
+      return chooseBestCandidate(candidates, existing, vibe, 'lightAlt');
+    }
+
+    function buildExtraNeutral(light, support, accent, balance, dark, vibe, existing) {
+      const candidates = [
+        neutralBridgeForVibe(vibe, [light, support, accent, balance, dark]),
+        neutralBridgeForVibe(vibe, [light, balance, accent, support, dark]),
+        tuneColor(support, vibe, 10, -8, 5),
+        tuneColor(support, vibe, -12, -10, -3),
+        tuneColor(mixHsl(light, support, 0.55), vibe, 0, -6, -6),
+        tuneColor(mixHsl(support, balance, 0.3), vibe, 0, -8, 2)
+      ];
+
+      return chooseBestCandidate(candidates, existing, vibe, 'neutralAlt');
+    }
+
+    function buildAccentAlt(accent, balance, vibe, existing) {
+      const candidates = [
+        tuneColor(accent, vibe, 18, -8, 8),
+        tuneColor(accent, vibe, -18, -6, 6),
+        tuneColor(accent, vibe, 28, -12, -4),
+        tuneColor(mixHsl(accent, balance, 0.28), vibe, 10, 4, 2),
+        tuneColor(makeColor(pick(vibeRanges[vibe].accent)), vibe, 0, 0, 0)
+      ];
+
+      return chooseBestCandidate(candidates, existing, vibe, 'accentAlt');
+    }
+
+    function buildContrastColor(light, support, accent, balance, dark, vibe, existing) {
+      const candidates = [
+        tuneColor(balance, vibe, 22, 0, 8),
+        tuneColor(balance, vibe, -24, 2, 4),
+        tuneColor(accent, vibe, 42, -10, 2),
+        tuneColor(mixHsl(accent, balance, 0.5), vibe, -12, 0, 0),
+        tuneColor(makeColor(pick(vibeRanges[vibe].balance)), vibe, 0, 0, 0),
+        tuneColor(makeColor(pick(vibeRanges[vibe].accent)), vibe, 0, 0, 0)
+      ];
+
+      if (vibe === 'playful') {
+        candidates.push(
+          tuneColor(makeColor({ h1: 20, h2: 48, s1: 18, s2: 34, l1: 48, l2: 72 }), vibe, 0, 0, 0),
+          tuneColor(makeColor({ h1: 335, h2: 18, s1: 22, s2: 38, l1: 46, l2: 70 }), vibe, 0, 0, 0)
+        );
       }
 
-      return softenPalette([
-        light,
-        shiftColor(light, 0, 2, -3),
-        shiftColor(light, 8, 5, -6),
-        support,
-        shiftColor(support, -8, 4, -5),
-        shiftColor(support, 10, 5, 5),
-        accent,
-        shiftColor(accent, -8, -8, 10),
-        shiftColor(accent, 10, -6, -5),
-        shiftColor(accent, 20, -10, 4),
-        balance,
-        shiftColor(balance, -10, -6, 10),
-        shiftColor(balance, 10, 4, -5),
-        shiftColor(balance, 22, -8, 5),
-        dark,
-        shiftColor(dark, 8, 4, 6),
-        shiftColor(dark, -8, 6, 10),
-        shiftColor(dark, 18, -4, 12),
-        shiftColor(accent, -18, -12, 8),
-        shiftColor(balance, -22, -10, 8)
-      ], vibe).map(copyColor);
+      return chooseBestCandidate(candidates, existing, vibe, 'contrast');
+    }
+
+    function buildDarkAlt(dark, accent, balance, vibe, existing) {
+      const candidates = [
+        tuneColor(dark, vibe, 10, 2, 10),
+        tuneColor(dark, vibe, -12, 4, 12),
+        tuneColor(mixHsl(dark, balance, 0.2), vibe, 0, 0, 8),
+        tuneColor(mixHsl(dark, accent, 0.18), vibe, 0, 0, 10),
+        tuneColor(makeColor(pick(vibeRanges[vibe].dark)), vibe, 0, -4, 8)
+      ];
+
+      return chooseBestCandidate(candidates, existing, vibe, 'darkAlt');
+    }
+
+    function build10ColorPalette(core, vibe) {
+      const [light, bridge, accent, balance, dark] = core.map(copyColor);
+      const palette = [];
+
+      palette.push(light);
+      palette.push(buildLightAlt(light, bridge, vibe, palette));
+      palette.push(bridge);
+      palette.push(buildExtraNeutral(light, bridge, accent, balance, dark, vibe, palette));
+      palette.push(accent);
+      palette.push(buildAccentAlt(accent, balance, vibe, palette));
+      palette.push(balance);
+      palette.push(buildContrastColor(light, bridge, accent, balance, dark, vibe, palette));
+      palette.push(dark);
+      palette.push(buildDarkAlt(dark, accent, balance, vibe, palette));
+
+      return palette.map(copyColor);
+    }
+
+    function build20ColorPalette(core, vibe) {
+      const firstTen = build10ColorPalette(core, vibe).map(copyColor);
+      const [light, lightAlt, bridge, extraNeutral, accent, accentAlt, balance, contrast, dark, darkAlt] = firstTen;
+      const palette = [...firstTen];
+
+      const additions = [
+        chooseBestCandidate([
+          tuneColor(light, vibe, 0, 2, -4),
+          tuneColor(lightAlt, vibe, 10, 2, -6),
+          tuneColor(mixHsl(light, bridge, 0.3), vibe, 0, -4, -2)
+        ], palette, vibe, 'lightAlt'),
+        chooseBestCandidate([
+          tuneColor(bridge, vibe, 12, -6, -4),
+          tuneColor(extraNeutral, vibe, -16, -4, 4),
+          neutralBridgeForVibe(vibe, [light, bridge, accent, balance, dark])
+        ], palette, vibe, 'neutralAlt'),
+        chooseBestCandidate([
+          tuneColor(extraNeutral, vibe, 14, -4, -2),
+          tuneColor(bridge, vibe, -12, -6, 4),
+          tuneColor(mixHsl(bridge, balance, 0.25), vibe, 0, -6, 0)
+        ], palette, vibe, 'neutralAlt'),
+        chooseBestCandidate([
+          tuneColor(accent, vibe, -12, -10, 12),
+          tuneColor(accentAlt, vibe, 16, -8, 10),
+          tuneColor(mixHsl(accent, light, 0.22), vibe, 0, -6, 6)
+        ], palette, vibe, 'accentAlt'),
+        chooseBestCandidate([
+          tuneColor(accent, vibe, 10, 0, -10),
+          tuneColor(accentAlt, vibe, -16, 0, -8),
+          tuneColor(mixHsl(accent, dark, 0.15), vibe, 0, 0, -6)
+        ], palette, vibe, 'accentAlt'),
+        chooseBestCandidate([
+          tuneColor(balance, vibe, -12, -6, 10),
+          tuneColor(contrast, vibe, 18, -6, 8),
+          tuneColor(mixHsl(balance, lightAlt, 0.2), vibe, 0, -4, 6)
+        ], palette, vibe, 'contrast'),
+        chooseBestCandidate([
+          tuneColor(balance, vibe, 14, 0, -8),
+          tuneColor(contrast, vibe, -18, 2, -6),
+          tuneColor(mixHsl(balance, dark, 0.18), vibe, 0, -2, -4)
+        ], palette, vibe, 'contrast'),
+        chooseBestCandidate([
+          tuneColor(dark, vibe, -8, 4, 6),
+          tuneColor(darkAlt, vibe, 12, -2, 8),
+          tuneColor(mixHsl(dark, accent, 0.1), vibe, 0, 0, 8)
+        ], palette, vibe, 'darkAlt'),
+        chooseBestCandidate([
+          tuneColor(darkAlt, vibe, 18, 0, 12),
+          tuneColor(dark, vibe, -18, 2, 12),
+          tuneColor(mixHsl(darkAlt, balance, 0.15), vibe, 0, 0, 10)
+        ], palette, vibe, 'darkAlt'),
+        chooseBestCandidate([
+          tuneColor(contrast, vibe, 26, -10, 4),
+          tuneColor(accentAlt, vibe, -24, -8, 4),
+          tuneColor(makeColor(pick(vibeRanges[vibe].balance)), vibe, 0, 0, 0)
+        ], palette, vibe, 'contrast')
+      ];
+
+      additions.forEach(color => palette.push(copyColor(color)));
+      return palette.map(copyColor);
+    }
+
+    function expandPalette(core, size, vibe) {
+      if (size === 5) return core.map(copyColor);
+      if (size === 10) return build10ColorPalette(core, vibe);
+      return build20ColorPalette(core, vibe);
     }
 
     function applyLocks(newPalette) {
@@ -1653,7 +1876,57 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Anti-repeat memory is checking recent palettes in this vibe.`);
+      const modeLabel = state.size === 5 ? '5-color' : state.size === 10 ? '10-color expanded' : '20-color expanded';
+      setStatus(`Generated a ${modeLabel} ${label} palette. Anti-repeat memory is checking recent palettes in this vibe.`);
+    }
+
+    function getRoleLabel(index, size) {
+      const labels5 = [
+        'Light Relief',
+        'Neutral Bridge',
+        'Hero Accent',
+        'Balance Tone',
+        'Dark Anchor'
+      ];
+
+      const labels10 = [
+        'Light Relief',
+        'Soft Tint',
+        'Neutral Bridge',
+        'Neutral Support',
+        'Hero Accent',
+        'Accent Pop',
+        'Balance Tone',
+        'Contrast Tone',
+        'Dark Anchor',
+        'Soft Anchor'
+      ];
+
+      const labels20 = [
+        'Light Relief',
+        'Soft Tint',
+        'Neutral Bridge',
+        'Neutral Support',
+        'Hero Accent',
+        'Accent Pop',
+        'Balance Tone',
+        'Contrast Tone',
+        'Dark Anchor',
+        'Soft Anchor',
+        'Light Wash',
+        'Bridge Shift',
+        'Bridge Echo',
+        'Accent Tint',
+        'Accent Depth',
+        'Balance Tint',
+        'Balance Depth',
+        'Anchor Echo',
+        'Anchor Lift',
+        'Collector Accent'
+      ];
+
+      const set = size === 5 ? labels5 : size === 10 ? labels10 : labels20;
+      return set[index] || `Swatch ${index + 1}`;
     }
 
     function renderPalette() {
@@ -1670,6 +1943,10 @@
         swatch.style.background = hex;
         swatch.addEventListener("click", () => toggleLock(index));
 
+        const roleLabel = document.createElement("div");
+        roleLabel.className = "role-label";
+        roleLabel.textContent = getRoleLabel(index, state.size);
+
         const hexText = document.createElement("div");
         hexText.className = "hex";
         hexText.textContent = hex;
@@ -1680,6 +1957,7 @@
         heart.addEventListener("click", () => toggleLock(index));
 
         card.appendChild(swatch);
+        card.appendChild(roleLabel);
         card.appendChild(hexText);
         card.appendChild(heart);
         paletteGrid.appendChild(card);
@@ -1795,5 +2073,3 @@
 
     generatePalette();
   </script>
-</body>
-</html>
