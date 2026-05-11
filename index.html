@@ -1434,22 +1434,20 @@
       return copyColor(best || makeColor(pick(ranges)));
     }
 
-    function hasNeutralBridge(palette) {
-      // Looks for a middle-value low/moderate-saturation neutral that is NOT the light swatch.
-      return palette.slice(1, 4).some(c =>
-        c.l >= 42 &&
-        c.l <= 78 &&
-        c.s <= 30
-      );
-    }
-
     function enforceNeutralBridge(palette, vibe) {
       const next = palette.map(copyColor);
 
-      if (hasNeutralBridge(next)) return next;
-
-      // Swatch 2 is the support/bridge role. Keep swatch 1 as light relief,
-      // swatch 3 as personality, swatch 4 as balance, swatch 5 as anchor.
+      // CONSISTENT RULE:
+      // Swatch 2 is always the neutral bridge in a 5-color palette.
+      // Earlier logic only added a neutral if none existed, but muted blues/greens
+      // sometimes counted as "neutral," so nude/warm neutrals appeared inconsistently.
+      //
+      // Keep:
+      // swatch 1 = light relief
+      // swatch 2 = warm/cool neutral bridge
+      // swatch 3 = personality color
+      // swatch 4 = balance color
+      // swatch 5 = dark anchor
       next[1] = neutralBridgeForVibe(vibe, next);
 
       return next.map(copyColor);
