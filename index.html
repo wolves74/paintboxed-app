@@ -1715,6 +1715,81 @@
       return chooseExpandedCandidate(candidates, existing, vibe, "neutral");
     }
 
+    function warmNudeNeutralForExpanded(vibe, existing) {
+      // 10-color palettes were reading a little too cool/gray.
+      // This adds a gentle warm nude neutral support: not spicy, not orange-heavy,
+      // not saturated, just a soft human/warm-neutral bridge.
+      const warmNudeRanges = {
+        playful: [
+          { h1: 14, h2: 28, s1: 12, s2: 26, l1: 62, l2: 78 },  // peach nude
+          { h1: 24, h2: 38, s1: 10, s2: 24, l1: 58, l2: 74 },  // warm tan
+          { h1: 340, h2: 8, s1: 10, s2: 24, l1: 60, l2: 76 },  // rosy nude
+          { h1: 32, h2: 48, s1: 10, s2: 22, l1: 60, l2: 76 }   // honey beige
+        ],
+
+        cozy: [
+          { h1: 18, h2: 32, s1: 8, s2: 20, l1: 58, l2: 76 },
+          { h1: 26, h2: 42, s1: 8, s2: 20, l1: 54, l2: 72 },
+          { h1: 340, h2: 8, s1: 7, s2: 18, l1: 56, l2: 74 },
+          { h1: 36, h2: 52, s1: 8, s2: 20, l1: 56, l2: 74 }
+        ],
+
+        moody: [
+          { h1: 18, h2: 34, s1: 6, s2: 16, l1: 44, l2: 62 },
+          { h1: 340, h2: 8, s1: 6, s2: 16, l1: 44, l2: 62 },
+          { h1: 28, h2: 44, s1: 6, s2: 16, l1: 42, l2: 60 }
+        ],
+
+        nature: [
+          { h1: 20, h2: 36, s1: 8, s2: 20, l1: 52, l2: 70 },
+          { h1: 32, h2: 50, s1: 8, s2: 20, l1: 52, l2: 72 },
+          { h1: 340, h2: 8, s1: 7, s2: 18, l1: 52, l2: 70 }
+        ],
+
+        coastal: [
+          { h1: 18, h2: 32, s1: 8, s2: 20, l1: 62, l2: 80 },
+          { h1: 26, h2: 42, s1: 7, s2: 18, l1: 60, l2: 78 },
+          { h1: 340, h2: 8, s1: 6, s2: 16, l1: 62, l2: 80 }
+        ],
+
+        vintage: [
+          { h1: 18, h2: 34, s1: 8, s2: 20, l1: 54, l2: 74 },
+          { h1: 28, h2: 46, s1: 8, s2: 22, l1: 54, l2: 74 },
+          { h1: 340, h2: 8, s1: 8, s2: 20, l1: 54, l2: 72 },
+          { h1: 36, h2: 54, s1: 9, s2: 22, l1: 54, l2: 74 }
+        ]
+      };
+
+      const ranges = warmNudeRanges[vibe] || warmNudeRanges.cozy;
+      const candidates = [];
+
+      for (let i = 0; i < 36; i++) {
+        candidates.push(softenColor(makeColor(pick(ranges)), vibe));
+      }
+
+      return chooseExpandedCandidate(candidates, existing, vibe, "neutral");
+    }
+
+    function hasWarmNudeNeutral(palette) {
+      return palette.some(c =>
+        isWarmNeutral(c) &&
+        c.l >= 44 &&
+        c.l <= 82 &&
+        c.s >= 5 &&
+        c.s <= 30
+      );
+    }
+
+    function countWarmNudeNeutrals(palette) {
+      return palette.filter(c =>
+        isWarmNeutral(c) &&
+        c.l >= 44 &&
+        c.l <= 82 &&
+        c.s >= 5 &&
+        c.s <= 30
+      ).length;
+    }
+
     function expandedPairPenalty(candidate, existing) {
       let penalty = 0;
 
@@ -1937,6 +2012,8 @@
       const darkCount = palette.filter(c => c.l <= 36).length;
       const lightCount = palette.filter(c => c.l >= 78).length;
 
+      const warmNudeCount = countWarmNudeNeutrals(palette);
+
       if (warmCount >= 2) score += 120;
       if (coolCount >= 2) score += 120;
       if (neutralCount >= 2) score += 120;
@@ -1945,12 +2022,15 @@
 
       if (warmCount === 0 || coolCount === 0) score -= 500;
       if (neutralCount < 2) score -= 320;
+      if (warmNudeCount < 1) score -= 460;
+      if (warmNudeCount >= 1) score += 260;
+      if (warmNudeCount >= 2) score += 80;
       if (darkCount < 1) score -= 220;
       if (lightCount < 1) score -= 180;
 
       if (vibe === "playful") {
         const hasWarmNeutral = palette.some(isWarmNeutral);
-        if (hasWarmNeutral) score += 160;
+        if (hasWarmNeutral) score += 220;
       }
 
       if (vibe === "cozy") {
@@ -1968,7 +2048,13 @@
       palette.push(light);
       palette.push(makeLightExpansion(vibe, core, palette));
       palette.push(bridge);
-      palette.push(neutralForExpanded(vibe, palette, core));
+
+      // NEW:
+      // Neutral Support is intentionally a gentle warm nude neutral.
+      // The temp-balanced bridge can still be warm or cool, but 10-color palettes
+      // need at least one soft warm/nude support so they do not feel cold or gray.
+      palette.push(warmNudeNeutralForExpanded(vibe, palette));
+
       palette.push(accent);
 
       const needAfterAccent = tempNeedForExpandedPalette(palette);
@@ -1985,6 +2071,11 @@
       // If the two dynamic slots landed too similar in temperature, replace the weaker slot with a bridge accent.
       if (hueFamily(palette[5].h) === hueFamily(palette[7].h) || broadColorBucket(palette[5]) === broadColorBucket(palette[7])) {
         palette[7] = makeBridgeAccent(vibe, core, palette.filter((_, i) => i !== 7));
+      }
+
+      // If somehow the warm nude got visually swallowed by other neutrals, force it again.
+      if (!hasWarmNudeNeutral(palette)) {
+        palette[3] = warmNudeNeutralForExpanded(vibe, palette.filter((_, i) => i !== 3));
       }
 
       return palette.map(copyColor);
@@ -2079,7 +2170,7 @@
         'Light Relief',
         'Soft Tint',
         'Neutral Bridge',
-        'Neutral Support',
+        'Warm Nude Support',
         'Hero Accent',
         'Accent Pop',
         'Balance Tone',
@@ -2092,7 +2183,7 @@
         'Light Relief',
         'Soft Tint',
         'Neutral Bridge',
-        'Neutral Support',
+        'Warm Nude Support',
         'Hero Accent',
         'Accent Pop',
         'Balance Tone',
