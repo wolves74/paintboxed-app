@@ -1,2354 +1,641 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Paintboxed Palette Creator</title>
-  <style>
-    :root {
-      --bg: #f6f1e8;
-      --card: #fffdf8;
-      --ink: #2f2c28;
-      --muted: #6d675f;
-      --line: #2f2c28;
-      --shadow: #d9cdb7;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px 16px 70px;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      letter-spacing: .06em;
-      margin: 8px 0 6px;
-    }
-
-    .subhead {
-      text-align: center;
-      color: var(--muted);
-      max-width: 760px;
-      margin: 0 auto 26px;
-      line-height: 1.45;
-      font-size: 1.05rem;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 4px solid var(--line);
-      border-radius: 24px;
-      padding: 18px;
-      box-shadow: 8px 8px 0 var(--shadow);
-      margin-bottom: 20px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-    }
-
-    .section-title {
-      font-size: 1.25rem;
-      letter-spacing: .05em;
-      margin: 0 0 12px;
-      text-transform: uppercase;
-    }
-
-    .helper {
-      color: var(--muted);
-      font-size: .95rem;
-      line-height: 1.4;
-      margin-top: 8px;
-    }
-
-    input[type="text"],
-    input[type="file"],
-    select {
-      width: 100%;
-      padding: 13px 14px;
-      border: 3px solid var(--line);
-      border-radius: 14px;
-      font-size: 1rem;
-      font-family: inherit;
-      background: #fff;
-      color: var(--ink);
-    }
-
-    input[type="color"] {
-      width: 86px;
-      height: 86px;
-      border: none;
-      background: none;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    .color-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .chip,
-    .main-btn,
-    .secondary-btn {
-      border: 4px solid var(--line);
-      border-radius: 18px;
-      background: var(--card);
-      color: var(--ink);
-      padding: 13px 18px;
-      font-family: inherit;
-      font-size: 1.05rem;
-      cursor: pointer;
-    }
-
-    .chip { min-width: 120px; }
-
-    .chip.active {
-      background: var(--ink);
-      color: #fffdf8;
-      box-shadow: 6px 6px 0 var(--shadow);
-    }
-
-    .main-btn {
-      background: var(--ink);
-      color: #fffdf8;
-      box-shadow: 7px 7px 0 var(--shadow);
-      font-size: 1.25rem;
-      min-height: 58px;
-    }
-
-    .secondary-btn {
-      background: var(--card);
-      color: var(--ink);
-      min-height: 58px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 22px 0;
-    }
-
-    .status {
-      background: #fffdf8;
-      border: 3px solid #d1c8b8;
-      border-radius: 18px;
-      padding: 14px;
-      color: var(--muted);
-      line-height: 1.45;
-      margin-bottom: 20px;
-    }
-
-    .palette-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-      gap: 16px;
-      margin-top: 14px;
-    }
-
-    .swatch-card { text-align: center; }
-
-    .swatch {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border: 4px solid var(--line);
-      border-radius: 20px;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .swatch.locked::after {
-      content: "LOCKED";
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(47, 44, 40, .9);
-      color: white;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: .65rem;
-      letter-spacing: .08em;
-    }
-
-    .hex {
-      margin-top: 8px;
-      color: var(--muted);
-      letter-spacing: .05em;
-      font-size: .95rem;
-    }
-
-    .role-label {
-      margin-top: 8px;
-      color: var(--muted);
-      letter-spacing: .08em;
-      font-size: .78rem;
-      text-transform: uppercase;
-      line-height: 1.3;
-    }
-
-    .heart {
-      border: none;
-      background: transparent;
-      font-size: .95rem;
-      cursor: pointer;
-      color: var(--ink);
-      line-height: 1.2;
-      margin-top: 4px;
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .pattern-shell {
-      border: 4px solid var(--line);
-      border-radius: 24px;
-      padding: 14px;
-      background: var(--card);
-      box-shadow: 8px 8px 0 var(--shadow);
-      margin-top: 24px;
-    }
-
-    .pattern-preview {
-      min-height: 440px;
-      border: 3px solid var(--line);
-      border-radius: 20px;
-      background-image: url("pumpkin-pattern.png");
-      background-repeat: repeat;
-      background-size: 260px 260px;
-      background-position: center;
-      background-color: #fffdf8;
-    }
-
-    .pattern-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-      margin-top: 16px;
-    }
-
-    .pattern-controls label {
-      flex: 1 1 220px;
-      color: var(--muted);
-    }
-
-    input[type="range"] { width: 100%; }
-
-    .preview-img {
-      width: 110px;
-      height: 110px;
-      object-fit: cover;
-      border: 3px solid var(--line);
-      border-radius: 16px;
-      display: none;
-      margin-top: 10px;
-    }
-
-    .seed-pill {
-      display: inline-block;
-      padding: 7px 10px;
-      border: 2px solid #c8beab;
-      border-radius: 999px;
-      margin: 6px 5px 0 0;
-      font-size: .88rem;
-      color: #514d47;
-      background: #eee5d6;
-    }
-
-    @media (max-width: 640px) {
-      .chip { flex: 1 1 calc(50% - 10px); }
-      .main-btn, .secondary-btn { width: 100%; }
-      .pattern-preview { min-height: 330px; }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <h1>Paintboxed</h1>
-    <p class="subhead">
-      Create balanced palettes with light-to-dark contrast, warm-to-cool harmony, and intentional color roles.
-    </p>
-
-    <div class="grid">
-      <section class="panel">
-        <h2 class="section-title">Color Wheel</h2>
-        <div class="color-row">
-          <input id="colorPicker" type="color" value="#C46F54" />
-          <div>
-            <strong>Pick a seed color</strong>
-            <div class="helper">The generator will harmonize around this color.</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2 class="section-title">Hex Code</h2>
-        <input id="hexInput" type="text" placeholder="Enter a hex like #C46F54" />
-        <div class="helper">A valid hex overrides the color wheel.</div>
-      </section>
-
-      <section class="panel">
-        <h2 class="section-title">Upload Image</h2>
-        <input id="imageUpload" type="file" accept="image/*" />
-        <div class="helper">Image upload extracts color seeds for the palette brain.</div>
-        <img id="imagePreview" class="preview-img" alt="Uploaded image preview" />
-        <div id="seedList"></div>
-      </section>
-    </div>
-
-    <section class="panel">
-      <h2 class="section-title">Palette Size</h2>
-      <div id="sizeButtons" class="btn-row">
-        <button class="chip active" data-size="5">5 Colors</button>
-        <button class="chip" data-size="10">10 Colors</button>
-        <button class="chip" data-size="20">20 Colors</button>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2 class="section-title">Pick a Vibe</h2>
-      <div id="vibeButtons" class="btn-row">
-        <button class="chip active" data-vibe="playful">Playful</button>
-        <button class="chip" data-vibe="cozy">Cozy</button>
-        <button class="chip" data-vibe="moody">Moody</button>
-        <button class="chip" data-vibe="nature">Earthy / Natural</button>
-        <button class="chip" data-vibe="coastal">Coastal</button>
-        <button class="chip" data-vibe="vintage">Vintage</button>
-      </div>
-    </section>
-
-    <div class="actions">
-      <button id="generateBtn" class="main-btn">Generate Palette</button>
-      <button id="unlockBtn" class="secondary-btn">Unlock All</button>
-      <button id="exportBtn" class="secondary-btn">Export Hex Codes</button>
-    </div>
-
-    <div id="statusBox" class="status">
-      Ready. Generate a palette to begin.
-    </div>
-
-    <section class="panel">
-      <h2 class="section-title">Your Palette</h2>
-      <div id="paletteGrid" class="palette-grid"></div>
-    </section>
-
-    <section class="pattern-shell">
-      <h2 class="section-title">Pumpkin Pattern Preview</h2>
-      <div id="patternPreview" class="pattern-preview"></div>
-
-      <div class="pattern-controls">
-        <label>
-          Pattern Scale
-          <input id="scaleSlider" type="range" min="80" max="220" value="130" />
-        </label>
-
-        <label>
-          Background
-          <select id="backgroundSelect">
-            <option value="palette-light">Use palette light color</option>
-            <option value="#FFFFFF">White</option>
-            <option value="#FFFDF8">Warm White</option>
-            <option value="#F6F1E8">Cream</option>
-          </select>
-        </label>
-      </div>
-
-      <p class="helper">
-        This uses <strong>pumpkin-pattern.png</strong> as a repeating PNG background.
-      </p>
-    </section>
-  </div>
-
-  <script>
-    const state = {
-      size: 5,
-      vibe: "playful",
-      palette: [],
-      locked: [],
-      imageSeeds: [],
-      history: {
-        playful: [],
-        cozy: [],
-        moody: [],
-        nature: [],
-        coastal: [],
-        vintage: []
-      }
-    };
-
-    const colorPicker = document.getElementById("colorPicker");
-    const hexInput = document.getElementById("hexInput");
-    const imageUpload = document.getElementById("imageUpload");
-    const imagePreview = document.getElementById("imagePreview");
-    const seedList = document.getElementById("seedList");
-    const sizeButtons = document.getElementById("sizeButtons");
-    const vibeButtons = document.getElementById("vibeButtons");
-    const generateBtn = document.getElementById("generateBtn");
-    const unlockBtn = document.getElementById("unlockBtn");
-    const exportBtn = document.getElementById("exportBtn");
-    const paletteGrid = document.getElementById("paletteGrid");
-    const statusBox = document.getElementById("statusBox");
-    const patternPreview = document.getElementById("patternPreview");
-    const scaleSlider = document.getElementById("scaleSlider");
-    const backgroundSelect = document.getElementById("backgroundSelect");
-
-    function clamp(n, min, max) {
-      return Math.min(max, Math.max(min, n));
-    }
-
-    function rand(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    function pick(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function wrapHue(h) {
-      return ((h % 360) + 360) % 360;
-    }
-
-    function hueDistance(a, b) {
-      const d = Math.abs(wrapHue(a) - wrapHue(b));
-      return Math.min(d, 360 - d);
-    }
-
-    function hueFromRange(a, b) {
-      if (a <= b) return rand(a, b);
-      return Math.random() < 0.5 ? rand(a, 360) : rand(0, b);
-    }
-
-    function copyColor(c) {
-      return {
-        h: Math.round(wrapHue(c.h)),
-        s: Math.round(clamp(c.s, 0, 100)),
-        l: Math.round(clamp(c.l, 0, 100))
-      };
-    }
-
-    function shiftColor(color, dh, ds, dl) {
-      return {
-        h: wrapHue(color.h + dh),
-        s: clamp(color.s + ds, 0, 100),
-        l: clamp(color.l + dl, 0, 100)
-      };
-    }
-
-    function tuneColor(color, vibe, dh = 0, ds = 0, dl = 0) {
-      return softenColor(shiftColor(color, dh, ds, dl), vibe);
-    }
-
-    function mixHsl(a, b, t) {
-      const radA = a.h * Math.PI / 180;
-      const radB = b.h * Math.PI / 180;
-      const x = (1 - t) * Math.cos(radA) + t * Math.cos(radB);
-      const y = (1 - t) * Math.sin(radA) + t * Math.sin(radB);
-      let h = Math.atan2(y, x) * 180 / Math.PI;
-      if (h < 0) h += 360;
-
-      return {
-        h: wrapHue(h),
-        s: (1 - t) * a.s + t * b.s,
-        l: (1 - t) * a.l + t * b.l
-      };
-    }
-
-    function colorDistance(a, b) {
-      return (
-        hueDistance(a.h, b.h) * 0.7 +
-        Math.abs(a.s - b.s) * 0.45 +
-        Math.abs(a.l - b.l) * 0.8
-      );
-    }
-
-    function normalizeHex(value) {
-      if (!value) return null;
-      let v = value.trim().replace(/^#/, "");
-      if (v.length === 3) v = v.split("").map(ch => ch + ch).join("");
-      if (!/^[0-9a-fA-F]{6}$/.test(v)) return null;
-      return "#" + v.toUpperCase();
-    }
-
-    function rgbToHex(r, g, b) {
-      return "#" + [r, g, b].map(v =>
-        Math.round(v).toString(16).padStart(2, "0")
-      ).join("").toUpperCase();
-    }
-
-    function hexToRgb(hex) {
-      const clean = normalizeHex(hex).slice(1);
-      return {
-        r: parseInt(clean.slice(0, 2), 16),
-        g: parseInt(clean.slice(2, 4), 16),
-        b: parseInt(clean.slice(4, 6), 16)
-      };
-    }
-
-    function rgbToHsl(r, g, b) {
-      r /= 255;
-      g /= 255;
-      b /= 255;
-
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      let h = 0;
-      let s = 0;
-      const l = (max + min) / 2;
-
-      if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-        if (max === g) h = (b - r) / d + 2;
-        if (max === b) h = (r - g) / d + 4;
-
-        h *= 60;
-      }
-
-      return {
-        h: wrapHue(h),
-        s: Math.round(s * 100),
-        l: Math.round(l * 100)
-      };
-    }
-
-    function hexToHsl(hex) {
-      const rgb = hexToRgb(hex);
-      return rgbToHsl(rgb.r, rgb.g, rgb.b);
-    }
-
-    function hslToRgb(h, s, l) {
-      h = wrapHue(h);
-      s /= 100;
-      l /= 100;
-
-      const c = (1 - Math.abs(2 * l - 1)) * s;
-      const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-      const m = l - c / 2;
-
-      let r = 0;
-      let g = 0;
-      let b = 0;
-
-      if (h < 60) {
-        r = c; g = x; b = 0;
-      } else if (h < 120) {
-        r = x; g = c; b = 0;
-      } else if (h < 180) {
-        r = 0; g = c; b = x;
-      } else if (h < 240) {
-        r = 0; g = x; b = c;
-      } else if (h < 300) {
-        r = x; g = 0; b = c;
-      } else {
-        r = c; g = 0; b = x;
-      }
-
-      return {
-        r: Math.round((r + m) * 255),
-        g: Math.round((g + m) * 255),
-        b: Math.round((b + m) * 255)
-      };
-    }
-
-    function hslToHex(h, s, l) {
-      const rgb = hslToRgb(h, s, l);
-      return rgbToHex(rgb.r, rgb.g, rgb.b);
-    }
-
-    function hueFamily(h) {
-      h = wrapHue(h);
-      if (h >= 345 || h < 12) return "red";
-      if (h >= 12 && h < 28) return "coral";
-      if (h >= 28 && h < 45) return "orange";
-      if (h >= 45 && h < 62) return "yellow";
-      if (h >= 62 && h < 86) return "gold";
-      if (h >= 86 && h < 118) return "olive";
-      if (h >= 118 && h < 155) return "green";
-      if (h >= 155 && h < 178) return "mint";
-      if (h >= 178 && h < 200) return "aqua";
-      if (h >= 200 && h < 225) return "sky";
-      if (h >= 225 && h < 255) return "blue";
-      if (h >= 255 && h < 285) return "periwinkle";
-      if (h >= 285 && h < 320) return "purple";
-      if (h >= 320 && h < 345) return "pink";
-      return "neutral";
-    }
-
-    function isWarmHue(h) {
-      h = wrapHue(h);
-      return h >= 340 || h <= 72;
-    }
-
-    function isCoolHue(h) {
-      h = wrapHue(h);
-      return h >= 165 && h <= 285;
-    }
-
-    function makeColor(range) {
-      return {
-        h: wrapHue(hueFromRange(range.h1, range.h2)),
-        s: rand(range.s1, range.s2),
-        l: rand(range.l1, range.l2)
-      };
-    }
-
-    const vibeRanges = {
-      playful: {
-        light: [
-          { h1: 335, h2: 354, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 178, h2: 200, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 258, h2: 286, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 135, h2: 165, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 200, h2: 222, s1: 24, s2: 42, l1: 88, l2: 95 },
-          { h1: 48, h2: 62, s1: 24, s2: 42, l1: 88, l2: 95 }
-        ],
-        support: [
-          { h1: 46, h2: 60, s1: 44, s2: 64, l1: 70, l2: 82 },
-          { h1: 335, h2: 352, s1: 44, s2: 64, l1: 70, l2: 82 },
-          { h1: 6, h2: 22, s1: 44, s2: 64, l1: 70, l2: 82 },
-          { h1: 325, h2: 345, s1: 44, s2: 64, l1: 70, l2: 82 },
-          { h1: 178, h2: 198, s1: 42, s2: 62, l1: 68, l2: 80 },
-          { h1: 260, h2: 288, s1: 40, s2: 60, l1: 70, l2: 82 },
-          { h1: 210, h2: 232, s1: 42, s2: 62, l1: 68, l2: 80 },
-          { h1: 24, h2: 40, s1: 44, s2: 64, l1: 70, l2: 82 },
-          { h1: 72, h2: 96, s1: 38, s2: 56, l1: 68, l2: 80 }
-        ],
-        accent: [
-          { h1: 8, h2: 22, s1: 50, s2: 68, l1: 46, l2: 62 },
-          { h1: 345, h2: 8, s1: 50, s2: 68, l1: 46, l2: 62 },
-          { h1: 325, h2: 348, s1: 50, s2: 68, l1: 46, l2: 62 },
-          { h1: 225, h2: 252, s1: 48, s2: 64, l1: 48, l2: 64 },
-          { h1: 178, h2: 198, s1: 48, s2: 64, l1: 48, l2: 64 },
-          { h1: 42, h2: 58, s1: 48, s2: 62, l1: 50, l2: 66 },
-          { h1: 260, h2: 288, s1: 46, s2: 58, l1: 50, l2: 64 },
-          { h1: 75, h2: 110, s1: 42, s2: 58, l1: 48, l2: 64 }
-        ],
-        balance: [
-          { h1: 175, h2: 205, s1: 42, s2: 62, l1: 48, l2: 66 },
-          { h1: 46, h2: 62, s1: 42, s2: 60, l1: 50, l2: 66 },
-          { h1: 8, h2: 24, s1: 42, s2: 60, l1: 50, l2: 66 },
-          { h1: 325, h2: 345, s1: 42, s2: 60, l1: 48, l2: 66 },
-          { h1: 198, h2: 222, s1: 40, s2: 58, l1: 48, l2: 66 },
-          { h1: 270, h2: 305, s1: 40, s2: 56, l1: 48, l2: 66 },
-          { h1: 78, h2: 105, s1: 38, s2: 56, l1: 48, l2: 66 }
-        ],
-        dark: [
-          { h1: 185, h2: 215, s1: 30, s2: 48, l1: 12, l2: 28 },
-          { h1: 215, h2: 245, s1: 28, s2: 46, l1: 12, l2: 28 },
-          { h1: 285, h2: 325, s1: 26, s2: 44, l1: 12, l2: 28 },
-          { h1: 330, h2: 355, s1: 26, s2: 44, l1: 12, l2: 28 },
-          { h1: 75, h2: 125, s1: 24, s2: 42, l1: 12, l2: 28 },
-          { h1: 20, h2: 35, s1: 24, s2: 42, l1: 12, l2: 28 }
-        ]
-      },
-
-      cozy: {
-        light: [
-          { h1: 35, h2: 50, s1: 5, s2: 14, l1: 92, l2: 97 },
-          { h1: 38, h2: 54, s1: 7, s2: 16, l1: 89, l2: 96 },
-          { h1: 25, h2: 38, s1: 4, s2: 12, l1: 87, l2: 94 },
-          { h1: 18, h2: 34, s1: 5, s2: 14, l1: 87, l2: 94 },
-          { h1: 345, h2: 358, s1: 6, s2: 14, l1: 88, l2: 95 },
-          { h1: 65, h2: 86, s1: 4, s2: 12, l1: 86, l2: 94 },
-          { h1: 80, h2: 108, s1: 4, s2: 12, l1: 87, l2: 94 },
-          { h1: 200, h2: 222, s1: 4, s2: 12, l1: 87, l2: 94 },
-          { h1: 280, h2: 315, s1: 4, s2: 12, l1: 87, l2: 94 },
-          { h1: 0, h2: 360, s1: 0, s2: 6, l1: 86, l2: 93 }
-        ],
-        support: [
-          { h1: 28, h2: 42, s1: 16, s2: 32, l1: 55, l2: 72 },
-          { h1: 35, h2: 52, s1: 14, s2: 30, l1: 56, l2: 74 },
-          { h1: 42, h2: 58, s1: 16, s2: 34, l1: 50, l2: 68 },
-          { h1: 46, h2: 64, s1: 14, s2: 30, l1: 46, l2: 64 },
-          { h1: 52, h2: 72, s1: 12, s2: 28, l1: 44, l2: 62 },
-          { h1: 22, h2: 38, s1: 16, s2: 32, l1: 52, l2: 70 },
-          { h1: 14, h2: 30, s1: 14, s2: 28, l1: 52, l2: 70 },
-          { h1: 345, h2: 360, s1: 10, s2: 24, l1: 52, l2: 70 },
-          { h1: 0, h2: 16, s1: 10, s2: 24, l1: 50, l2: 68 },
-          { h1: 280, h2: 318, s1: 8, s2: 20, l1: 48, l2: 66 },
-          { h1: 78, h2: 108, s1: 6, s2: 16, l1: 50, l2: 68 },
-          { h1: 205, h2: 230, s1: 6, s2: 16, l1: 50, l2: 68 },
-          { h1: 225, h2: 252, s1: 7, s2: 18, l1: 48, l2: 66 },
-          { h1: 20, h2: 36, s1: 7, s2: 18, l1: 42, l2: 58 }
-        ],
-        accent: [
-          { h1: 14, h2: 30, s1: 26, s2: 44, l1: 42, l2: 60 },
-          { h1: 24, h2: 40, s1: 24, s2: 42, l1: 42, l2: 60 },
-          { h1: 36, h2: 52, s1: 22, s2: 38, l1: 42, l2: 60 },
-          { h1: 44, h2: 60, s1: 20, s2: 36, l1: 42, l2: 60 },
-          { h1: 52, h2: 70, s1: 16, s2: 32, l1: 40, l2: 58 },
-          { h1: 72, h2: 100, s1: 10, s2: 24, l1: 40, l2: 58 },
-          { h1: 105, h2: 135, s1: 8, s2: 22, l1: 40, l2: 58 },
-          { h1: 190, h2: 222, s1: 10, s2: 24, l1: 40, l2: 58 },
-          { h1: 225, h2: 252, s1: 8, s2: 22, l1: 40, l2: 58 },
-          { h1: 285, h2: 320, s1: 8, s2: 22, l1: 40, l2: 58 },
-          { h1: 330, h2: 348, s1: 10, s2: 24, l1: 40, l2: 58 }
-        ],
-        balance: [
-          { h1: 40, h2: 58, s1: 12, s2: 28, l1: 40, l2: 58 },
-          { h1: 50, h2: 68, s1: 10, s2: 24, l1: 38, l2: 56 },
-          { h1: 60, h2: 82, s1: 9, s2: 22, l1: 38, l2: 56 },
-          { h1: 82, h2: 108, s1: 7, s2: 18, l1: 40, l2: 58 },
-          { h1: 112, h2: 150, s1: 6, s2: 16, l1: 38, l2: 54 },
-          { h1: 190, h2: 225, s1: 9, s2: 22, l1: 40, l2: 58 },
-          { h1: 225, h2: 252, s1: 7, s2: 18, l1: 38, l2: 56 },
-          { h1: 285, h2: 320, s1: 7, s2: 18, l1: 38, l2: 56 },
-          { h1: 18, h2: 36, s1: 14, s2: 30, l1: 40, l2: 58 },
-          { h1: 330, h2: 350, s1: 10, s2: 24, l1: 40, l2: 56 }
-        ],
-        dark: [
-          { h1: 18, h2: 35, s1: 18, s2: 34, l1: 12, l2: 26 },
-          { h1: 35, h2: 52, s1: 16, s2: 30, l1: 14, l2: 28 },
-          { h1: 65, h2: 100, s1: 16, s2: 32, l1: 12, l2: 26 },
-          { h1: 100, h2: 140, s1: 16, s2: 32, l1: 12, l2: 26 },
-          { h1: 190, h2: 230, s1: 16, s2: 32, l1: 12, l2: 26 },
-          { h1: 228, h2: 252, s1: 14, s2: 28, l1: 12, l2: 26 },
-          { h1: 285, h2: 325, s1: 16, s2: 32, l1: 12, l2: 26 },
-          { h1: 340, h2: 20, s1: 18, s2: 34, l1: 12, l2: 26 }
-        ]
-      },
-
-      moody: {
-        light: [
-          { h1: 30, h2: 50, s1: 4, s2: 12, l1: 84, l2: 93 },
-          { h1: 15, h2: 35, s1: 6, s2: 14, l1: 80, l2: 90 },
-          { h1: 200, h2: 220, s1: 6, s2: 14, l1: 78, l2: 88 },
-          { h1: 85, h2: 115, s1: 5, s2: 13, l1: 78, l2: 88 },
-          { h1: 300, h2: 330, s1: 5, s2: 14, l1: 78, l2: 88 }
-        ],
-        support: [
-          { h1: 25, h2: 40, s1: 8, s2: 20, l1: 48, l2: 66 },
-          { h1: 300, h2: 335, s1: 10, s2: 22, l1: 42, l2: 60 },
-          { h1: 80, h2: 120, s1: 8, s2: 20, l1: 42, l2: 60 },
-          { h1: 200, h2: 230, s1: 10, s2: 22, l1: 40, l2: 58 },
-          { h1: 15, h2: 35, s1: 12, s2: 24, l1: 38, l2: 56 }
-        ],
-        accent: [
-          { h1: 330, h2: 355, s1: 22, s2: 40, l1: 28, l2: 46 },
-          { h1: 350, h2: 18, s1: 22, s2: 40, l1: 28, l2: 46 },
-          { h1: 14, h2: 32, s1: 24, s2: 42, l1: 30, l2: 48 },
-          { h1: 185, h2: 215, s1: 20, s2: 38, l1: 24, l2: 42 },
-          { h1: 210, h2: 245, s1: 18, s2: 34, l1: 24, l2: 42 },
-          { h1: 85, h2: 135, s1: 18, s2: 34, l1: 24, l2: 42 },
-          { h1: 275, h2: 320, s1: 18, s2: 34, l1: 24, l2: 42 }
-        ],
-        balance: [
-          { h1: 190, h2: 230, s1: 14, s2: 28, l1: 24, l2: 44 },
-          { h1: 80, h2: 130, s1: 14, s2: 28, l1: 22, l2: 42 },
-          { h1: 140, h2: 185, s1: 12, s2: 26, l1: 22, l2: 42 },
-          { h1: 280, h2: 330, s1: 14, s2: 28, l1: 22, l2: 42 },
-          { h1: 20, h2: 40, s1: 14, s2: 28, l1: 24, l2: 44 }
-        ],
-        dark: [
-          { h1: 190, h2: 230, s1: 18, s2: 34, l1: 8, l2: 20 },
-          { h1: 85, h2: 135, s1: 16, s2: 32, l1: 8, l2: 20 },
-          { h1: 280, h2: 330, s1: 18, s2: 34, l1: 8, l2: 20 },
-          { h1: 15, h2: 35, s1: 18, s2: 34, l1: 8, l2: 20 },
-          { h1: 220, h2: 255, s1: 14, s2: 30, l1: 8, l2: 20 }
-        ]
-      },
-
-      nature: {
-        light: [
-          { h1: 36, h2: 54, s1: 6, s2: 16, l1: 88, l2: 96 },
-          { h1: 20, h2: 36, s1: 7, s2: 17, l1: 86, l2: 94 },
-          { h1: 70, h2: 105, s1: 6, s2: 16, l1: 84, l2: 94 },
-          { h1: 340, h2: 15, s1: 8, s2: 18, l1: 86, l2: 94 }
-        ],
-        support: [
-          { h1: 30, h2: 46, s1: 16, s2: 30, l1: 58, l2: 76 },
-          { h1: 18, h2: 32, s1: 14, s2: 28, l1: 56, l2: 72 },
-          { h1: 340, h2: 10, s1: 12, s2: 26, l1: 58, l2: 74 },
-          { h1: 80, h2: 115, s1: 8, s2: 18, l1: 54, l2: 70 },
-          { h1: 25, h2: 38, s1: 8, s2: 20, l1: 50, l2: 66 }
-        ],
-        accent: [
-          { h1: 12, h2: 28, s1: 28, s2: 48, l1: 42, l2: 58 },
-          { h1: 28, h2: 44, s1: 24, s2: 42, l1: 44, l2: 60 },
-          { h1: 44, h2: 58, s1: 22, s2: 38, l1: 44, l2: 60 },
-          { h1: 340, h2: 10, s1: 20, s2: 36, l1: 42, l2: 58 },
-          { h1: 70, h2: 125, s1: 14, s2: 30, l1: 38, l2: 56 }
-        ],
-        balance: [
-          { h1: 75, h2: 100, s1: 12, s2: 26, l1: 40, l2: 60 },
-          { h1: 100, h2: 145, s1: 10, s2: 24, l1: 38, l2: 58 },
-          { h1: 145, h2: 175, s1: 8, s2: 20, l1: 36, l2: 56 },
-          { h1: 200, h2: 230, s1: 12, s2: 26, l1: 40, l2: 60 },
-          { h1: 220, h2: 245, s1: 12, s2: 24, l1: 36, l2: 54 }
-        ],
-        dark: [
-          { h1: 20, h2: 36, s1: 18, s2: 34, l1: 10, l2: 24 },
-          { h1: 80, h2: 135, s1: 18, s2: 34, l1: 10, l2: 24 },
-          { h1: 200, h2: 235, s1: 18, s2: 34, l1: 10, l2: 24 },
-          { h1: 230, h2: 260, s1: 14, s2: 28, l1: 10, l2: 24 }
-        ]
-      },
-
-      coastal: {
-        light: [
-          { h1: 35, h2: 50, s1: 4, s2: 14, l1: 92, l2: 98 },
-          { h1: 180, h2: 200, s1: 8, s2: 20, l1: 88, l2: 96 },
-          { h1: 200, h2: 220, s1: 8, s2: 18, l1: 88, l2: 96 },
-          { h1: 18, h2: 35, s1: 8, s2: 18, l1: 88, l2: 96 },
-          { h1: 45, h2: 58, s1: 12, s2: 24, l1: 88, l2: 96 }
-        ],
-        support: [
-          { h1: 28, h2: 42, s1: 12, s2: 26, l1: 64, l2: 80 },
-          { h1: 18, h2: 32, s1: 12, s2: 26, l1: 66, l2: 82 },
-          { h1: 85, h2: 115, s1: 8, s2: 18, l1: 58, l2: 74 },
-          { h1: 200, h2: 220, s1: 10, s2: 22, l1: 62, l2: 78 },
-          { h1: 20, h2: 35, s1: 8, s2: 18, l1: 56, l2: 72 }
-        ],
-        accent: [
-          { h1: 175, h2: 195, s1: 30, s2: 50, l1: 48, l2: 68 },
-          { h1: 190, h2: 210, s1: 26, s2: 46, l1: 48, l2: 68 },
-          { h1: 200, h2: 225, s1: 24, s2: 42, l1: 48, l2: 66 },
-          { h1: 12, h2: 25, s1: 26, s2: 44, l1: 58, l2: 72 },
-          { h1: 28, h2: 44, s1: 24, s2: 42, l1: 58, l2: 74 },
-          { h1: 45, h2: 58, s1: 24, s2: 40, l1: 62, l2: 76 }
-        ],
-        balance: [
-          { h1: 190, h2: 225, s1: 16, s2: 34, l1: 42, l2: 62 },
-          { h1: 170, h2: 195, s1: 16, s2: 34, l1: 42, l2: 62 },
-          { h1: 95, h2: 125, s1: 8, s2: 20, l1: 52, l2: 68 },
-          { h1: 25, h2: 40, s1: 10, s2: 24, l1: 48, l2: 64 },
-          { h1: 220, h2: 240, s1: 16, s2: 30, l1: 38, l2: 56 }
-        ],
-        dark: [
-          { h1: 190, h2: 225, s1: 24, s2: 42, l1: 12, l2: 28 },
-          { h1: 210, h2: 240, s1: 22, s2: 40, l1: 12, l2: 28 },
-          { h1: 170, h2: 195, s1: 22, s2: 40, l1: 12, l2: 28 },
-          { h1: 25, h2: 38, s1: 16, s2: 32, l1: 16, l2: 30 }
-        ]
-      },
-
-      vintage: {
-        light: [
-          { h1: 35, h2: 52, s1: 8, s2: 18, l1: 90, l2: 97 },
-          { h1: 25, h2: 42, s1: 8, s2: 18, l1: 86, l2: 94 },
-          { h1: 340, h2: 10, s1: 8, s2: 18, l1: 86, l2: 94 },
-          { h1: 80, h2: 110, s1: 6, s2: 16, l1: 84, l2: 92 },
-          { h1: 205, h2: 225, s1: 6, s2: 16, l1: 84, l2: 92 },
-          { h1: 280, h2: 310, s1: 6, s2: 16, l1: 84, l2: 92 }
-        ],
-        support: [
-          { h1: 25, h2: 42, s1: 14, s2: 28, l1: 56, l2: 76 },
-          { h1: 35, h2: 52, s1: 14, s2: 28, l1: 58, l2: 78 },
-          { h1: 340, h2: 10, s1: 12, s2: 26, l1: 56, l2: 74 },
-          { h1: 18, h2: 34, s1: 12, s2: 26, l1: 52, l2: 70 },
-          { h1: 80, h2: 110, s1: 8, s2: 20, l1: 50, l2: 68 }
-        ],
-        accent: [
-          { h1: 42, h2: 58, s1: 28, s2: 48, l1: 44, l2: 62 },
-          { h1: 28, h2: 44, s1: 28, s2: 48, l1: 42, l2: 60 },
-          { h1: 12, h2: 28, s1: 28, s2: 46, l1: 42, l2: 60 },
-          { h1: 340, h2: 10, s1: 22, s2: 40, l1: 40, l2: 58 },
-          { h1: 70, h2: 100, s1: 18, s2: 34, l1: 38, l2: 56 },
-          { h1: 205, h2: 230, s1: 18, s2: 34, l1: 38, l2: 56 },
-          { h1: 275, h2: 315, s1: 18, s2: 34, l1: 38, l2: 56 }
-        ],
-        balance: [
-          { h1: 70, h2: 110, s1: 14, s2: 30, l1: 36, l2: 58 },
-          { h1: 110, h2: 145, s1: 10, s2: 24, l1: 38, l2: 58 },
-          { h1: 190, h2: 230, s1: 14, s2: 30, l1: 36, l2: 58 },
-          { h1: 275, h2: 320, s1: 14, s2: 30, l1: 36, l2: 58 },
-          { h1: 330, h2: 350, s1: 16, s2: 32, l1: 36, l2: 58 }
-        ],
-        dark: [
-          { h1: 20, h2: 36, s1: 20, s2: 38, l1: 10, l2: 26 },
-          { h1: 70, h2: 110, s1: 18, s2: 36, l1: 10, l2: 26 },
-          { h1: 205, h2: 235, s1: 18, s2: 34, l1: 10, l2: 26 },
-          { h1: 285, h2: 330, s1: 18, s2: 34, l1: 10, l2: 26 },
-          { h1: 340, h2: 20, s1: 20, s2: 36, l1: 10, l2: 26 }
-        ]
-      }
-    };
-
-    function getSeedContext() {
-      const hex = normalizeHex(hexInput.value);
-
-      if (hex) {
-        return { label: "hex input", seeds: [hexToHsl(hex)] };
-      }
-
-      if (state.imageSeeds.length) {
-        return { label: "uploaded image", seeds: state.imageSeeds.map(copyColor) };
-      }
-
-      return { label: "color wheel", seeds: [hexToHsl(colorPicker.value)] };
-    }
-
-    function extractImageSeeds(img) {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
-      const maxSide = 80;
-      const scale = Math.min(maxSide / img.width, maxSide / img.height, 1);
-
-      canvas.width = Math.max(10, Math.round(img.width * scale));
-      canvas.height = Math.max(10, Math.round(img.height * scale));
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      const bins = new Map();
-
-      for (let i = 0; i < data.length; i += 20) {
-        const a = data[i + 3];
-        if (a < 180) continue;
-
-        const hsl = rgbToHsl(data[i], data[i + 1], data[i + 2]);
-        if (hsl.l < 6 || hsl.l > 96) continue;
-
-        const hueBucket = Math.round(hsl.h / 15) * 15;
-        const key = String(wrapHue(hueBucket));
-        const weight = Math.max(.3, (hsl.s + 10) * (1 - Math.abs(hsl.l - 55) / 100));
-
-        if (!bins.has(key)) {
-          bins.set(key, { weight: 0, hSin: 0, hCos: 0, s: 0, l: 0 });
-        }
-
-        const bin = bins.get(key);
-        const rad = hsl.h * Math.PI / 180;
-
-        bin.weight += weight;
-        bin.hSin += Math.sin(rad) * weight;
-        bin.hCos += Math.cos(rad) * weight;
-        bin.s += hsl.s * weight;
-        bin.l += hsl.l * weight;
-      }
-
-      const ranked = Array.from(bins.values()).map(bin => {
-        let h = Math.atan2(bin.hSin, bin.hCos) * 180 / Math.PI;
-        if (h < 0) h += 360;
-
-        return {
-          h: wrapHue(h),
-          s: Math.round(bin.s / bin.weight),
-          l: Math.round(bin.l / bin.weight),
-          weight: bin.weight
-        };
-      }).sort((a, b) => b.weight - a.weight);
-
-      const chosen = [];
-
-      for (const color of ranked) {
-        if (chosen.length >= 5) break;
-        if (chosen.every(existing => hueDistance(existing.h, color.h) > 22)) {
-          chosen.push(color);
-        }
-      }
-
-      return chosen.length ? chosen : [hexToHsl(colorPicker.value)];
-    }
-
-    function chooseDark(accent, balance, vibe) {
-      const ranges = vibeRanges[vibe].dark;
-      const recentDarks = state.history[vibe].slice(-8).map(h => h.darkFamily);
-
-      let best = null;
-      let bestScore = -9999;
-
-      for (let i = 0; i < 40; i++) {
-        const candidate = makeColor(pick(ranges));
-        let score = 0;
-
-        score += hueDistance(candidate.h, accent.h) * 0.8;
-        score += hueDistance(candidate.h, balance.h) * 0.45;
-
-        if (recentDarks.includes(hueFamily(candidate.h))) score -= 80;
-        if (!recentDarks.includes(hueFamily(candidate.h))) score += 25;
-
-        if (vibe === "cozy" && hueFamily(candidate.h) === hueFamily(balance.h)) score -= 35;
-        if (vibe === "vintage" && isWarmHue(candidate.h)) score += 15;
-        if (vibe === "coastal" && candidate.l < 10) score -= 30;
-
-        if (score > bestScore) {
-          best = candidate;
-          bestScore = score;
-        }
-      }
-
-      return best;
-    }
-
-    function buildCorePalette(vibe) {
-      const ranges = vibeRanges[vibe];
-
-      let light = makeColor(pick(ranges.light));
-      let support = makeColor(pick(ranges.support));
-      let accent = makeColor(pick(ranges.accent));
-      let balance = makeColor(pick(ranges.balance));
-
-      let tries = 0;
-
-      while (tries < 60 && Math.abs(light.l - support.l) < 12) {
-        support = makeColor(pick(ranges.support));
-        tries++;
-      }
-
-      tries = 0;
-
-      while (tries < 60 && hueDistance(accent.h, balance.h) < 34) {
-        balance = makeColor(pick(ranges.balance));
-        tries++;
-      }
-
-      const dark = chooseDark(accent, balance, vibe);
-
-      return softenPalette([light, support, accent, balance, dark], vibe).map(copyColor);
-    }
-
-    function softenColor(color, vibe) {
-      const c = copyColor(color);
-
-      if (c.l >= 84) {
-        c.s = Math.min(c.s, vibe === "playful" ? 38 : 30);
-        return c;
-      }
-
-      if (c.l <= 30) {
-        c.s = Math.min(c.s, vibe === "playful" ? 54 : 48);
-        return c;
-      }
-
-      if (vibe === "playful") {
-        c.s = Math.min(c.s, 70);
-
-        if (c.h >= 350 || c.h <= 14) {
-          c.s = Math.min(c.s, 66);
-          c.l = clamp(c.l, 44, 64);
-        }
-
-        if (c.h >= 42 && c.h <= 64) {
-          c.s = Math.min(c.s, 62);
-          c.l = clamp(c.l, 50, 68);
-        }
-
-        if (c.h >= 205 && c.h <= 245) {
-          c.s = Math.min(c.s, 64);
-          c.l = clamp(c.l, 46, 66);
-        }
-
-        if (c.h >= 250 && c.h <= 315) {
-          c.s = Math.min(c.s, 58);
-          c.l = clamp(c.l, 48, 68);
-        }
-
-        if (c.h >= 70 && c.h <= 135) {
-          c.s = Math.min(c.s, 58);
-          c.l = clamp(c.l, 46, 66);
-        }
-
-        if (c.h >= 175 && c.h <= 205) {
-          c.s = Math.min(c.s, 64);
-          c.l = clamp(c.l, 48, 68);
-        }
-
-        return c;
-      }
-
-      if (vibe === "cozy") c.s = Math.min(c.s, 38);
-      if (vibe === "moody") c.s = Math.min(c.s, 46);
-      if (vibe === "nature") c.s = Math.min(c.s, 50);
-      if (vibe === "coastal") c.s = Math.min(c.s, 50);
-      if (vibe === "vintage") c.s = Math.min(c.s, 52);
-
-      if (vibe === "cozy" && c.h >= 52 && c.h <= 170) c.s = Math.min(c.s, 24);
-      if (vibe === "cozy" && c.h >= 38 && c.h <= 68) c.s = Math.min(c.s, 34);
-      if (vibe === "cozy" && c.h >= 270 && c.h <= 335) c.s = Math.min(c.s, 24);
-
-      return c;
-    }
-
-    function softenPalette(palette, vibe) {
-      return palette.map(c => softenColor(c, vibe));
-    }
-
-    function metrics(palette) {
-      const sats = palette.map(c => c.s);
-      const lights = palette.map(c => c.l);
-
-      return {
-        satRange: Math.max(...sats) - Math.min(...sats),
-        lightRange: Math.max(...lights) - Math.min(...lights)
-      };
-    }
-
-    function palettePasses(palette, vibe) {
-      const m = metrics(palette);
-
-      if (m.lightRange < 42) return false;
-      if (palette[0].l < 78) return false;
-      if (palette[4].l > 34) return false;
-      if (Math.abs(palette[0].l - palette[1].l) < 10) return false;
-      if (hueDistance(palette[2].h, palette[3].h) < 22) return false;
-
-      const families = palette.map(c => hueFamily(c.h));
-      const midFamilies = [families[1], families[2], families[3]];
-
-      if (new Set(midFamilies).size < 3) return false;
-
-      if (vibe === "cozy") {
-        const light = palette[0];
-        const support = palette[1];
-        const accent = palette[2];
-        const balance = palette[3];
-
-        const mid = [support, accent, balance];
-
-        const greenCount = mid.filter(c => c.h >= 52 && c.h <= 170).length;
-        const purpleCount = mid.filter(c => c.h >= 270 && c.h <= 335).length;
-        const blueCount = mid.filter(c => c.h >= 190 && c.h <= 252).length;
-
-        if (greenCount > 1) return false;
-        if (purpleCount > 1) return false;
-        if (blueCount > 1) return false;
-
-        if (hueDistance(support.h, balance.h) < 34) return false;
-        if (Math.abs(light.l - support.l) < 12 && hueDistance(light.h, support.h) < 24) return false;
-
-        if (support.s > 34) return false;
-        if (accent.s < 16) return false;
-
-        if (accent.h >= 52 && accent.h <= 170 && accent.s > 28) return false;
-        if (balance.h >= 52 && balance.h <= 170 && balance.s > 24) return false;
-
-        const hasYellow = mid.some(c =>
-          c.h >= 38 &&
-          c.h <= 72 &&
-          c.s >= 10 &&
-          c.s <= 38 &&
-          c.l >= 38 &&
-          c.l <= 74
-        );
-
-        if (hasYellow && mid.some(c => c.h >= 38 && c.h <= 72 && c.s > 38)) return false;
-      }
-
-      if (vibe === "moody") {
-        if (palette[2].s > 48 || palette[3].s > 44) return false;
-        if (palette[0].l > 95) return false;
-      }
-
-      if (vibe === "coastal") {
-        if (palette[4].l < 8) return false;
-      }
-
-      if (vibe === "vintage") {
-        const warmCount = palette.filter(c => isWarmHue(c.h) || (c.h >= 65 && c.h <= 110)).length;
-        if (warmCount < 2) return false;
-      }
-
-      return true;
-    }
-
-    function makeSignature(palette) {
-      return {
-        lightFamily: hueFamily(palette[0].h),
-        supportFamily: hueFamily(palette[1].h),
-        accentFamily: hueFamily(palette[2].h),
-        balanceFamily: hueFamily(palette[3].h),
-        darkFamily: hueFamily(palette[4].h),
-        supportHue: palette[1].h,
-        accentHue: palette[2].h,
-        balanceHue: palette[3].h,
-        darkHue: palette[4].h,
-        valuePattern: palette.map(c => c.l < 35 ? "d" : c.l > 80 ? "l" : "m").join("-")
-      };
-    }
-
-    function tooSimilarToHistory(palette, vibe) {
-      const history = state.history[vibe] || [];
-      const sig = makeSignature(palette);
-
-      for (const old of history.slice(-12)) {
-        let score = 0;
-
-        if (sig.lightFamily === old.lightFamily) score += 1;
-        if (sig.supportFamily === old.supportFamily) score += 3;
-        if (sig.accentFamily === old.accentFamily) score += 3;
-        if (sig.balanceFamily === old.balanceFamily) score += 3;
-        if (sig.darkFamily === old.darkFamily) score += 2;
-
-        if (hueDistance(sig.supportHue, old.supportHue) < 30) score += 3;
-        if (hueDistance(sig.accentHue, old.accentHue) < 34) score += 3;
-        if (hueDistance(sig.balanceHue, old.balanceHue) < 34) score += 3;
-        if (hueDistance(sig.darkHue, old.darkHue) < 38) score += 2;
-
-        if (sig.valuePattern === old.valuePattern) score += 1;
-
-        const limit = vibe === "cozy" ? 8 : vibe === "playful" ? 10 : 11;
-
-        if (score >= limit) return true;
-      }
-
-      return false;
-    }
-
-    function rememberPalette(palette, vibe) {
-      state.history[vibe].push(makeSignature(palette));
-      if (state.history[vibe].length > 16) state.history[vibe].shift();
-    }
-
-    function scorePalette(palette, vibe) {
-      const m = metrics(palette);
-      let score = 0;
-
-      score += m.lightRange * 2;
-      score += m.satRange;
-      score += hueDistance(palette[2].h, palette[3].h) * 0.5;
-
-      if (palette[0].l >= 86) score += 12;
-      if (palette[4].l <= 28) score += 12;
-
-      if (vibe === "cozy") {
-        const mid = [palette[1], palette[2], palette[3]];
-        const hasYellow = mid.some(c => c.h >= 38 && c.h <= 72);
-        const hasWarm = mid.some(c => isWarmHue(c.h));
-        const hasCool = mid.some(c => isCoolHue(c.h) || (c.h >= 80 && c.h <= 170));
-
-        if (hasYellow) score += 35;
-        if (hasWarm && hasCool) score += 22;
-        if (hueFamily(palette[1].h) === "gold" || hueFamily(palette[1].h) === "yellow") score += 22;
-      }
-
-      if (vibe === "playful") {
-        if (palette[2].s >= 48 && palette[3].s >= 40) score += 25;
-      }
-
-      if (vibe === "vintage" && isWarmHue(palette[2].h)) score += 18;
-
-      return score;
-    }
-
-    function chooseCozyPalette() {
-      const cozyStories = [
-        {
-          name: "linen-honey-blue-bark",
-          colors: [
-            { h: rand(36, 50), s: rand(5, 13), l: rand(92, 97) },
-            { h: rand(42, 58), s: rand(18, 32), l: rand(54, 70) },
-            { h: rand(190, 220), s: rand(10, 22), l: rand(42, 58) },
-            { h: rand(18, 34), s: rand(14, 28), l: rand(40, 56) },
-            { h: rand(18, 35), s: rand(20, 34), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "mushroom-ochre-rose-olive",
-          colors: [
-            { h: rand(25, 38), s: rand(4, 12), l: rand(88, 94) },
-            { h: rand(46, 64), s: rand(16, 30), l: rand(48, 64) },
-            { h: rand(345, 360), s: rand(12, 24), l: rand(48, 64) },
-            { h: rand(82, 108), s: rand(7, 18), l: rand(40, 56) },
-            { h: rand(70, 100), s: rand(18, 32), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "pale-sage-camel-clay-slate",
-          colors: [
-            { h: rand(80, 108), s: rand(4, 12), l: rand(88, 94) },
-            { h: rand(28, 42), s: rand(16, 30), l: rand(56, 72) },
-            { h: rand(14, 30), s: rand(26, 42), l: rand(42, 58) },
-            { h: rand(205, 230), s: rand(8, 20), l: rand(38, 54) },
-            { h: rand(190, 230), s: rand(18, 32), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "blue-gray-wheat-plum-brown",
-          colors: [
-            { h: rand(200, 222), s: rand(4, 12), l: rand(88, 94) },
-            { h: rand(35, 52), s: rand(16, 30), l: rand(56, 72) },
-            { h: rand(285, 320), s: rand(8, 20), l: rand(40, 56) },
-            { h: rand(24, 40), s: rand(14, 28), l: rand(40, 56) },
-            { h: rand(285, 325), s: rand(16, 30), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "parchment-gold-eucalyptus-espresso",
-          colors: [
-            { h: rand(40, 56), s: rand(7, 16), l: rand(90, 96) },
-            { h: rand(50, 68), s: rand(14, 28), l: rand(44, 60) },
-            { h: rand(112, 150), s: rand(6, 16), l: rand(40, 56) },
-            { h: rand(330, 350), s: rand(10, 22), l: rand(40, 56) },
-            { h: rand(18, 35), s: rand(20, 34), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "putty-caramel-periwinkle-bark",
-          colors: [
-            { h: rand(0, 360), s: rand(0, 6), l: rand(86, 93) },
-            { h: rand(22, 38), s: rand(16, 32), l: rand(52, 68) },
-            { h: rand(225, 252), s: rand(7, 18), l: rand(40, 56) },
-            { h: rand(44, 60), s: rand(16, 30), l: rand(42, 58) },
-            { h: rand(18, 35), s: rand(20, 34), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "blush-wheat-blue-olive",
-          colors: [
-            { h: rand(345, 358), s: rand(6, 14), l: rand(88, 95) },
-            { h: rand(35, 52), s: rand(16, 30), l: rand(56, 72) },
-            { h: rand(190, 222), s: rand(10, 22), l: rand(42, 58) },
-            { h: rand(60, 82), s: rand(9, 22), l: rand(38, 56) },
-            { h: rand(70, 100), s: rand(18, 32), l: rand(12, 24) }
-          ]
-        },
-        {
-          name: "stone-clay-honey-navy",
-          colors: [
-            { h: rand(18, 34), s: rand(5, 14), l: rand(87, 94) },
-            { h: rand(14, 30), s: rand(18, 34), l: rand(52, 68) },
-            { h: rand(44, 60), s: rand(20, 36), l: rand(42, 58) },
-            { h: rand(205, 230), s: rand(8, 20), l: rand(40, 56) },
-            { h: rand(190, 230), s: rand(18, 32), l: rand(12, 24) }
-          ]
-        }
-      ];
-
-      let tries = 0;
-
-      while (tries < 100) {
-        const story = pick(cozyStories);
-        let palette = story.colors.map(copyColor);
-        palette = softenPalette(palette, "cozy").map(copyColor);
-
-        if (cozyPaletteLooksBalanced(palette) && !tooSimilarToHistory(palette, "cozy")) {
-          return palette;
-        }
-
-        tries++;
-      }
-
-      const fallback = pick(cozyStories).colors.map(copyColor);
-      return softenPalette(fallback, "cozy").map(copyColor);
-    }
-
-    function cozyPaletteLooksBalanced(palette) {
-      const light = palette[0];
-      const support = palette[1];
-      const accent = palette[2];
-      const balance = palette[3];
-      const dark = palette[4];
-      const mid = [support, accent, balance];
-
-      if (light.l < 84) return false;
-      if (dark.l > 28) return false;
-      if (Math.abs(light.l - support.l) < 10) return false;
-
-      const families = mid.map(c => hueFamily(c.h));
-      if (new Set(families).size < 3) return false;
-
-      const greenCount = mid.filter(c => c.h >= 52 && c.h <= 170).length;
-      const blueCount = mid.filter(c => c.h >= 190 && c.h <= 252).length;
-      const purpleCount = mid.filter(c => c.h >= 270 && c.h <= 335).length;
-
-      if (greenCount > 1) return false;
-      if (blueCount > 1) return false;
-      if (purpleCount > 1) return false;
-
-      const hasWarm = mid.some(c => (c.h >= 12 && c.h <= 72) || c.h >= 340);
-      if (!hasWarm) return false;
-
-      const hasCoolOrBotanical = mid.some(c =>
-        (c.h >= 80 && c.h <= 170) ||
-        (c.h >= 190 && c.h <= 252) ||
-        (c.h >= 270 && c.h <= 335)
-      );
-      if (!hasCoolOrBotanical) return false;
-
-      if (hueDistance(support.h, balance.h) < 36) return false;
-      if (Math.abs(support.l - balance.l) < 8 && hueDistance(support.h, balance.h) < 48) return false;
-      if (mid.some(c => c.s > 38)) return false;
-
-      return true;
-    }
-
-    function paletteTemperatureNeed(palette) {
-      // Look at the main personality, balance, and anchor colors.
-      // If the palette is leaning cool, swatch 2 should become a warm neutral.
-      // If the palette is leaning warm, swatch 2 should become a cool neutral.
-      // If mixed, choose based on what is missing most.
-      const check = [palette[2], palette[3], palette[4]].filter(Boolean);
-
-      let warm = 0;
-      let cool = 0;
-
-      check.forEach(c => {
-        if (isWarmHue(c.h) || (c.h >= 35 && c.h <= 72)) warm++;
-        if (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) cool++;
-      });
-
-      if (cool >= 2 && warm === 0) return "warm";
-      if (warm >= 2 && cool === 0) return "cool";
-
-      if (cool > warm) return "warm";
-      if (warm > cool) return "cool";
-
-      return "either";
-    }
-
-    function neutralBridgeForVibe(vibe, palette) {
-      // Neutral bridge DNA:
-      // Swatch 2 must act like a balancing bridge, not just "some beige."
-      // If the rest of the palette leans cool, it adds a warm neutral.
-      // If the rest of the palette leans warm, it adds a cool neutral.
-      // If the palette is already balanced, it rotates through warm and cool neutrals.
-
-      const neutralRanges = {
-        playful: {
-          warm: [
-            { h1: 16, h2: 28, s1: 16, s2: 32, l1: 66, l2: 82 },  // peach nude
-            { h1: 24, h2: 38, s1: 14, s2: 30, l1: 58, l2: 76 },  // tan / camel
-            { h1: 34, h2: 48, s1: 12, s2: 28, l1: 60, l2: 78 },  // honey beige
-            { h1: 345, h2: 8, s1: 12, s2: 28, l1: 60, l2: 78 },  // rosy nude
-            { h1: 0, h2: 18, s1: 10, s2: 24, l1: 54, l2: 72 }    // dusty blush taupe
-          ],
-          cool: [
-            { h1: 80, h2: 110, s1: 6, s2: 16, l1: 58, l2: 76 },  // muted olive-gray
-            { h1: 190, h2: 220, s1: 6, s2: 16, l1: 58, l2: 76 }, // blue-gray neutral
-            { h1: 225, h2: 245, s1: 6, s2: 16, l1: 54, l2: 72 }, // periwinkle-gray neutral
-            { h1: 285, h2: 315, s1: 6, s2: 16, l1: 56, l2: 74 }, // lavender-gray neutral
-            { h1: 0, h2: 360, s1: 0, s2: 8, l1: 54, l2: 72 }     // putty neutral
-          ]
-        },
-
-        cozy: {
-          warm: [
-            { h1: 18, h2: 32, s1: 9, s2: 22, l1: 58, l2: 76 },   // soft nude peach-beige
-            { h1: 24, h2: 38, s1: 9, s2: 22, l1: 50, l2: 68 },   // warm mushroom
-            { h1: 30, h2: 46, s1: 10, s2: 24, l1: 52, l2: 72 },  // oatmeal / camel
-            { h1: 40, h2: 58, s1: 10, s2: 24, l1: 50, l2: 70 },  // wheat / honey neutral
-            { h1: 345, h2: 8, s1: 8, s2: 20, l1: 56, l2: 74 },   // blush nude
-            { h1: 330, h2: 350, s1: 7, s2: 18, l1: 50, l2: 68 }  // rosy taupe
-          ],
-          cool: [
-            { h1: 0, h2: 360, s1: 0, s2: 8, l1: 48, l2: 68 },    // putty / warm gray
-            { h1: 70, h2: 108, s1: 4, s2: 13, l1: 50, l2: 70 },  // sage-gray neutral
-            { h1: 105, h2: 135, s1: 4, s2: 13, l1: 48, l2: 66 }, // eucalyptus-gray neutral
-            { h1: 200, h2: 225, s1: 4, s2: 13, l1: 50, l2: 70 }, // blue-gray neutral
-            { h1: 225, h2: 252, s1: 4, s2: 13, l1: 48, l2: 66 }, // periwinkle-gray neutral
-            { h1: 280, h2: 315, s1: 4, s2: 13, l1: 50, l2: 68 }  // lavender-gray neutral
-          ]
-        },
-
-        moody: {
-          warm: [
-            { h1: 20, h2: 38, s1: 6, s2: 18, l1: 42, l2: 62 },
-            { h1: 345, h2: 10, s1: 6, s2: 18, l1: 42, l2: 62 },
-            { h1: 35, h2: 55, s1: 6, s2: 18, l1: 42, l2: 62 }
-          ],
-          cool: [
-            { h1: 0, h2: 360, s1: 0, s2: 9, l1: 38, l2: 58 },
-            { h1: 80, h2: 115, s1: 4, s2: 14, l1: 40, l2: 60 },
-            { h1: 200, h2: 230, s1: 5, s2: 16, l1: 40, l2: 60 },
-            { h1: 290, h2: 330, s1: 5, s2: 16, l1: 40, l2: 60 }
-          ]
-        },
-
-        nature: {
-          warm: [
-            { h1: 20, h2: 38, s1: 8, s2: 20, l1: 52, l2: 70 },
-            { h1: 34, h2: 52, s1: 9, s2: 22, l1: 52, l2: 72 },
-            { h1: 330, h2: 350, s1: 7, s2: 18, l1: 50, l2: 68 }
-          ],
-          cool: [
-            { h1: 0, h2: 360, s1: 0, s2: 8, l1: 48, l2: 66 },
-            { h1: 75, h2: 115, s1: 5, s2: 16, l1: 48, l2: 66 },
-            { h1: 200, h2: 230, s1: 5, s2: 16, l1: 48, l2: 66 }
-          ]
-        },
-
-        coastal: {
-          warm: [
-            { h1: 24, h2: 42, s1: 8, s2: 20, l1: 58, l2: 76 },
-            { h1: 35, h2: 52, s1: 8, s2: 20, l1: 60, l2: 78 },
-            { h1: 12, h2: 26, s1: 9, s2: 22, l1: 62, l2: 80 },
-            { h1: 345, h2: 8, s1: 7, s2: 18, l1: 62, l2: 80 }
-          ],
-          cool: [
-            { h1: 90, h2: 120, s1: 4, s2: 14, l1: 58, l2: 76 },
-            { h1: 175, h2: 200, s1: 5, s2: 16, l1: 58, l2: 76 },
-            { h1: 195, h2: 220, s1: 5, s2: 16, l1: 58, l2: 76 }
-          ]
-        },
-
-        vintage: {
-          warm: [
-            { h1: 24, h2: 40, s1: 9, s2: 22, l1: 54, l2: 74 },
-            { h1: 36, h2: 55, s1: 10, s2: 24, l1: 54, l2: 74 },
-            { h1: 12, h2: 28, s1: 10, s2: 24, l1: 54, l2: 72 },
-            { h1: 340, h2: 10, s1: 9, s2: 22, l1: 54, l2: 72 }
-          ],
-          cool: [
-            { h1: 0, h2: 360, s1: 0, s2: 8, l1: 48, l2: 66 },
-            { h1: 78, h2: 110, s1: 6, s2: 17, l1: 48, l2: 66 },
-            { h1: 205, h2: 230, s1: 6, s2: 17, l1: 48, l2: 66 },
-            { h1: 285, h2: 320, s1: 6, s2: 17, l1: 48, l2: 66 }
-          ]
-        }
-      };
-
-      const groups = neutralRanges[vibe] || neutralRanges.cozy;
-      const need = paletteTemperatureNeed(palette || []);
-
-      let ranges;
-      if (need === "warm") {
-        ranges = groups.warm;
-      } else if (need === "cool") {
-        ranges = groups.cool;
-      } else {
-        ranges = groups.warm.concat(groups.cool);
-      }
-
-      let best = null;
-      let bestScore = -9999;
-
-      for (let i = 0; i < 120; i++) {
-        const candidate = softenColor(makeColor(pick(ranges)), vibe);
-        let score = 0;
-
-        // Must look like a neutral bridge, not white, not anchor, not main pop.
-        if (candidate.l >= 48 && candidate.l <= 78) score += 60;
-        if (candidate.s >= 4 && candidate.s <= 30) score += 50;
-        if (candidate.s > 34) score -= 140;
-        if (candidate.l > 82) score -= 140;
-        if (candidate.l < 38) score -= 100;
-
-        if (palette && palette[0]) {
-          if (Math.abs(candidate.l - palette[0].l) < 12) score -= 80;
-          if (hueDistance(candidate.h, palette[0].h) < 16) score -= 30;
-        }
-
-        if (palette && palette[2]) {
-          score += hueDistance(candidate.h, palette[2].h) * 0.35;
-          if (hueFamily(candidate.h) === hueFamily(palette[2].h) && Math.abs(candidate.l - palette[2].l) < 12) score -= 70;
-        }
-
-        if (palette && palette[3]) {
-          score += hueDistance(candidate.h, palette[3].h) * 0.25;
-          if (hueFamily(candidate.h) === hueFamily(palette[3].h) && Math.abs(candidate.l - palette[3].l) < 12) score -= 70;
-        }
-
-        // Hard preference: if temperature is missing, reward that missing temperature.
-        if (need === "warm" && (isWarmHue(candidate.h) || candidate.h <= 72)) score += 90;
-        if (need === "cool" && (isCoolHue(candidate.h) || (candidate.h >= 80 && candidate.h <= 170))) score += 90;
-
-        if (score > bestScore) {
-          best = candidate;
-          bestScore = score;
-        }
-      }
-
-      return copyColor(best || makeColor(pick(ranges)));
-    }
-
-    function enforceNeutralBridge(palette, vibe) {
-      const next = palette.map(copyColor);
-
-      // CONSISTENT RULE:
-      // Swatch 2 is always the neutral bridge in a 5-color palette.
-      // Earlier logic only added a neutral if none existed, but muted blues/greens
-      // sometimes counted as "neutral," so nude/warm neutrals appeared inconsistently.
-      //
-      // Keep:
-      // swatch 1 = light relief
-      // swatch 2 = warm/cool neutral bridge
-      // swatch 3 = personality color
-      // swatch 4 = balance color
-      // swatch 5 = dark anchor
-      next[1] = neutralBridgeForVibe(vibe, next);
-
-      return next.map(copyColor);
-    }
-
-    function choosePalette(vibe) {
-      if (vibe === "cozy") {
-        return chooseCozyPalette();
-      }
-
-      const candidates = [];
-
-      for (let i = 0; i < 500; i++) {
-        const palette = buildCorePalette(vibe);
-
-        if (!palettePasses(palette, vibe)) continue;
-        if (tooSimilarToHistory(palette, vibe)) continue;
-
-        candidates.push({
-          palette,
-          score: scorePalette(palette, vibe)
-        });
-      }
-
-      if (!candidates.length) {
-        for (let i = 0; i < 200; i++) {
-          const palette = buildCorePalette(vibe);
-          if (!palettePasses(palette, vibe)) continue;
-          candidates.push({
-            palette,
-            score: scorePalette(palette, vibe)
-          });
-        }
-      }
-
-      if (!candidates.length) return buildCorePalette(vibe);
-
-      candidates.sort((a, b) => b.score - a.score);
-      return pick(candidates.slice(0, Math.min(12, candidates.length))).palette;
-    }
-
-    function broadColorBucket(color) {
-      const h = wrapHue(color.h);
-
-      if (color.l >= 82) return "light";
-      if (color.l <= 34) return "dark";
-      if (color.s <= 18 && color.l >= 42 && color.l <= 80) return "neutral";
-
-      if (h >= 340 || h < 28) return "red-coral";
-      if (h >= 28 && h < 62) return "orange-yellow";
-      if (h >= 62 && h < 118) return "gold-olive";
-      if (h >= 118 && h < 178) return "green-mint";
-      if (h >= 178 && h < 225) return "aqua-blue";
-      if (h >= 225 && h < 285) return "blue-periwinkle";
-      if (h >= 285 && h < 340) return "purple-pink";
-
-      return "mixed";
-    }
-
-    function isNeutralish(color) {
-      return color.s <= 32 && color.l >= 40 && color.l <= 82;
-    }
-
-    function isWarmNeutral(color) {
-      return isNeutralish(color) && (isWarmHue(color.h) || color.h <= 72);
-    }
-
-    function isCoolNeutral(color) {
-      return isNeutralish(color) && (isCoolHue(color.h) || (color.h >= 75 && color.h <= 170));
-    }
-
-    function randomFromRanges(ranges, vibe) {
-      return softenColor(makeColor(pick(ranges)), vibe);
-    }
-
-    function randomFromVibe(vibe, groups, predicate) {
-      const ranges = [];
-
-      groups.forEach(group => {
-        if (vibeRanges[vibe] && vibeRanges[vibe][group]) {
-          ranges.push(...vibeRanges[vibe][group]);
-        }
-      });
-
-      for (let i = 0; i < 80; i++) {
-        const candidate = randomFromRanges(ranges.length ? ranges : vibeRanges[vibe].accent, vibe);
-        if (!predicate || predicate(candidate)) return copyColor(candidate);
-      }
-
-      return copyColor(randomFromRanges(ranges.length ? ranges : vibeRanges[vibe].accent, vibe));
-    }
-
-    function tempNeedForExpandedPalette(existing) {
-      let warm = 0;
-      let cool = 0;
-
-      existing.forEach(c => {
-        if (isWarmHue(c.h) || c.h <= 72) warm++;
-        if (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) cool++;
-      });
-
-      if (cool > warm) return "warm";
-      if (warm > cool) return "cool";
-      return "either";
-    }
-
-    function neutralForExpanded(vibe, existing, core) {
-      const need = tempNeedForExpandedPalette(existing);
-      const paletteForNeed = core && core.length >= 5 ? core.map(copyColor) : existing.slice(0, 5).map(copyColor);
-
-      const candidates = [];
-
-      for (let i = 0; i < 12; i++) {
-        candidates.push(neutralBridgeForVibe(vibe, paletteForNeed));
-      }
-
-      if (need === "warm" || need === "either") {
-        candidates.push(
-          softenColor(makeColor({ h1: 18, h2: 34, s1: 10, s2: 26, l1: 54, l2: 76 }), vibe),
-          softenColor(makeColor({ h1: 30, h2: 48, s1: 10, s2: 24, l1: 52, l2: 74 }), vibe),
-          softenColor(makeColor({ h1: 340, h2: 10, s1: 8, s2: 22, l1: 54, l2: 74 }), vibe)
-        );
-      }
-
-      if (need === "cool" || need === "either") {
-        candidates.push(
-          softenColor(makeColor({ h1: 75, h2: 115, s1: 4, s2: 15, l1: 48, l2: 72 }), vibe),
-          softenColor(makeColor({ h1: 195, h2: 230, s1: 4, s2: 16, l1: 48, l2: 72 }), vibe),
-          softenColor(makeColor({ h1: 225, h2: 255, s1: 4, s2: 16, l1: 48, l2: 72 }), vibe),
-          softenColor(makeColor({ h1: 280, h2: 318, s1: 4, s2: 16, l1: 48, l2: 72 }), vibe)
-        );
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "neutral");
-    }
-
-    function warmNudeNeutralForExpanded(vibe, existing) {
-      // 10-color palettes were reading a little too cool/gray.
-      // This adds a gentle warm nude neutral support: not spicy, not orange-heavy,
-      // not saturated, just a soft human/warm-neutral bridge.
-      const warmNudeRanges = {
-        playful: [
-          { h1: 14, h2: 28, s1: 12, s2: 26, l1: 62, l2: 78 },  // peach nude
-          { h1: 24, h2: 38, s1: 10, s2: 24, l1: 58, l2: 74 },  // warm tan
-          { h1: 340, h2: 8, s1: 10, s2: 24, l1: 60, l2: 76 },  // rosy nude
-          { h1: 32, h2: 48, s1: 10, s2: 22, l1: 60, l2: 76 }   // honey beige
-        ],
-
-        cozy: [
-          { h1: 18, h2: 32, s1: 8, s2: 20, l1: 58, l2: 76 },
-          { h1: 26, h2: 42, s1: 8, s2: 20, l1: 54, l2: 72 },
-          { h1: 340, h2: 8, s1: 7, s2: 18, l1: 56, l2: 74 },
-          { h1: 36, h2: 52, s1: 8, s2: 20, l1: 56, l2: 74 }
-        ],
-
-        moody: [
-          { h1: 18, h2: 34, s1: 6, s2: 16, l1: 44, l2: 62 },
-          { h1: 340, h2: 8, s1: 6, s2: 16, l1: 44, l2: 62 },
-          { h1: 28, h2: 44, s1: 6, s2: 16, l1: 42, l2: 60 }
-        ],
-
-        nature: [
-          { h1: 20, h2: 36, s1: 8, s2: 20, l1: 52, l2: 70 },
-          { h1: 32, h2: 50, s1: 8, s2: 20, l1: 52, l2: 72 },
-          { h1: 340, h2: 8, s1: 7, s2: 18, l1: 52, l2: 70 }
-        ],
-
-        coastal: [
-          { h1: 18, h2: 32, s1: 8, s2: 20, l1: 62, l2: 80 },
-          { h1: 26, h2: 42, s1: 7, s2: 18, l1: 60, l2: 78 },
-          { h1: 340, h2: 8, s1: 6, s2: 16, l1: 62, l2: 80 }
-        ],
-
-        vintage: [
-          { h1: 18, h2: 34, s1: 8, s2: 20, l1: 54, l2: 74 },
-          { h1: 28, h2: 46, s1: 8, s2: 22, l1: 54, l2: 74 },
-          { h1: 340, h2: 8, s1: 8, s2: 20, l1: 54, l2: 72 },
-          { h1: 36, h2: 54, s1: 9, s2: 22, l1: 54, l2: 74 }
-        ]
-      };
-
-      const ranges = warmNudeRanges[vibe] || warmNudeRanges.cozy;
-      const candidates = [];
-
-      for (let i = 0; i < 36; i++) {
-        candidates.push(softenColor(makeColor(pick(ranges)), vibe));
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "neutral");
-    }
-
-    function hasWarmNudeNeutral(palette) {
-      return palette.some(c =>
-        isWarmNeutral(c) &&
-        c.l >= 44 &&
-        c.l <= 82 &&
-        c.s >= 5 &&
-        c.s <= 30
-      );
-    }
-
-    function countWarmNudeNeutrals(palette) {
-      return palette.filter(c =>
-        isWarmNeutral(c) &&
-        c.l >= 44 &&
-        c.l <= 82 &&
-        c.s >= 5 &&
-        c.s <= 30
-      ).length;
-    }
-
-    function expandedPairPenalty(candidate, existing) {
-      let penalty = 0;
-
-      existing.forEach(other => {
-        const hd = hueDistance(candidate.h, other.h);
-        const ld = Math.abs(candidate.l - other.l);
-        const sd = Math.abs(candidate.s - other.s);
-        const dist = hd * 0.75 + ld * 1.1 + sd * 0.5;
-
-        if (dist < 24) penalty += 500;
-        if (hd < 14 && ld < 18) penalty += 260;
-        if (hd < 20 && ld < 12) penalty += 260;
-        if (hueFamily(candidate.h) === hueFamily(other.h) && ld < 22) penalty += 220;
-        if (broadColorBucket(candidate) === broadColorBucket(other) && ld < 14 && sd < 16) penalty += 190;
-      });
-
-      return penalty;
-    }
-
-    function chooseExpandedCandidate(candidates, existing, vibe, role) {
-      let best = null;
-      let bestScore = -999999;
-
-      candidates.forEach(raw => {
-        const c = copyColor(softenColor(raw, vibe));
-        let score = 0;
-
-        existing.forEach(other => {
-          score += Math.min(hueDistance(c.h, other.h), 90) * 0.7;
-          score += Math.min(Math.abs(c.l - other.l), 42) * 1.35;
-          score += Math.min(Math.abs(c.s - other.s), 34) * 0.4;
-        });
-
-        score -= expandedPairPenalty(c, existing);
-
-        const familyCount = existing.filter(e => hueFamily(e.h) === hueFamily(c.h)).length;
-        const bucketCount = existing.filter(e => broadColorBucket(e) === broadColorBucket(c)).length;
-
-        score -= familyCount * 95;
-        score -= bucketCount * 60;
-
-        if (role === "light") {
-          if (c.l >= 76 && c.l <= 94) score += 80;
-          if (c.l < 70) score -= 120;
-        }
-
-        if (role === "neutral") {
-          if (isNeutralish(c)) score += 95;
-          if (c.s > 34) score -= 180;
-          if (c.l < 42 || c.l > 82) score -= 150;
-        }
-
-        if (role === "warm") {
-          if (isWarmHue(c.h) || c.h <= 72) score += 100;
-          if (c.l >= 38 && c.l <= 74) score += 35;
-        }
-
-        if (role === "cool") {
-          if (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) score += 100;
-          if (c.l >= 38 && c.l <= 74) score += 35;
-        }
-
-        if (role === "bridgeAccent") {
-          if (c.l >= 36 && c.l <= 72) score += 45;
-          if (c.s >= 8 && c.s <= (vibe === "playful" ? 64 : 44)) score += 35;
-        }
-
-        if (role === "dark") {
-          if (c.l >= 10 && c.l <= 36) score += 80;
-          if (c.l > 44) score -= 150;
-        }
-
-        if (score > bestScore) {
-          best = c;
-          bestScore = score;
-        }
-      });
-
-      return best || copyColor(candidates[0]);
-    }
-
-    function makeLightExpansion(vibe, core, existing) {
-      const [light, bridge] = core;
-      const candidates = [
-        tuneColor(light, vibe, 10, 3, -8),
-        tuneColor(light, vibe, -14, 4, -10),
-        tuneColor(mixHsl(light, bridge, 0.2), vibe, 8, -2, -4),
-        tuneColor(mixHsl(light, bridge, 0.35), vibe, -10, -4, 2)
-      ];
-
-      for (let i = 0; i < 8; i++) {
-        candidates.push(randomFromVibe(vibe, ["light"], c => c.l >= 78));
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "light");
-    }
-
-    function makeWarmExpansion(vibe, core, existing) {
-      const [, bridge, accent, balance] = core;
-      const candidates = [
-        tuneColor(accent, vibe, 14, -8, 7),
-        tuneColor(accent, vibe, -18, -10, 3),
-        tuneColor(bridge, vibe, 18, 5, -8),
-        tuneColor(mixHsl(accent, bridge, 0.28), vibe, 0, -4, 0),
-        tuneColor(mixHsl(balance, accent, 0.4), vibe, 18, -4, 2)
-      ];
-
-      for (let i = 0; i < 14; i++) {
-        candidates.push(randomFromVibe(vibe, ["support", "accent", "balance"], c =>
-          (isWarmHue(c.h) || c.h <= 72) && c.l >= 36 && c.l <= 76
-        ));
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "warm");
-    }
-
-    function makeCoolExpansion(vibe, core, existing) {
-      const [, bridge, accent, balance] = core;
-      const candidates = [
-        tuneColor(balance, vibe, -16, -4, 5),
-        tuneColor(balance, vibe, 20, -6, 3),
-        tuneColor(accent, vibe, 35, -10, 5),
-        tuneColor(mixHsl(balance, bridge, 0.25), vibe, 0, -4, 0),
-        tuneColor(mixHsl(balance, accent, 0.4), vibe, -20, -6, 4)
-      ];
-
-      for (let i = 0; i < 14; i++) {
-        candidates.push(randomFromVibe(vibe, ["support", "accent", "balance"], c =>
-          (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) && c.l >= 34 && c.l <= 76
-        ));
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "cool");
-    }
-
-    function makeBridgeAccent(vibe, core, existing) {
-      const [, bridge, accent, balance] = core;
-      const candidates = [
-        tuneColor(mixHsl(accent, balance, 0.5), vibe, 0, -8, 2),
-        tuneColor(mixHsl(bridge, balance, 0.45), vibe, 0, -4, -2),
-        tuneColor(balance, vibe, 32, -8, 4),
-        tuneColor(accent, vibe, -32, -8, 4)
-      ];
-
-      for (let i = 0; i < 16; i++) {
-        candidates.push(randomFromVibe(vibe, ["accent", "balance", "support"], c =>
-          c.l >= 34 && c.l <= 76
-        ));
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "bridgeAccent");
-    }
-
-    function makeDarkExpansion(vibe, core, existing) {
-      const [, , accent, balance, dark] = core;
-      const candidates = [
-        tuneColor(dark, vibe, 16, -2, 12),
-        tuneColor(dark, vibe, -18, 2, 12),
-        tuneColor(mixHsl(dark, accent, 0.16), vibe, 0, 0, 8),
-        tuneColor(mixHsl(dark, balance, 0.18), vibe, 0, 0, 10)
-      ];
-
-      for (let i = 0; i < 12; i++) {
-        candidates.push(randomFromVibe(vibe, ["dark"], c => c.l <= 38));
-      }
-
-      return chooseExpandedCandidate(candidates, existing, vibe, "dark");
-    }
-
-    function scoreExpandedPalette(palette, vibe) {
-      let score = 0;
-
-      const families = palette.map(c => hueFamily(c.h));
-      const buckets = palette.map(c => broadColorBucket(c));
-      const lights = palette.map(c => c.l);
-      const sats = palette.map(c => c.s);
-
-      score += new Set(families).size * 90;
-      score += new Set(buckets).size * 70;
-      score += (Math.max(...lights) - Math.min(...lights)) * 3;
-      score += (Math.max(...sats) - Math.min(...sats));
-
-      let pairPenalty = 0;
-
-      for (let i = 0; i < palette.length; i++) {
-        for (let j = i + 1; j < palette.length; j++) {
-          const a = palette[i];
-          const b = palette[j];
-          const hd = hueDistance(a.h, b.h);
-          const ld = Math.abs(a.l - b.l);
-          const sd = Math.abs(a.s - b.s);
-          const dist = hd * 0.75 + ld * 1.1 + sd * 0.5;
-
-          if (dist < 24) pairPenalty += 400;
-          if (hd < 16 && ld < 20) pairPenalty += 220;
-          if (hueFamily(a.h) === hueFamily(b.h) && ld < 22) pairPenalty += 220;
-          if (broadColorBucket(a) === broadColorBucket(b) && ld < 14 && sd < 18) pairPenalty += 160;
-        }
-      }
-
-      score -= pairPenalty;
-
-      const familyCounts = {};
-      const bucketCounts = {};
-
-      families.forEach(f => familyCounts[f] = (familyCounts[f] || 0) + 1);
-      buckets.forEach(b => bucketCounts[b] = (bucketCounts[b] || 0) + 1);
-
-      Object.values(familyCounts).forEach(count => {
-        if (count > 2) score -= (count - 2) * 280;
-      });
-
-      Object.values(bucketCounts).forEach(count => {
-        if (count > 3) score -= (count - 3) * 220;
-      });
-
-      const warmCount = palette.filter(c => isWarmHue(c.h) || c.h <= 72).length;
-      const coolCount = palette.filter(c => isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)).length;
-      const neutralCount = palette.filter(isNeutralish).length;
-      const darkCount = palette.filter(c => c.l <= 36).length;
-      const lightCount = palette.filter(c => c.l >= 78).length;
-
-      const warmNudeCount = countWarmNudeNeutrals(palette);
-
-      if (warmCount >= 2) score += 120;
-      if (coolCount >= 2) score += 120;
-      if (neutralCount >= 2) score += 120;
-      if (darkCount >= 2) score += 80;
-      if (lightCount >= 2) score += 70;
-
-      if (warmCount === 0 || coolCount === 0) score -= 500;
-      if (neutralCount < 2) score -= 320;
-      if (warmNudeCount < 1) score -= 460;
-      if (warmNudeCount >= 1) score += 260;
-      if (warmNudeCount >= 2) score += 80;
-      if (darkCount < 1) score -= 220;
-      if (lightCount < 1) score -= 180;
-
-      if (vibe === "playful") {
-        const hasWarmNeutral = palette.some(isWarmNeutral);
-        if (hasWarmNeutral) score += 220;
-      }
-
-      if (vibe === "cozy") {
-        const hasYellowBrown = palette.some(c => c.h >= 38 && c.h <= 72 && c.s >= 8 && c.l >= 40 && c.l <= 76);
-        if (hasYellowBrown) score += 150;
-      }
-
-      return score;
-    }
-
-    function build10ColorTrial(core, vibe) {
-      const [light, bridge, accent, balance, dark] = core.map(copyColor);
-      const palette = [];
-
-      palette.push(light);
-      palette.push(makeLightExpansion(vibe, core, palette));
-      palette.push(bridge);
-
-      // NEW:
-      // Neutral Support is intentionally a gentle warm nude neutral.
-      // The temp-balanced bridge can still be warm or cool, but 10-color palettes
-      // need at least one soft warm/nude support so they do not feel cold or gray.
-      palette.push(warmNudeNeutralForExpanded(vibe, palette));
-
-      palette.push(accent);
-
-      const needAfterAccent = tempNeedForExpandedPalette(palette);
-      palette.push(needAfterAccent === "warm" ? makeWarmExpansion(vibe, core, palette) : makeCoolExpansion(vibe, core, palette));
-
-      palette.push(balance);
-
-      const needAfterBalance = tempNeedForExpandedPalette(palette);
-      palette.push(needAfterBalance === "warm" ? makeWarmExpansion(vibe, core, palette) : makeCoolExpansion(vibe, core, palette));
-
-      palette.push(dark);
-      palette.push(makeDarkExpansion(vibe, core, palette));
-
-      // If the two dynamic slots landed too similar in temperature, replace the weaker slot with a bridge accent.
-      if (hueFamily(palette[5].h) === hueFamily(palette[7].h) || broadColorBucket(palette[5]) === broadColorBucket(palette[7])) {
-        palette[7] = makeBridgeAccent(vibe, core, palette.filter((_, i) => i !== 7));
-      }
-
-      // If somehow the warm nude got visually swallowed by other neutrals, force it again.
-      if (!hasWarmNudeNeutral(palette)) {
-        palette[3] = warmNudeNeutralForExpanded(vibe, palette.filter((_, i) => i !== 3));
-      }
-
-      return palette.map(copyColor);
-    }
-
-    function build10ColorPalette(core, vibe) {
-      let best = null;
-      let bestScore = -999999;
-
-      for (let i = 0; i < 180; i++) {
-        const trial = build10ColorTrial(core, vibe);
-        const score = scoreExpandedPalette(trial, vibe);
-
-        if (score > bestScore) {
-          best = trial;
-          bestScore = score;
-        }
-      }
-
-      return best.map(copyColor);
-    }
-
-    function build20ColorPalette(core, vibe) {
-      // 20 colors use two strong 10-color expansions, then keep the most visually distinct 20.
-      const first = build10ColorPalette(core, vibe);
-      const second = build10ColorPalette(core, vibe);
-      const all = first.concat(second);
-      const chosen = [];
-
-      all.forEach(candidate => {
-        if (chosen.length >= 20) return;
-        const tooClose = chosen.some(existing =>
-          hueDistance(candidate.h, existing.h) < 14 &&
-          Math.abs(candidate.l - existing.l) < 16
-        );
-
-        if (!tooClose) chosen.push(copyColor(candidate));
-      });
-
-      while (chosen.length < 20) {
-        chosen.push(makeBridgeAccent(vibe, core, chosen));
-      }
-
-      return chosen.slice(0, 20).map(copyColor);
-    }
-
-    function expandPalette(core, size, vibe) {
-      if (size === 5) return core.map(copyColor);
-      if (size === 10) return build10ColorPalette(core, vibe);
-      return build20ColorPalette(core, vibe);
-    }
-
-    function applyLocks(newPalette) {
-      if (!state.palette.length || state.palette.length !== newPalette.length) return newPalette;
-      return newPalette.map((color, i) => state.locked[i] ? copyColor(state.palette[i]) : color);
-    }
-
-    function generatePalette() {
-      getSeedContext();
-
-      let core = choosePalette(state.vibe);
-      core = enforceNeutralBridge(core, state.vibe);
-      rememberPalette(core, state.vibe);
-
-      let palette = expandPalette(core, state.size, state.vibe);
-      palette = applyLocks(palette);
-
-      if (state.locked.length !== palette.length) {
-        state.locked = Array(palette.length).fill(false);
-      }
-
-      state.palette = palette.map(copyColor);
-
-      renderPalette();
-      renderPattern();
-
-      const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      const modeLabel = state.size === 5 ? '5-color' : state.size === 10 ? '10-color expanded' : '20-color expanded';
-      setStatus(`Generated a ${modeLabel} ${label} palette. Anti-repeat memory is checking recent palettes in this vibe.`);
-    }
-
-    function getRoleLabel(index, size) {
-      const labels5 = [
-        'Light Relief',
-        'Neutral Bridge',
-        'Hero Accent',
-        'Balance Tone',
-        'Dark Anchor'
-      ];
-
-      const labels10 = [
-        'Light Relief',
-        'Soft Tint',
-        'Neutral Bridge',
-        'Warm Nude Support',
-        'Hero Accent',
-        'Accent Pop',
-        'Balance Tone',
-        'Contrast Tone',
-        'Dark Anchor',
-        'Soft Anchor'
-      ];
-
-      const labels20 = [
-        'Light Relief',
-        'Soft Tint',
-        'Neutral Bridge',
-        'Warm Nude Support',
-        'Hero Accent',
-        'Accent Pop',
-        'Balance Tone',
-        'Contrast Tone',
-        'Dark Anchor',
-        'Soft Anchor',
-        'Light Wash',
-        'Bridge Shift',
-        'Bridge Echo',
-        'Accent Tint',
-        'Accent Depth',
-        'Balance Tint',
-        'Balance Depth',
-        'Anchor Echo',
-        'Anchor Lift',
-        'Collector Accent'
-      ];
-
-      const set = size === 5 ? labels5 : size === 10 ? labels10 : labels20;
-      return set[index] || `Swatch ${index + 1}`;
-    }
-
-    function renderPalette() {
-      paletteGrid.innerHTML = "";
-
-      state.palette.forEach((color, index) => {
-        const hex = hslToHex(color.h, color.s, color.l);
-
-        const card = document.createElement("div");
-        card.className = "swatch-card";
-
-        const swatch = document.createElement("div");
-        swatch.className = "swatch" + (state.locked[index] ? " locked" : "");
-        swatch.style.background = hex;
-        swatch.addEventListener("click", () => toggleLock(index));
-
-        const roleLabel = document.createElement("div");
-        roleLabel.className = "role-label";
-        roleLabel.textContent = getRoleLabel(index, state.size);
-
-        const hexText = document.createElement("div");
-        hexText.className = "hex";
-        hexText.textContent = hex;
-
-        const heart = document.createElement("button");
-        heart.className = "heart";
-        heart.textContent = state.locked[index] ? "Locked" : "Lock";
-        heart.addEventListener("click", () => toggleLock(index));
-
-        card.appendChild(swatch);
-        card.appendChild(roleLabel);
-        card.appendChild(hexText);
-        card.appendChild(heart);
-        paletteGrid.appendChild(card);
-      });
-    }
-
-    function renderPattern() {
-      if (!state.palette.length) return;
-
-      const scale = Number(scaleSlider.value);
-      const selectedBg = backgroundSelect.value;
-      let bg = "#FFFDF8";
-
-      if (selectedBg === "palette-light") {
-        const light = state.palette.reduce((best, c) => c.l > best.l ? c : best, state.palette[0]);
-        bg = hslToHex(light.h, Math.min(light.s, 18), Math.max(light.l, 92));
-      } else {
-        bg = selectedBg;
-      }
-
-      patternPreview.style.backgroundImage = 'url("pumpkin-pattern.png")';
-      patternPreview.style.backgroundRepeat = "repeat";
-      patternPreview.style.backgroundSize = `${scale * 2}px ${scale * 2}px`;
-      patternPreview.style.backgroundColor = bg;
-    }
-
-    function toggleLock(index) {
-      state.locked[index] = !state.locked[index];
-      renderPalette();
-    }
-
-    function unlockAll() {
-      state.locked = Array(state.palette.length).fill(false);
-      renderPalette();
-      setStatus("All colors unlocked.");
-    }
-
-    function setStatus(message) {
-      statusBox.textContent = message;
-    }
-
-    function exportHexCodes() {
-      const codes = state.palette.map(c => hslToHex(c.h, c.s, c.l)).join("\n");
-      alert(codes);
-    }
-
-    sizeButtons.addEventListener("click", event => {
-      const button = event.target.closest("[data-size]");
-      if (!button) return;
-
-      state.size = Number(button.dataset.size);
-      sizeButtons.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
-      state.locked = [];
-      generatePalette();
+<script>
+/* =========================
+   10-COLOR EXPANSION RESET
+   TOP-ROW ANTI-REPEAT FIX
+   ========================= */
+
+function topRowTooSimilar(a, b) {
+  const hd = hueDistance(a.h, b.h);
+  const ld = Math.abs(a.l - b.l);
+  const sd = Math.abs(a.s - b.s);
+
+  return (
+    (hd < 22 && ld < 16) ||
+    (hueFamily(a.h) === hueFamily(b.h) && ld < 18) ||
+    (broadColorBucket(a) === broadColorBucket(b) && ld < 18 && sd < 18)
+  );
+}
+
+function tempNeedForExpandedPalette(existing) {
+  let warm = 0;
+  let cool = 0;
+
+  existing.forEach(c => {
+    if (isWarmHue(c.h) || c.h <= 72) warm++;
+    if (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) cool++;
+  });
+
+  if (cool > warm) return "warm";
+  if (warm > cool) return "cool";
+  return "either";
+}
+
+function neutralForExpanded(vibe, existing, core) {
+  const need = tempNeedForExpandedPalette(existing);
+  const paletteForNeed = core && core.length >= 5
+    ? core.map(copyColor)
+    : existing.slice(0, 5).map(copyColor);
+
+  const candidates = [];
+
+  for (let i = 0; i < 12; i++) {
+    candidates.push(neutralBridgeForVibe(vibe, paletteForNeed));
+  }
+
+  if (need === "warm" || need === "either") {
+    candidates.push(
+      softenColor(makeColor({ h1: 18, h2: 34, s1: 10, s2: 26, l1: 54, l2: 76 }), vibe),
+      softenColor(makeColor({ h1: 30, h2: 48, s1: 10, s2: 24, l1: 52, l2: 74 }), vibe),
+      softenColor(makeColor({ h1: 340, h2: 10, s1: 8, s2: 22, l1: 54, l2: 74 }), vibe)
+    );
+  }
+
+  if (need === "cool" || need === "either") {
+    candidates.push(
+      softenColor(makeColor({ h1: 75, h2: 115, s1: 4, s2: 15, l1: 48, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 195, h2: 230, s1: 4, s2: 16, l1: 48, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 225, h2: 255, s1: 4, s2: 16, l1: 48, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 280, h2: 318, s1: 4, s2: 16, l1: 48, l2: 72 }), vibe)
+    );
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "neutral");
+}
+
+function warmNudeNeutralForExpanded(vibe, existing) {
+  const warmNudeRanges = {
+    playful: [
+      { h1: 14, h2: 28, s1: 12, s2: 26, l1: 62, l2: 78 },
+      { h1: 24, h2: 38, s1: 10, s2: 24, l1: 58, l2: 74 },
+      { h1: 340, h2: 8, s1: 10, s2: 24, l1: 60, l2: 76 },
+      { h1: 32, h2: 48, s1: 10, s2: 22, l1: 60, l2: 76 },
+      { h1: 8, h2: 20, s1: 10, s2: 22, l1: 60, l2: 74 }
+    ],
+    cozy: [
+      { h1: 18, h2: 32, s1: 8, s2: 20, l1: 58, l2: 76 },
+      { h1: 26, h2: 42, s1: 8, s2: 20, l1: 54, l2: 72 },
+      { h1: 340, h2: 8, s1: 7, s2: 18, l1: 56, l2: 74 },
+      { h1: 36, h2: 52, s1: 8, s2: 20, l1: 56, l2: 74 }
+    ],
+    moody: [
+      { h1: 18, h2: 34, s1: 6, s2: 16, l1: 44, l2: 62 },
+      { h1: 340, h2: 8, s1: 6, s2: 16, l1: 44, l2: 62 },
+      { h1: 28, h2: 44, s1: 6, s2: 16, l1: 42, l2: 60 }
+    ],
+    nature: [
+      { h1: 20, h2: 36, s1: 8, s2: 20, l1: 52, l2: 70 },
+      { h1: 32, h2: 50, s1: 8, s2: 20, l1: 52, l2: 72 },
+      { h1: 340, h2: 8, s1: 7, s2: 18, l1: 52, l2: 70 }
+    ],
+    coastal: [
+      { h1: 18, h2: 32, s1: 8, s2: 20, l1: 62, l2: 80 },
+      { h1: 26, h2: 42, s1: 7, s2: 18, l1: 60, l2: 78 },
+      { h1: 340, h2: 8, s1: 6, s2: 16, l1: 62, l2: 80 }
+    ],
+    vintage: [
+      { h1: 18, h2: 34, s1: 8, s2: 20, l1: 54, l2: 74 },
+      { h1: 28, h2: 46, s1: 8, s2: 22, l1: 54, l2: 74 },
+      { h1: 340, h2: 8, s1: 8, s2: 20, l1: 54, l2: 72 },
+      { h1: 36, h2: 54, s1: 9, s2: 22, l1: 54, l2: 74 }
+    ]
+  };
+
+  const ranges = warmNudeRanges[vibe] || warmNudeRanges.cozy;
+  const candidates = [];
+
+  for (let i = 0; i < 40; i++) {
+    candidates.push(softenColor(makeColor(pick(ranges)), vibe));
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "neutralSupport");
+}
+
+function hasWarmNudeNeutral(palette) {
+  return palette.some(c =>
+    isWarmNeutral(c) &&
+    c.l >= 44 &&
+    c.l <= 82 &&
+    c.s >= 5 &&
+    c.s <= 30
+  );
+}
+
+function countWarmNudeNeutrals(palette) {
+  return palette.filter(c =>
+    isWarmNeutral(c) &&
+    c.l >= 44 &&
+    c.l <= 82 &&
+    c.s >= 5 &&
+    c.s <= 30
+  ).length;
+}
+
+function expandedPairPenalty(candidate, existing) {
+  let penalty = 0;
+
+  existing.forEach(other => {
+    const hd = hueDistance(candidate.h, other.h);
+    const ld = Math.abs(candidate.l - other.l);
+    const sd = Math.abs(candidate.s - other.s);
+    const dist = hd * 0.75 + ld * 1.1 + sd * 0.5;
+
+    if (dist < 24) penalty += 500;
+    if (hd < 14 && ld < 18) penalty += 260;
+    if (hd < 20 && ld < 12) penalty += 260;
+    if (hueFamily(candidate.h) === hueFamily(other.h) && ld < 22) penalty += 220;
+    if (broadColorBucket(candidate) === broadColorBucket(other) && ld < 14 && sd < 16) penalty += 190;
+  });
+
+  return penalty;
+}
+
+function chooseExpandedCandidate(candidates, existing, vibe, role) {
+  let best = null;
+  let bestScore = -999999;
+
+  candidates.forEach(raw => {
+    const c = copyColor(softenColor(raw, vibe));
+    let score = 0;
+
+    existing.forEach(other => {
+      score += Math.min(hueDistance(c.h, other.h), 90) * 0.7;
+      score += Math.min(Math.abs(c.l - other.l), 42) * 1.35;
+      score += Math.min(Math.abs(c.s - other.s), 34) * 0.4;
     });
 
-    vibeButtons.addEventListener("click", event => {
-      const button = event.target.closest("[data-vibe]");
-      if (!button) return;
+    score -= expandedPairPenalty(c, existing);
 
-      state.vibe = button.dataset.vibe;
-      vibeButtons.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
-      state.locked = [];
-      generatePalette();
-    });
+    const familyCount = existing.filter(e => hueFamily(e.h) === hueFamily(c.h)).length;
+    const bucketCount = existing.filter(e => broadColorBucket(e) === broadColorBucket(c)).length;
 
-    generateBtn.addEventListener("click", generatePalette);
-    unlockBtn.addEventListener("click", unlockAll);
-    exportBtn.addEventListener("click", exportHexCodes);
-    scaleSlider.addEventListener("input", renderPattern);
-    backgroundSelect.addEventListener("change", renderPattern);
+    score -= familyCount * 95;
+    score -= bucketCount * 60;
 
-    hexInput.addEventListener("blur", () => {
-      const normalized = normalizeHex(hexInput.value);
+    if (role === "light") {
+      if (c.l >= 76 && c.l <= 94) score += 80;
+      if (c.l < 70) score -= 120;
+    }
 
-      if (normalized) {
-        hexInput.value = normalized;
-        setStatus("Valid hex recognized. Generate a new palette to use it.");
-      } else if (hexInput.value.trim()) {
-        setStatus("That hex is not valid. Use something like #C46F54.");
+    if (role === "softTint") {
+      if (c.l >= 78 && c.l <= 92) score += 130;
+      if (c.s >= 4 && c.s <= 24) score += 95;
+      if (c.l < 75) score -= 220;
+      if (c.s > 28) score -= 170;
+    }
+
+    if (role === "neutral" || role === "neutralBridge") {
+      if (isNeutralish(c)) score += 110;
+      if (c.s > 32) score -= 180;
+      if (c.l < 46 || c.l > 80) score -= 170;
+
+      if (role === "neutralBridge") {
+        if (c.l >= 52 && c.l <= 74) score += 90;
       }
-    });
+    }
 
-    imageUpload.addEventListener("change", event => {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
+    if (role === "neutralSupport") {
+      if (isWarmNeutral(c)) score += 130;
+      if (c.l >= 52 && c.l <= 76) score += 80;
+      if (c.s >= 6 && c.s <= 24) score += 60;
+      if (c.s > 28) score -= 120;
+    }
 
-      const url = URL.createObjectURL(file);
-      const img = new Image();
+    if (role === "warm") {
+      if (isWarmHue(c.h) || c.h <= 72) score += 100;
+      if (c.l >= 38 && c.l <= 74) score += 35;
+    }
 
-      img.onload = () => {
-        imagePreview.src = url;
-        imagePreview.style.display = "block";
-        state.imageSeeds = extractImageSeeds(img);
-        seedList.innerHTML = "";
+    if (role === "cool") {
+      if (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) score += 100;
+      if (c.l >= 38 && c.l <= 74) score += 35;
+    }
 
-        state.imageSeeds.forEach(seed => {
-          const hex = hslToHex(seed.h, seed.s, seed.l);
-          const pill = document.createElement("span");
-          pill.className = "seed-pill";
-          pill.textContent = hex;
-          pill.style.background = hslToHex(seed.h, Math.max(18, seed.s), Math.min(88, Math.max(72, seed.l)));
-          seedList.appendChild(pill);
-        });
+    if (role === "bridgeAccent") {
+      if (c.l >= 36 && c.l <= 72) score += 45;
+      if (c.s >= 8 && c.s <= (vibe === "playful" ? 64 : 44)) score += 35;
+    }
 
-        setStatus("Image analyzed. Generate a new palette to use extracted image colors.");
-      };
+    if (role === "dark") {
+      if (c.l >= 10 && c.l <= 36) score += 80;
+      if (c.l > 44) score -= 150;
+    }
 
-      img.src = url;
-    });
+    if (score > bestScore) {
+      best = c;
+      bestScore = score;
+    }
+  });
 
-    generatePalette();
-  </script>
-</body>
-</html>
+  return best || copyColor(candidates[0]);
+}
+
+function makeSoftTintExpansion(vibe, core, existing) {
+  const [light, bridge, accent, balance] = core;
+  const bridgeWarm = isWarmNeutral(bridge) || ((isWarmHue(bridge.h) || bridge.h <= 72) && bridge.s <= 30);
+
+  const candidates = [
+    tuneColor(light, vibe, 0, -6, -3),
+    tuneColor(mixHsl(light, bridge, 0.12), vibe, 0, -8, -4),
+    tuneColor(mixHsl(light, accent, 0.14), vibe, 0, -10, -3),
+    tuneColor(mixHsl(light, balance, 0.14), vibe, 0, -10, -3)
+  ];
+
+  if (bridgeWarm) {
+    candidates.push(
+      softenColor(makeColor({ h1: 190, h2: 225, s1: 4, s2: 14, l1: 80, l2: 92 }), vibe),
+      softenColor(makeColor({ h1: 80, h2: 110, s1: 4, s2: 14, l1: 80, l2: 92 }), vibe),
+      softenColor(makeColor({ h1: 265, h2: 310, s1: 4, s2: 14, l1: 80, l2: 92 }), vibe),
+      softenColor(makeColor({ h1: 0, h2: 360, s1: 0, s2: 8, l1: 82, l2: 93 }), vibe)
+    );
+  } else {
+    candidates.push(
+      softenColor(makeColor({ h1: 16, h2: 30, s1: 6, s2: 16, l1: 80, l2: 92 }), vibe),
+      softenColor(makeColor({ h1: 30, h2: 46, s1: 6, s2: 16, l1: 80, l2: 92 }), vibe),
+      softenColor(makeColor({ h1: 340, h2: 8, s1: 6, s2: 16, l1: 80, l2: 92 }), vibe),
+      softenColor(makeColor({ h1: 40, h2: 54, s1: 4, s2: 14, l1: 82, l2: 93 }), vibe)
+    );
+  }
+
+  for (let i = 0; i < 10; i++) {
+    candidates.push(
+      randomFromVibe(vibe, ["light", "support"], c =>
+        c.l >= 78 && c.l <= 94 && c.s <= 28
+      )
+    );
+  }
+
+  return chooseExpandedCandidate(candidates, existing.concat([bridge]), vibe, "softTint");
+}
+
+function makeDistinctNeutralBridge(vibe, core, existing, softTint) {
+  const [light, bridge, accent, balance] = core;
+  const softWarm = isWarmNeutral(softTint) || ((isWarmHue(softTint.h) || softTint.h <= 72) && softTint.s <= 28);
+
+  const candidates = [
+    copyColor(bridge),
+    tuneColor(bridge, vibe, 0, -4, 0),
+    tuneColor(bridge, vibe, 8, -6, 3),
+    tuneColor(bridge, vibe, -8, -6, 3)
+  ];
+
+  for (let i = 0; i < 18; i++) {
+    candidates.push(neutralBridgeForVibe(vibe, [light, softTint, accent, balance]));
+  }
+
+  if (softWarm) {
+    candidates.push(
+      softenColor(makeColor({ h1: 78, h2: 110, s1: 4, s2: 14, l1: 52, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 190, h2: 225, s1: 4, s2: 14, l1: 52, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 225, h2: 252, s1: 4, s2: 14, l1: 50, l2: 70 }), vibe),
+      softenColor(makeColor({ h1: 280, h2: 315, s1: 4, s2: 14, l1: 52, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 0, h2: 360, s1: 0, s2: 8, l1: 50, l2: 68 }), vibe)
+    );
+  } else {
+    candidates.push(
+      softenColor(makeColor({ h1: 16, h2: 30, s1: 8, s2: 20, l1: 54, l2: 74 }), vibe),
+      softenColor(makeColor({ h1: 26, h2: 42, s1: 8, s2: 20, l1: 54, l2: 74 }), vibe),
+      softenColor(makeColor({ h1: 340, h2: 8, s1: 8, s2: 18, l1: 54, l2: 72 }), vibe),
+      softenColor(makeColor({ h1: 34, h2: 52, s1: 8, s2: 20, l1: 54, l2: 74 }), vibe)
+    );
+  }
+
+  return chooseExpandedCandidate(candidates, existing.concat([softTint]), vibe, "neutralBridge");
+}
+
+function makeLightExpansion(vibe, core, existing) {
+  const [light, bridge] = core;
+  const candidates = [
+    tuneColor(light, vibe, 10, 3, -8),
+    tuneColor(light, vibe, -14, 4, -10),
+    tuneColor(mixHsl(light, bridge, 0.2), vibe, 8, -2, -4),
+    tuneColor(mixHsl(light, bridge, 0.35), vibe, -10, -4, 2)
+  ];
+
+  for (let i = 0; i < 8; i++) {
+    candidates.push(randomFromVibe(vibe, ["light"], c => c.l >= 78));
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "light");
+}
+
+function makeWarmExpansion(vibe, core, existing) {
+  const [, bridge, accent, balance] = core;
+  const candidates = [
+    tuneColor(accent, vibe, 14, -8, 7),
+    tuneColor(accent, vibe, -18, -10, 3),
+    tuneColor(bridge, vibe, 18, 5, -8),
+    tuneColor(mixHsl(accent, bridge, 0.28), vibe, 0, -4, 0),
+    tuneColor(mixHsl(balance, accent, 0.4), vibe, 18, -4, 2)
+  ];
+
+  for (let i = 0; i < 14; i++) {
+    candidates.push(randomFromVibe(vibe, ["support", "accent", "balance"], c =>
+      (isWarmHue(c.h) || c.h <= 72) && c.l >= 36 && c.l <= 76
+    ));
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "warm");
+}
+
+function makeCoolExpansion(vibe, core, existing) {
+  const [, bridge, accent, balance] = core;
+  const candidates = [
+    tuneColor(balance, vibe, -16, -4, 5),
+    tuneColor(balance, vibe, 20, -6, 3),
+    tuneColor(accent, vibe, 35, -10, 5),
+    tuneColor(mixHsl(balance, bridge, 0.25), vibe, 0, -4, 0),
+    tuneColor(mixHsl(balance, accent, 0.4), vibe, -20, -6, 4)
+  ];
+
+  for (let i = 0; i < 14; i++) {
+    candidates.push(randomFromVibe(vibe, ["support", "accent", "balance"], c =>
+      (isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)) && c.l >= 34 && c.l <= 76
+    ));
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "cool");
+}
+
+function makeBridgeAccent(vibe, core, existing) {
+  const [, bridge, accent, balance] = core;
+  const candidates = [
+    tuneColor(mixHsl(accent, balance, 0.5), vibe, 0, -8, 2),
+    tuneColor(mixHsl(bridge, balance, 0.45), vibe, 0, -4, -2),
+    tuneColor(balance, vibe, 32, -8, 4),
+    tuneColor(accent, vibe, -32, -8, 4)
+  ];
+
+  for (let i = 0; i < 16; i++) {
+    candidates.push(randomFromVibe(vibe, ["accent", "balance", "support"], c =>
+      c.l >= 34 && c.l <= 76
+    ));
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "bridgeAccent");
+}
+
+function makeDarkExpansion(vibe, core, existing) {
+  const [, , accent, balance, dark] = core;
+  const candidates = [
+    tuneColor(dark, vibe, 16, -2, 12),
+    tuneColor(dark, vibe, -18, 2, 12),
+    tuneColor(mixHsl(dark, accent, 0.16), vibe, 0, 0, 8),
+    tuneColor(mixHsl(dark, balance, 0.18), vibe, 0, 0, 10)
+  ];
+
+  for (let i = 0; i < 12; i++) {
+    candidates.push(randomFromVibe(vibe, ["dark"], c => c.l <= 38));
+  }
+
+  return chooseExpandedCandidate(candidates, existing, vibe, "dark");
+}
+
+function separateTopRow(palette, vibe, core) {
+  let tries = 0;
+
+  while (tries < 10) {
+    let changed = false;
+
+    if (topRowTooSimilar(palette[1], palette[2])) {
+      palette[2] = makeDistinctNeutralBridge(vibe, core, [palette[0], palette[1]], palette[1]);
+      changed = true;
+    }
+
+    if (topRowTooSimilar(palette[2], palette[3])) {
+      let replacement = warmNudeNeutralForExpanded(vibe, palette.filter((_, i) => i !== 3));
+      let innerTries = 0;
+
+      while (
+        innerTries < 8 &&
+        (topRowTooSimilar(replacement, palette[2]) || topRowTooSimilar(replacement, palette[1]))
+      ) {
+        replacement = warmNudeNeutralForExpanded(vibe, palette.filter((_, i) => i !== 3));
+        innerTries++;
+      }
+
+      palette[3] = replacement;
+      changed = true;
+    }
+
+    if (
+      (isWarmNeutral(palette[1]) && isWarmNeutral(palette[2])) ||
+      topRowTooSimilar(palette[1], palette[2])
+    ) {
+      let replacement = makeSoftTintExpansion(vibe, core, [palette[0]]);
+      let innerTries = 0;
+
+      while (
+        innerTries < 8 &&
+        (topRowTooSimilar(replacement, palette[2]) || (isWarmNeutral(replacement) && isWarmNeutral(palette[2])))
+      ) {
+        replacement = makeSoftTintExpansion(vibe, core, [palette[0]]);
+        innerTries++;
+      }
+
+      palette[1] = replacement;
+      changed = true;
+    }
+
+    if (!changed) break;
+    tries++;
+  }
+
+  return palette.map(copyColor);
+}
+
+function scoreExpandedPalette(palette, vibe) {
+  let score = 0;
+
+  const families = palette.map(c => hueFamily(c.h));
+  const buckets = palette.map(c => broadColorBucket(c));
+
+  for (let i = 0; i < palette.length; i++) {
+    for (let j = i + 1; j < palette.length; j++) {
+      const a = palette[i];
+      const b = palette[j];
+      const hd = hueDistance(a.h, b.h);
+      const ld = Math.abs(a.l - b.l);
+      const sd = Math.abs(a.s - b.s);
+      const dist = hd * 0.75 + ld * 1.1 + sd * 0.5;
+
+      if (dist < 24) score -= 400;
+      if (hd < 16 && ld < 20) score -= 220;
+      if (hueFamily(a.h) === hueFamily(b.h) && ld < 22) score -= 220;
+      if (broadColorBucket(a) === broadColorBucket(b) && ld < 14 && sd < 18) score -= 160;
+    }
+  }
+
+  const familyCounts = {};
+  const bucketCounts = {};
+
+  families.forEach(f => familyCounts[f] = (familyCounts[f] || 0) + 1);
+  buckets.forEach(b => bucketCounts[b] = (bucketCounts[b] || 0) + 1);
+
+  Object.values(familyCounts).forEach(count => {
+    if (count > 2) score -= (count - 2) * 280;
+  });
+
+  Object.values(bucketCounts).forEach(count => {
+    if (count > 3) score -= (count - 3) * 220;
+  });
+
+  const warmCount = palette.filter(c => isWarmHue(c.h) || c.h <= 72).length;
+  const coolCount = palette.filter(c => isCoolHue(c.h) || (c.h >= 80 && c.h <= 170)).length;
+  const neutralCount = palette.filter(isNeutralish).length;
+  const darkCount = palette.filter(c => c.l <= 36).length;
+  const lightCount = palette.filter(c => c.l >= 78).length;
+  const warmNudeCount = countWarmNudeNeutrals(palette);
+
+  if (warmCount >= 2) score += 120;
+  if (coolCount >= 2) score += 120;
+  if (neutralCount >= 2) score += 120;
+  if (darkCount >= 2) score += 80;
+  if (lightCount >= 2) score += 70;
+
+  if (warmCount === 0 || coolCount === 0) score -= 500;
+  if (neutralCount < 2) score -= 320;
+  if (warmNudeCount < 1) score -= 460;
+  if (warmNudeCount >= 1) score += 260;
+  if (warmNudeCount >= 2) score += 80;
+  if (darkCount < 1) score -= 220;
+  if (lightCount < 1) score -= 180;
+
+  /* HARD TOP-ROW RULES */
+  const softTint = palette[1];
+  const neutralBridge = palette[2];
+  const neutralSupport = palette[3];
+
+  if (topRowTooSimilar(softTint, neutralBridge)) score -= 900;
+  if (topRowTooSimilar(neutralBridge, neutralSupport)) score -= 520;
+  if (topRowTooSimilar(softTint, neutralSupport)) score -= 280;
+
+  if (Math.abs(softTint.l - neutralBridge.l) < 10) score -= 180;
+  if (hueFamily(softTint.h) === hueFamily(neutralBridge.h)) score -= 240;
+
+  if (isWarmNeutral(softTint) && isWarmNeutral(neutralBridge)) score -= 360;
+  if (isWarmNeutral(neutralBridge) && isWarmNeutral(neutralSupport)) score -= 240;
+
+  if (softTint.l > neutralBridge.l) score += 120;
+  else score -= 160;
+
+  if (neutralBridge.l > neutralSupport.l - 4) score += 50;
+
+  if (vibe === "playful") {
+    const hasWarmNeutral = palette.some(isWarmNeutral);
+    if (hasWarmNeutral) score += 220;
+  }
+
+  if (vibe === "cozy") {
+    const hasYellowBrown = palette.some(c => c.h >= 38 && c.h <= 72 && c.s >= 8 && c.l >= 40 && c.l <= 76);
+    if (hasYellowBrown) score += 150;
+  }
+
+  return score;
+}
+
+function build10ColorTrial(core, vibe) {
+  const [light, bridge, accent, balance, dark] = core.map(copyColor);
+  const palette = [];
+
+  palette.push(light);
+
+  let softTint = makeSoftTintExpansion(vibe, core, [light]);
+  palette.push(softTint);
+
+  let bridge10 = makeDistinctNeutralBridge(vibe, core, [light, softTint], softTint);
+  palette.push(bridge10);
+
+  let neutralSupport = warmNudeNeutralForExpanded(vibe, palette);
+  let supportTries = 0;
+  while (
+    supportTries < 8 &&
+    (topRowTooSimilar(neutralSupport, softTint) || topRowTooSimilar(neutralSupport, bridge10))
+  ) {
+    neutralSupport = warmNudeNeutralForExpanded(vibe, palette);
+    supportTries++;
+  }
+  palette.push(neutralSupport);
+
+  palette.push(accent);
+
+  const needAfterAccent = tempNeedForExpandedPalette(palette);
+  palette.push(
+    needAfterAccent === "warm"
+      ? makeWarmExpansion(vibe, core, palette)
+      : needAfterAccent === "cool"
+        ? makeCoolExpansion(vibe, core, palette)
+        : pick([
+            makeWarmExpansion(vibe, core, palette),
+            makeCoolExpansion(vibe, core, palette)
+          ])
+  );
+
+  palette.push(balance);
+
+  const needAfterBalance = tempNeedForExpandedPalette(palette);
+  palette.push(
+    needAfterBalance === "warm"
+      ? makeWarmExpansion(vibe, core, palette)
+      : needAfterBalance === "cool"
+        ? makeCoolExpansion(vibe, core, palette)
+        : makeBridgeAccent(vibe, core, palette)
+  );
+
+  palette.push(dark);
+  palette.push(makeDarkExpansion(vibe, core, palette));
+
+  if (
+    hueFamily(palette[5].h) === hueFamily(palette[7].h) ||
+    broadColorBucket(palette[5]) === broadColorBucket(palette[7])
+  ) {
+    palette[7] = makeBridgeAccent(vibe, core, palette.filter((_, i) => i !== 7));
+  }
+
+  if (!hasWarmNudeNeutral(palette)) {
+    palette[3] = warmNudeNeutralForExpanded(vibe, palette.filter((_, i) => i !== 3));
+  }
+
+  return separateTopRow(palette, vibe, core);
+}
+
+function build10ColorPalette(core, vibe) {
+  let best = null;
+  let bestScore = -999999;
+
+  for (let i = 0; i < 220; i++) {
+    const trial = build10ColorTrial(core, vibe);
+    const score = scoreExpandedPalette(trial, vibe);
+
+    if (score > bestScore) {
+      best = trial;
+      bestScore = score;
+    }
+  }
+
+  return best.map(copyColor);
+}
+
+function build20ColorPalette(core, vibe) {
+  const first = build10ColorPalette(core, vibe);
+  const second = build10ColorPalette(core, vibe);
+  const all = first.concat(second);
+  const chosen = [];
+
+  all.forEach(candidate => {
+    if (chosen.length >= 20) return;
+
+    const tooClose = chosen.some(existing =>
+      hueDistance(candidate.h, existing.h) < 14 &&
+      Math.abs(candidate.l - existing.l) < 16
+    );
+
+    if (!tooClose) chosen.push(copyColor(candidate));
+  });
+
+  while (chosen.length < 20) {
+    chosen.push(makeBridgeAccent(vibe, core, chosen));
+  }
+
+  return chosen.slice(0, 20).map(copyColor);
+}
+</script>
