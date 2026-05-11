@@ -1007,54 +1007,78 @@
   const recipe = pick(recipes);
 
   const lightPairs = [
-    // pale pink + peach
-    [
-      { h: rand(338, 354), s: rand(18, 30), l: rand(90, 96) },
-      { h: rand(16, 30), s: rand(36, 52), l: rand(74, 84) }
-    ],
+  // pale pink + butter yellow
+  [
+    { h: rand(335, 354), s: rand(26, 40), l: rand(88, 95) },
+    { h: rand(46, 60), s: rand(46, 66), l: rand(70, 82) }
+  ],
 
-    // pale blue + warm pink
-    [
-      { h: rand(200, 220), s: rand(18, 30), l: rand(90, 96) },
-      { h: rand(335, 352), s: rand(36, 52), l: rand(74, 84) }
-    ],
+  // pale aqua + warm pink
+  [
+    { h: rand(178, 200), s: rand(26, 42), l: rand(88, 95) },
+    { h: rand(335, 352), s: rand(46, 66), l: rand(70, 82) }
+  ],
 
-    // mint + coral peach
-    [
-      { h: rand(130, 160), s: rand(18, 32), l: rand(90, 96) },
-      { h: rand(8, 24), s: rand(38, 54), l: rand(74, 84) }
-    ],
+  // pale lilac + coral
+  [
+    { h: rand(258, 286), s: rand(26, 42), l: rand(88, 95) },
+    { h: rand(6, 20), s: rand(46, 66), l: rand(70, 82) }
+  ],
 
-    // pale lilac + golden peach
-    [
-      { h: rand(260, 288), s: rand(18, 30), l: rand(90, 96) },
-      { h: rand(30, 46), s: rand(38, 54), l: rand(74, 84) }
-    ],
+  // mint + raspberry
+  [
+    { h: rand(135, 165), s: rand(26, 44), l: rand(88, 95) },
+    { h: rand(325, 345), s: rand(48, 68), l: rand(70, 82) }
+  ],
 
-    // butter + warm pink
-    [
-      { h: rand(46, 60), s: rand(20, 34), l: rand(90, 96) },
-      { h: rand(336, 352), s: rand(38, 54), l: rand(74, 84) }
-    ],
+  // pale blue + watermelon
+  [
+    { h: rand(200, 222), s: rand(26, 42), l: rand(88, 95) },
+    { h: rand(350, 8), s: rand(46, 66), l: rand(70, 82) }
+  ],
 
-    // cream + aqua support
-    [
-      { h: rand(36, 50), s: rand(14, 24), l: rand(92, 97) },
-      { h: rand(178, 198), s: rand(34, 50), l: rand(72, 84) }
-    ],
+  // cream + pool teal
+  [
+    { h: rand(38, 52), s: rand(18, 30), l: rand(90, 96) },
+    { h: rand(178, 198), s: rand(44, 62), l: rand(68, 80) }
+  ],
 
-    // peach light + lavender support
-    [
-      { h: rand(16, 30), s: rand(18, 30), l: rand(90, 96) },
-      { h: rand(260, 288), s: rand(34, 50), l: rand(72, 84) }
-    ],
+  // pale yellow + lavender
+  [
+    { h: rand(48, 62), s: rand(28, 44), l: rand(88, 95) },
+    { h: rand(260, 288), s: rand(42, 60), l: rand(70, 82) }
+  ],
 
-    // pale aqua + watermelon support
-    [
-      { h: rand(178, 200), s: rand(18, 30), l: rand(90, 96) },
-      { h: rand(348, 8), s: rand(38, 54), l: rand(74, 84) }
-    ]
-  ];
+  // peachy pink + cornflower
+  [
+    { h: rand(350, 12), s: rand(26, 42), l: rand(88, 95) },
+    { h: rand(210, 232), s: rand(44, 62), l: rand(68, 80) }
+  ],
+
+  // pale mint + cheerful orange
+  [
+    { h: rand(125, 155), s: rand(26, 42), l: rand(88, 95) },
+    { h: rand(24, 40), s: rand(46, 64), l: rand(70, 82) }
+  ],
+
+  // pale peach + orchid
+  [
+    { h: rand(14, 30), s: rand(24, 40), l: rand(88, 95) },
+    { h: rand(290, 318), s: rand(42, 60), l: rand(70, 82) }
+  ],
+
+  // pale sky + poppy
+  [
+    { h: rand(195, 215), s: rand(26, 42), l: rand(88, 95) },
+    { h: rand(356, 12), s: rand(46, 64), l: rand(68, 80) }
+  ],
+
+  // pale lavender + lime-olive
+  [
+    { h: rand(260, 286), s: rand(24, 40), l: rand(88, 95) },
+    { h: rand(72, 96), s: rand(38, 56), l: rand(68, 80) }
+  ]
+];
 
   const pair = pick(lightPairs);
   const light = pair[0];
