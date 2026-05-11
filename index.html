@@ -759,38 +759,47 @@
 
     const vibeRanges = {
       cozy: {
-  light: [
-    { h1: 35, h2: 50, s1: 5, s2: 14, l1: 92, l2: 97 },   // ivory / linen
-    { h1: 38, h2: 54, s1: 7, s2: 16, l1: 89, l2: 96 },   // oat / pale flax
-    { h1: 25, h2: 38, s1: 4, s2: 12, l1: 87, l2: 94 },   // pale mushroom
-    { h1: 18, h2: 34, s1: 5, s2: 14, l1: 87, l2: 94 },   // warm stone / pale clay
-    { h1: 345, h2: 358, s1: 6, s2: 14, l1: 88, l2: 95 }, // pale blush-beige
-    { h1: 65, h2: 86, s1: 4, s2: 12, l1: 86, l2: 94 },   // pale flax / pale yellow-gray
-    { h1: 80, h2: 108, s1: 4, s2: 12, l1: 87, l2: 94 },  // pale sage-gray
-    { h1: 200, h2: 222, s1: 4, s2: 12, l1: 87, l2: 94 }, // pale blue-gray
-    { h1: 280, h2: 315, s1: 4, s2: 12, l1: 87, l2: 94 }, // pale lavender-gray
-    { h1: 20, h2: 40, s1: 3, s2: 10, l1: 84, l2: 91 }    // soft putty / pearl gray
-  ],
-
-  support: [
-    { h1: 28, h2: 42, s1: 16, s2: 32, l1: 55, l2: 72 },  // camel / tan
-    { h1: 35, h2: 52, s1: 14, s2: 30, l1: 56, l2: 74 },  // wheat / oatmeal support
-    { h1: 42, h2: 58, s1: 16, s2: 34, l1: 50, l2: 68 },  // honey / muted gold
-    { h1: 46, h2: 64, s1: 14, s2: 30, l1: 46, l2: 64 },  // muted yellow-brown
-    { h1: 52, h2: 72, s1: 12, s2: 28, l1: 44, l2: 62 },  // olive-gold / moss-gold
-    { h1: 22, h2: 38, s1: 16, s2: 32, l1: 52, l2: 70 },  // soft caramel beige
-    { h1: 14, h2: 30, s1: 14, s2: 28, l1: 52, l2: 70 },  // clay beige / muted apricot beige
-    { h1: 345, h2: 360, s1: 10, s2: 24, l1: 52, l2: 70 }, // rosy taupe
-    { h1: 0, h2: 16, s1: 10, s2: 24, l1: 50, l2: 68 },   // blush taupe / clay rose
-    { h1: 280, h2: 318, s1: 8, s2: 20, l1: 48, l2: 66 }, // dusty mauve
-    { h1: 78, h2: 108, s1: 6, s2: 16, l1: 50, l2: 68 },  // sage gray
-    { h1: 205, h2: 230, s1: 6, s2: 16, l1: 50, l2: 68 }, // smoky blue-gray
-    { h1: 225, h2: 252, s1: 7, s2: 18, l1: 48, l2: 66 }, // muted periwinkle-gray
-    { h1: 20, h2: 36, s1: 7, s2: 18, l1: 42, l2: 58 }    // soft cocoa taupe
-  ],
-
-  accent: [
-    { h1: 14, h2:
+        light: [
+          { h1: 35, h2: 50, s1: 6, s2: 16, l1: 91, l2: 97 },
+          { h1: 20, h2: 35, s1: 5, s2: 14, l1: 88, l2: 94 },
+          { h1: 80, h2: 110, s1: 5, s2: 12, l1: 88, l2: 94 },
+          { h1: 200, h2: 220, s1: 5, s2: 12, l1: 88, l2: 94 },
+          { h1: 280, h2: 310, s1: 5, s2: 12, l1: 88, l2: 94 },
+          { h1: 345, h2: 358, s1: 8, s2: 16, l1: 90, l2: 95 }
+        ],
+        support: [
+          { h1: 26, h2: 42, s1: 18, s2: 34, l1: 58, l2: 76 },
+          { h1: 18, h2: 30, s1: 14, s2: 28, l1: 58, l2: 74 },
+          { h1: 35, h2: 52, s1: 14, s2: 28, l1: 60, l2: 78 },
+          { h1: 90, h2: 115, s1: 8, s2: 18, l1: 52, l2: 68 },
+          { h1: 285, h2: 315, s1: 10, s2: 22, l1: 50, l2: 66 },
+          { h1: 18, h2: 35, s1: 8, s2: 20, l1: 48, l2: 62 }
+        ],
+        accent: [
+          { h1: 14, h2: 28, s1: 28, s2: 48, l1: 44, l2: 62 },
+          { h1: 28, h2: 45, s1: 26, s2: 44, l1: 46, l2: 62 },
+          { h1: 45, h2: 58, s1: 20, s2: 36, l1: 46, l2: 62 },
+          { h1: 65, h2: 88, s1: 12, s2: 28, l1: 42, l2: 60 },
+          { h1: 90, h2: 125, s1: 10, s2: 24, l1: 42, l2: 60 },
+          { h1: 200, h2: 225, s1: 14, s2: 28, l1: 44, l2: 60 },
+          { h1: 280, h2: 315, s1: 12, s2: 26, l1: 42, l2: 58 }
+        ],
+        balance: [
+          { h1: 52, h2: 84, s1: 10, s2: 24, l1: 40, l2: 62 },
+          { h1: 84, h2: 126, s1: 8, s2: 20, l1: 44, l2: 64 },
+          { h1: 126, h2: 170, s1: 6, s2: 18, l1: 38, l2: 56 },
+          { h1: 195, h2: 230, s1: 12, s2: 28, l1: 42, l2: 62 },
+          { h1: 285, h2: 325, s1: 10, s2: 24, l1: 40, l2: 58 },
+          { h1: 18, h2: 35, s1: 18, s2: 34, l1: 42, l2: 58 }
+        ],
+        dark: [
+          { h1: 18, h2: 35, s1: 20, s2: 36, l1: 12, l2: 26 },
+          { h1: 90, h2: 135, s1: 16, s2: 34, l1: 12, l2: 28 },
+          { h1: 205, h2: 235, s1: 18, s2: 34, l1: 12, l2: 28 },
+          { h1: 290, h2: 330, s1: 18, s2: 34, l1: 12, l2: 26 },
+          { h1: 345, h2: 20, s1: 20, s2: 36, l1: 12, l2: 26 }
+        ]
+      },
 
       moody: {
         light: [
@@ -1261,95 +1270,8 @@
       if (hueDistance(palette[2].h, palette[3].h) < 20) return false;
 
       if (vibe === "cozy") {
-  const light = palette[0];
-  const support = palette[1];
-  const accent = palette[2];
-  const balance = palette[3];
-  const dark = palette[4];
-
-  // Cozy greens are allowed, but must stay muted.
-  if (balance.h >= 52 && balance.h <= 170 && balance.s > 24) return false;
-  if (accent.h >= 52 && accent.h <= 170 && accent.s > 32) return false;
-
-  // Do not allow Swatch 2 and Swatch 4 to sit in nearly the same olive/sage/green-gray lane.
-  if (hueDistance(support.h, balance.h) < 34) return false;
-
-  // Middle colors should not collapse into the same cozy lane.
-  const midFamilies = [
-    hueFamily(support.h),
-    hueFamily(accent.h),
-    hueFamily(balance.h)
-  ];
-
-  const uniqueMidFamilies = new Set(midFamilies);
-  if (uniqueMidFamilies.size < 3) return false;
-
-  // Avoid two greens in the middle of the same palette.
-  const midGreenCount = [support, accent, balance].filter(c =>
-    c.h >= 52 && c.h <= 170
-  ).length;
-  if (midGreenCount > 1) return false;
-
-  // Avoid two mauve/purple colors in the middle of the same palette.
-  const midPurpleCount = [support, accent, balance].filter(c =>
-    c.h >= 270 && c.h <= 335
-  ).length;
-  if (midPurpleCount > 1) return false;
-
-  // Avoid too much blue/periwinkle repetition.
-  const midBlueCount = [support, accent, balance].filter(c =>
-    c.h >= 190 && c.h <= 252
-  ).length;
-  if (midBlueCount > 1) return false;
-
-  // Allow muted yellow / honey / ochre / wheat tones,
-  // but keep them tasteful and not bright/playful.
-  const hasMutedYellowFamily = [support, accent, balance].some(c =>
-    c.h >= 38 &&
-    c.h <= 68 &&
-    c.s >= 10 &&
-    c.s <= 38 &&
-    c.l >= 40 &&
-    c.l <= 72
-  );
-
-  if (hasMutedYellowFamily) {
-    if ([support, accent, balance].some(c =>
-      c.h >= 38 && c.h <= 68 && c.s > 38
-    )) return false;
-  }
-
-  // Swatch 2 should have presence, but not become loud.
-  if (support.s < 6 && support.l < 66) return false;
-  if (support.s > 34) return false;
-
-  // Swatch 3 should carry some cozy personality.
-  if (accent.s < 16) return false;
-
-  // Swatch 1 and Swatch 2 should not be near-duplicates.
-  if (
-    Math.abs(light.l - support.l) < 12 &&
-    hueDistance(light.h, support.h) < 24
-  ) return false;
-
-  // Swatch 4 should balance the palette, not duplicate Swatch 2.
-  if (
-    Math.abs(support.l - balance.l) < 8 &&
-    hueDistance(support.h, balance.h) < 45
-  ) return false;
-
-  // If Swatch 2 is green, Swatch 4 must move elsewhere.
-  if (
-    support.h >= 52 && support.h <= 170 &&
-    balance.h >= 52 && balance.h <= 170
-  ) return false;
-
-  // If Swatch 2 is mauve/purple, Swatch 4 must move elsewhere.
-  if (
-    support.h >= 270 && support.h <= 335 &&
-    balance.h >= 270 && balance.h <= 335
-  ) return false;
-}
+        if (palette[3].h >= 52 && palette[3].h <= 170 && palette[3].s > 24) return false;
+      }
 
       if (vibe === "moody") {
         if (palette[2].s > 48 || palette[3].s > 44) return false;
@@ -1450,8 +1372,8 @@
         if (similarity >= 12) return true;
 
         if (vibe === "playful" && similarity >= 10) return true;
-if (vibe === "vintage" && similarity >= 11) return true;
-if (vibe === "cozy" && similarity >= 9) return true;
+        if (vibe === "vintage" && similarity >= 11) return true;
+        if (vibe === "cozy" && similarity >= 11) return true;
       }
 
       return false;
