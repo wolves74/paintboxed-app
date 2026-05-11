@@ -199,15 +199,6 @@
       font-size: .95rem;
     }
 
-    .role-label {
-      margin-top: 8px;
-      color: var(--muted);
-      letter-spacing: .08em;
-      font-size: .78rem;
-      text-transform: uppercase;
-      line-height: 1.3;
-    }
-
     .heart {
       border: none;
       background: transparent;
@@ -452,25 +443,6 @@
         h: wrapHue(color.h + dh),
         s: clamp(color.s + ds, 0, 100),
         l: clamp(color.l + dl, 0, 100)
-      };
-    }
-
-    function tuneColor(color, vibe, dh = 0, ds = 0, dl = 0) {
-      return softenColor(shiftColor(color, dh, ds, dl), vibe);
-    }
-
-    function mixHsl(a, b, t) {
-      const radA = a.h * Math.PI / 180;
-      const radB = b.h * Math.PI / 180;
-      const x = (1 - t) * Math.cos(radA) + t * Math.cos(radB);
-      const y = (1 - t) * Math.sin(radA) + t * Math.sin(radB);
-      let h = Math.atan2(y, x) * 180 / Math.PI;
-      if (h < 0) h += 360;
-
-      return {
-        h: wrapHue(h),
-        s: (1 - t) * a.s + t * b.s,
-        l: (1 - t) * a.l + t * b.l
       };
     }
 
@@ -1322,7 +1294,7 @@
 
       let tries = 0;
 
-      while (tries < 35) {
+      while (tries < 100) {
         const story = pick(cozyStories);
         let palette = story.colors.map(copyColor);
         palette = softenPalette(palette, "cozy").map(copyColor);
@@ -1583,7 +1555,7 @@
 
       const candidates = [];
 
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 500; i++) {
         const palette = buildCorePalette(vibe);
 
         if (!palettePasses(palette, vibe)) continue;
@@ -1596,7 +1568,7 @@
       }
 
       if (!candidates.length) {
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 200; i++) {
           const palette = buildCorePalette(vibe);
           if (!palettePasses(palette, vibe)) continue;
           candidates.push({
@@ -1612,152 +1584,48 @@
       return pick(candidates.slice(0, Math.min(12, candidates.length))).palette;
     }
 
-    function simpleWarmNude(vibe, base) {
-      const h = isWarmHue(base.h) ? wrapHue(base.h + 16) : 26;
-      const s = vibe === "playful" ? 22 : 16;
-      const l = vibe === "moody" ? 54 : vibe === "coastal" ? 70 : 64;
-
-      return softenColor({
-        h,
-        s,
-        l
-      }, vibe);
-    }
-
-    function simpleCoolNeutral(vibe, base) {
-      let h = 205;
-
-      if (isWarmHue(base.h) || base.h <= 72) h = 205;
-      else if (base.h >= 180 && base.h <= 250) h = 88;
-      else h = 222;
-
-      return softenColor({
-        h,
-        s: vibe === "playful" ? 14 : 10,
-        l: vibe === "moody" ? 50 : 62
-      }, vibe);
-    }
-
-    function simpleSoftTint(vibe, light, bridge) {
-      const mixed = mixHsl(light, bridge, 0.16);
-      return softenColor({
-        h: wrapHue(mixed.h + 12),
-        s: Math.min(22, Math.max(4, mixed.s - 8)),
-        l: Math.max(82, Math.min(94, mixed.l - 4))
-      }, vibe);
-    }
-
-    function simpleAccentPop(vibe, accent, balance) {
-      return softenColor({
-        h: wrapHue(accent.h + 24),
-        s: clamp(accent.s - 6, vibe === "playful" ? 34 : 14, vibe === "playful" ? 62 : 42),
-        l: clamp(accent.l + 5, 38, 70)
-      }, vibe);
-    }
-
-    function simpleContrastTone(vibe, accent, balance) {
-      const mixed = mixHsl(accent, balance, 0.55);
-      return softenColor({
-        h: wrapHue(mixed.h + 36),
-        s: clamp(mixed.s - 8, 8, vibe === "playful" ? 56 : 36),
-        l: clamp(mixed.l + 2, 36, 68)
-      }, vibe);
-    }
-
-    function simpleSoftAnchor(vibe, dark, balance) {
-      const mixed = mixHsl(dark, balance, 0.18);
-      return softenColor({
-        h: wrapHue(mixed.h + 14),
-        s: clamp(mixed.s - 2, 10, vibe === "playful" ? 48 : 36),
-        l: clamp(mixed.l + 12, 18, 40)
-      }, vibe);
-    }
-
-    function expanded10FromCore(core, vibe) {
-      const [light, bridge, accent, balance, dark] = core.map(copyColor);
-
-      let softTint = simpleSoftTint(vibe, light, bridge);
-      let neutralBridge = copyColor(bridge);
-
-      // Keep Soft Tint and Neutral Bridge visibly different without running loops.
-      if (hueFamily(softTint.h) === hueFamily(neutralBridge.h) || Math.abs(softTint.l - neutralBridge.l) < 10) {
-        softTint = isWarmHue(neutralBridge.h)
-          ? simpleCoolNeutral(vibe, neutralBridge)
-          : simpleWarmNude(vibe, neutralBridge);
-
-        softTint.l = Math.max(82, Math.min(92, softTint.l + 18));
-        softTint.s = Math.min(18, softTint.s);
-      }
-
-      let warmSupport = simpleWarmNude(vibe, neutralBridge);
-
-      if (hueFamily(warmSupport.h) === hueFamily(neutralBridge.h) && Math.abs(warmSupport.l - neutralBridge.l) < 16) {
-        warmSupport = softenColor({
-          h: wrapHue(warmSupport.h + 18),
-          s: Math.max(8, warmSupport.s - 4),
-          l: clamp(warmSupport.l + 8, 54, 78)
-        }, vibe);
-      }
-
-      let accentPop = simpleAccentPop(vibe, accent, balance);
-      let contrastTone = simpleContrastTone(vibe, accent, balance);
-
-      if (hueFamily(accentPop.h) === hueFamily(contrastTone.h)) {
-        contrastTone = softenColor({
-          h: wrapHue(contrastTone.h + 52),
-          s: contrastTone.s,
-          l: contrastTone.l
-        }, vibe);
-      }
-
-      const softAnchor = simpleSoftAnchor(vibe, dark, balance);
-
-      return [
-        light,
-        softTint,
-        neutralBridge,
-        warmSupport,
-        accent,
-        accentPop,
-        balance,
-        contrastTone,
-        dark,
-        softAnchor
-      ].map(copyColor);
-    }
-
-    function expanded20FromCore(core, vibe) {
-      const ten = expanded10FromCore(core, vibe);
-      const [light, softTint, bridge, warmSupport, accent, accentPop, balance, contrast, dark, softAnchor] = ten;
-
-      return [
-        light,
-        softTint,
-        bridge,
-        warmSupport,
-        accent,
-        accentPop,
-        balance,
-        contrast,
-        dark,
-        softAnchor,
-        tuneColor(light, vibe, 16, 2, -8),
-        tuneColor(softTint, vibe, -20, 0, -8),
-        tuneColor(bridge, vibe, 14, -4, 6),
-        tuneColor(warmSupport, vibe, -12, -4, -6),
-        tuneColor(accent, vibe, -18, -8, 10),
-        tuneColor(accentPop, vibe, 22, -8, -8),
-        tuneColor(balance, vibe, -22, -6, 8),
-        tuneColor(contrast, vibe, 28, -6, -8),
-        tuneColor(dark, vibe, -18, 2, 10),
-        tuneColor(softAnchor, vibe, 18, -2, 8)
-      ].map(copyColor);
-    }
-
     function expandPalette(core, size, vibe) {
       if (size === 5) return core.map(copyColor);
-      if (size === 10) return expanded10FromCore(core, vibe);
-      return expanded20FromCore(core, vibe);
+
+      const [light, support, accent, balance, dark] = core.map(copyColor);
+
+      if (size === 10) {
+        return softenPalette([
+          light,
+          shiftColor(light, 4, 3, -4),
+          support,
+          shiftColor(support, -8, 4, -6),
+          accent,
+          shiftColor(accent, 10, -6, 8),
+          balance,
+          shiftColor(balance, -10, -5, 8),
+          dark,
+          shiftColor(dark, 8, 4, 10)
+        ], vibe).map(copyColor);
+      }
+
+      return softenPalette([
+        light,
+        shiftColor(light, 0, 2, -3),
+        shiftColor(light, 8, 5, -6),
+        support,
+        shiftColor(support, -8, 4, -5),
+        shiftColor(support, 10, 5, 5),
+        accent,
+        shiftColor(accent, -8, -8, 10),
+        shiftColor(accent, 10, -6, -5),
+        shiftColor(accent, 20, -10, 4),
+        balance,
+        shiftColor(balance, -10, -6, 10),
+        shiftColor(balance, 10, 4, -5),
+        shiftColor(balance, 22, -8, 5),
+        dark,
+        shiftColor(dark, 8, 4, 6),
+        shiftColor(dark, -8, 6, 10),
+        shiftColor(dark, 18, -4, 12),
+        shiftColor(accent, -18, -12, 8),
+        shiftColor(balance, -22, -10, 8)
+      ], vibe).map(copyColor);
     }
 
     function applyLocks(newPalette) {
@@ -1785,56 +1653,7 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Lightweight fast expansion is active.`);
-    }
-
-    function getRoleLabel(index, size) {
-      const labels5 = [
-        "Light Relief",
-        "Neutral Bridge",
-        "Hero Accent",
-        "Balance Tone",
-        "Dark Anchor"
-      ];
-
-      const labels10 = [
-        "Light Relief",
-        "Soft Tint",
-        "Neutral Bridge",
-        "Warm Nude Support",
-        "Hero Accent",
-        "Accent Pop",
-        "Balance Tone",
-        "Contrast Tone",
-        "Dark Anchor",
-        "Soft Anchor"
-      ];
-
-      const labels20 = [
-        "Light Relief",
-        "Soft Tint",
-        "Neutral Bridge",
-        "Warm Nude Support",
-        "Hero Accent",
-        "Accent Pop",
-        "Balance Tone",
-        "Contrast Tone",
-        "Dark Anchor",
-        "Soft Anchor",
-        "Light Wash",
-        "Soft Tint Shift",
-        "Bridge Shift",
-        "Warm Support Shift",
-        "Accent Tint",
-        "Accent Depth",
-        "Balance Tint",
-        "Contrast Depth",
-        "Dark Echo",
-        "Soft Anchor Echo"
-      ];
-
-      const set = size === 5 ? labels5 : size === 10 ? labels10 : labels20;
-      return set[index] || `Swatch ${index + 1}`;
+      setStatus(`Generated a ${label} palette. Anti-repeat memory is checking recent palettes in this vibe.`);
     }
 
     function renderPalette() {
@@ -1851,10 +1670,6 @@
         swatch.style.background = hex;
         swatch.addEventListener("click", () => toggleLock(index));
 
-        const roleLabel = document.createElement("div");
-        roleLabel.className = "role-label";
-        roleLabel.textContent = getRoleLabel(index, state.size);
-
         const hexText = document.createElement("div");
         hexText.className = "hex";
         hexText.textContent = hex;
@@ -1865,7 +1680,6 @@
         heart.addEventListener("click", () => toggleLock(index));
 
         card.appendChild(swatch);
-        card.appendChild(roleLabel);
         card.appendChild(hexText);
         card.appendChild(heart);
         paletteGrid.appendChild(card);
