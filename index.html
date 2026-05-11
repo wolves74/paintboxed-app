@@ -991,72 +991,151 @@
     }
 
     function buildPlayful(seedContext) {
-      const recipes = [
-        { accent: [8, 22], balance: [175, 205] },
-        { accent: [325, 350], balance: [48, 62] },
-        { accent: [265, 292], balance: [88, 122] },
-        { accent: [18, 36], balance: [220, 248] },
-        { accent: [155, 178], balance: [320, 345] },
-        { accent: [48, 62], balance: [225, 255] },
-        { accent: [350, 8], balance: [198, 220] },
-        { accent: [24, 42], balance: [275, 305] }
-      ];
+  const recipes = [
+    { name: "coral-teal", accent: [8, 22], balance: [175, 205] },
+    { name: "pink-yellow", accent: [325, 348], balance: [46, 62] },
+    { name: "periwinkle-coral", accent: [225, 252], balance: [8, 24] },
+    { name: "mint-raspberry", accent: [148, 172], balance: [325, 345] },
+    { name: "aqua-orange", accent: [178, 198], balance: [24, 42] },
+    { name: "lavender-lime", accent: [260, 288], balance: [78, 105] },
+    { name: "watermelon-sky", accent: [350, 8], balance: [198, 222] },
+    { name: "golden-violet", accent: [42, 58], balance: [270, 305] },
+    { name: "poppy-pool", accent: [356, 14], balance: [178, 205] },
+    { name: "cornflower-peach", accent: [210, 235], balance: [18, 34] }
+  ];
 
-      const recipe = pick(recipes);
+  const recipe = pick(recipes);
 
-      const lightPairs = [
-        [
-          { h: rand(36, 50), s: rand(14, 24), l: rand(92, 96) },
-          { h: rand(16, 30), s: rand(32, 46), l: rand(76, 84) }
-        ],
-        [
-          { h: rand(340, 356), s: rand(16, 26), l: rand(92, 96) },
-          { h: rand(28, 42), s: rand(34, 48), l: rand(76, 84) }
-        ],
-        [
-          { h: rand(198, 220), s: rand(14, 24), l: rand(92, 96) },
-          { h: rand(340, 356), s: rand(32, 46), l: rand(76, 84) }
-        ],
-        [
-          { h: rand(125, 155), s: rand(14, 24), l: rand(92, 96) },
-          { h: rand(20, 34), s: rand(34, 50), l: rand(76, 84) }
-        ],
-        [
-          { h: rand(265, 288), s: rand(14, 24), l: rand(92, 96) },
-          { h: rand(16, 30), s: rand(34, 48), l: rand(76, 84) }
-        ],
-        [
-          { h: rand(48, 60), s: rand(16, 28), l: rand(91, 96) },
-          { h: rand(338, 354), s: rand(34, 48), l: rand(76, 84) }
-        ]
-      ];
+  const lightPairs = [
+    // pale pink + peach
+    [
+      { h: rand(338, 354), s: rand(18, 30), l: rand(90, 96) },
+      { h: rand(16, 30), s: rand(36, 52), l: rand(74, 84) }
+    ],
 
-      const pair = pick(lightPairs);
-      const light = pair[0];
-      const support = pair[1];
+    // pale blue + warm pink
+    [
+      { h: rand(200, 220), s: rand(18, 30), l: rand(90, 96) },
+      { h: rand(335, 352), s: rand(36, 52), l: rand(74, 84) }
+    ],
 
-      let accent = {
-        h: hueFromRange(recipe.accent),
-        s: rand(38, 58),
-        l: rand(50, 64)
-      };
+    // mint + coral peach
+    [
+      { h: rand(130, 160), s: rand(18, 32), l: rand(90, 96) },
+      { h: rand(8, 24), s: rand(38, 54), l: rand(74, 84) }
+    ],
 
-      let balance = {
-        h: hueFromRange(recipe.balance),
-        s: rand(28, 48),
-        l: rand(52, 68)
-      };
+    // pale lilac + golden peach
+    [
+      { h: rand(260, 288), s: rand(18, 30), l: rand(90, 96) },
+      { h: rand(30, 46), s: rand(38, 54), l: rand(74, 84) }
+    ],
 
-      if (accent.h >= 250 && accent.h <= 315) accent.s = Math.min(accent.s, 48);
-      if (balance.h >= 250 && balance.h <= 315) balance.s = Math.min(balance.s, 42);
-      if (accent.h >= 45 && accent.h <= 135) accent.s = Math.min(accent.s, 50);
-      if (balance.h >= 45 && balance.h <= 135) balance.s = Math.min(balance.s, 44);
+    // butter + warm pink
+    [
+      { h: rand(46, 60), s: rand(20, 34), l: rand(90, 96) },
+      { h: rand(336, 352), s: rand(38, 54), l: rand(74, 84) }
+    ],
 
-      const dark = chooseRelationshipDark(accent, balance, "playful");
+    // cream + aqua support
+    [
+      { h: rand(36, 50), s: rand(14, 24), l: rand(92, 97) },
+      { h: rand(178, 198), s: rand(34, 50), l: rand(72, 84) }
+    ],
 
-      return [light, support, accent, balance, dark].map(copyColor);
-    }
+    // peach light + lavender support
+    [
+      { h: rand(16, 30), s: rand(18, 30), l: rand(90, 96) },
+      { h: rand(260, 288), s: rand(34, 50), l: rand(72, 84) }
+    ],
 
+    // pale aqua + watermelon support
+    [
+      { h: rand(178, 200), s: rand(18, 30), l: rand(90, 96) },
+      { h: rand(348, 8), s: rand(38, 54), l: rand(74, 84) }
+    ]
+  ];
+
+  const pair = pick(lightPairs);
+  const light = pair[0];
+  const support = pair[1];
+
+  let accent = {
+    h: hueFromRange(recipe.accent),
+    s: rand(50, 72),
+    l: rand(48, 64)
+  };
+
+  let balance = {
+    h: hueFromRange(recipe.balance),
+    s: rand(42, 66),
+    l: rand(50, 68)
+  };
+
+  // Primary-adjacent colors are allowed, but softened.
+  const accentIsRed = accent.h >= 350 || accent.h <= 14;
+  const accentIsYellow = accent.h >= 42 && accent.h <= 64;
+  const accentIsBlue = accent.h >= 205 && accent.h <= 245;
+
+  if (accentIsRed) {
+    accent.s = Math.min(accent.s, 66);
+    accent.l = clamp(accent.l, 46, 62);
+  }
+
+  if (accentIsYellow) {
+    accent.s = Math.min(accent.s, 62);
+    accent.l = clamp(accent.l, 52, 66);
+  }
+
+  if (accentIsBlue) {
+    accent.s = Math.min(accent.s, 64);
+    accent.l = clamp(accent.l, 48, 64);
+  }
+
+  // Purple / violet can be joyful, but not electric.
+  if (accent.h >= 250 && accent.h <= 315) {
+    accent.s = Math.min(accent.s, 58);
+    accent.l = clamp(accent.l, 50, 64);
+  }
+
+  // Greens/limes should feel fresh, not neon.
+  if (accent.h >= 70 && accent.h <= 135) {
+    accent.s = Math.min(accent.s, 58);
+    accent.l = clamp(accent.l, 48, 64);
+  }
+
+  // Balance color also needs control so the palette doesn't feel toy-store.
+  if (balance.h >= 250 && balance.h <= 315) {
+    balance.s = Math.min(balance.s, 56);
+    balance.l = clamp(balance.l, 52, 68);
+  }
+
+  if (balance.h >= 45 && balance.h <= 135) {
+    balance.s = Math.min(balance.s, 58);
+    balance.l = clamp(balance.l, 50, 68);
+  }
+
+  if (balance.h >= 205 && balance.h <= 245) {
+    balance.s = Math.min(balance.s, 60);
+    balance.l = clamp(balance.l, 48, 66);
+  }
+
+  if (balance.h >= 350 || balance.h <= 14) {
+    balance.s = Math.min(balance.s, 62);
+    balance.l = clamp(balance.l, 46, 64);
+  }
+
+  let tries = 0;
+
+  while (tries < 24 && hueDistance(accent.h, balance.h) < 36) {
+    balance.h = wrapHue(accent.h + pick([70, 90, 115, 135, 155, -70, -90, -115, -135, -155]));
+    tries++;
+  }
+
+  const dark = chooseRelationshipDark(accent, balance, "playful");
+
+  return [light, support, accent, balance, dark].map(copyColor);
+}
     function chooseRelationshipDark(accent, balance, vibe) {
       const ranges = vibeRanges[vibe] && vibeRanges[vibe].dark ? vibeRanges[vibe].dark : vibeRanges.cozy.dark;
 
