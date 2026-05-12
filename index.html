@@ -1984,89 +1984,165 @@
       return copyColor(best || softenColor(makeColor(pick(ranges)), "cozy"));
     }
 
-    function buildCozy10FromCore(core) {
-      const [light, bridge, accent, balance, dark] = core.map(copyColor);
-      const palette = [];
+    function cozy10ValueSpreadScore(palette) {
+      const lightCount = palette.filter(c => c.l >= 82).length;
+      const darkCount = palette.filter(c => c.l <= 34).length;
+      const mediumCount = palette.filter(c => c.l > 34 && c.l < 82).length;
+      const warmMiddleCount = palette.slice(1, 8).filter(c =>
+        ((c.h >= 12 && c.h <= 70) || c.h >= 340) &&
+        c.s >= 14 &&
+        c.l >= 38 &&
+        c.l <= 78
+      ).length;
+      const coolMiddleCount = palette.slice(1, 8).filter(c =>
+        ((c.h >= 72 && c.h <= 135) || (c.h >= 190 && c.h <= 235)) &&
+        c.s >= 6 &&
+        c.l >= 36 &&
+        c.l <= 74
+      ).length;
 
-      palette.push(light);
+      let score = 0;
+      score += lightCount >= 2 ? 150 : -200;
+      score += darkCount >= 2 ? 150 : -260;
+      score += warmMiddleCount >= 3 ? 200 : -320;
+      score += coolMiddleCount >= 1 ? 100 : -150;
+
+      // Penalize muddy middle pile-up.
+      if (mediumCount >= 8) score -= 380;
+
+      // Penalize repeated dusty mauve/purple stack.
+      const mauveCount = palette.filter(c => c.h >= 285 && c.h <= 345).length;
+      if (mauveCount > 2) score -= 280;
+
+      // Penalize repeated beige/gray-neutral stack.
+      const neutralCount = palette.filter(c => c.s <= 16 && c.l >= 38 && c.l <= 82).length;
+      if (neutralCount > 3) score -= 280;
+
+      return score;
+    }
+
+    function buildCozy10FromCore(core) {
+      // Cozy 10 v2:
+      // Fixes the flat/muddy issue by forcing contrast architecture:
+      // - at least 2 lights
+      // - at least 2 dark/grounding colors
+      // - visible warm middle color, not only a dark warm anchor
+      // - no big mauve/gray pile-up
+      // - cool contrast appears as support, not domination
+      const [light, bridge, accent, balance, dark] = core.map(copyColor);
+
+      function pickBest(ranges, existing, role) {
+        return cozy10PickFromRanges(ranges, existing, role);
+      }
 
       const warmNeutralRanges = [
-        { h1: 20, h2: 34, s1: 14, s2: 28, l1: 62, l2: 78 },
-        { h1: 26, h2: 42, s1: 12, s2: 26, l1: 56, l2: 74 },
-        { h1: 34, h2: 54, s1: 14, s2: 30, l1: 58, l2: 76 },
-        { h1: 44, h2: 64, s1: 12, s2: 26, l1: 54, l2: 72 },
-        { h1: 345, h2: 8, s1: 10, s2: 22, l1: 58, l2: 76 }
+        { h1: 20, h2: 34, s1: 16, s2: 30, l1: 62, l2: 78 },
+        { h1: 28, h2: 44, s1: 14, s2: 28, l1: 58, l2: 74 },
+        { h1: 36, h2: 56, s1: 16, s2: 30, l1: 58, l2: 76 },
+        { h1: 44, h2: 64, s1: 14, s2: 28, l1: 54, l2: 72 },
+        { h1: 14, h2: 28, s1: 14, s2: 28, l1: 60, l2: 76 }
       ];
-      palette.push(cozy10PickFromRanges(warmNeutralRanges, palette, "warmNeutral"));
 
-      const warmAccentRanges = [
-        { h1: 14, h2: 30, s1: 20, s2: 38, l1: 42, l2: 64 },
-        { h1: 28, h2: 46, s1: 20, s2: 38, l1: 42, l2: 64 },
-        { h1: 38, h2: 60, s1: 18, s2: 34, l1: 42, l2: 64 },
-        { h1: 345, h2: 10, s1: 14, s2: 30, l1: 44, l2: 64 }
+      const warmPersonalityRanges = [
+        { h1: 34, h2: 58, s1: 24, s2: 42, l1: 38, l2: 60 },  // wheat / honey / ochre
+        { h1: 44, h2: 68, s1: 22, s2: 38, l1: 36, l2: 58 },  // muted golden olive
+        { h1: 18, h2: 34, s1: 24, s2: 42, l1: 40, l2: 62 },  // clay / apricot tan
+        { h1: 345, h2: 10, s1: 18, s2: 34, l1: 42, l2: 62 }  // warm dried rose
       ];
-      palette.push(cozy10PickFromRanges(warmAccentRanges, palette, "warmAccent"));
 
       const coolContrastRanges = [
-        { h1: 72, h2: 110, s1: 8, s2: 24, l1: 42, l2: 66 },
-        { h1: 105, h2: 135, s1: 6, s2: 20, l1: 40, l2: 62 },
-        { h1: 195, h2: 225, s1: 8, s2: 24, l1: 44, l2: 68 },
-        { h1: 225, h2: 245, s1: 6, s2: 18, l1: 42, l2: 62 }
+        { h1: 195, h2: 225, s1: 12, s2: 28, l1: 36, l2: 60 }, // dusty blue-gray
+        { h1: 75, h2: 115, s1: 14, s2: 30, l1: 36, l2: 58 },  // olive/sage
+        { h1: 220, h2: 238, s1: 10, s2: 24, l1: 30, l2: 52 }, // slate
+        { h1: 105, h2: 135, s1: 10, s2: 24, l1: 36, l2: 58 }  // eucalyptus
       ];
-      palette.push(cozy10PickFromRanges(coolContrastRanges, palette, "coolContrast"));
 
       const lightSupportRanges = [
-        { h1: 35, h2: 52, s1: 5, s2: 16, l1: 88, l2: 96 },
-        { h1: 18, h2: 34, s1: 5, s2: 16, l1: 88, l2: 95 },
-        { h1: 200, h2: 222, s1: 4, s2: 13, l1: 86, l2: 94 },
-        { h1: 345, h2: 8, s1: 5, s2: 14, l1: 88, l2: 95 }
+        { h1: 35, h2: 54, s1: 6, s2: 18, l1: 88, l2: 96 },   // cream / butter
+        { h1: 18, h2: 34, s1: 6, s2: 18, l1: 88, l2: 95 },   // pale peach beige
+        { h1: 200, h2: 222, s1: 5, s2: 16, l1: 86, l2: 94 }, // pale blue-gray
+        { h1: 345, h2: 8, s1: 6, s2: 16, l1: 88, l2: 95 }    // pale blush
       ];
-      palette.push(cozy10PickFromRanges(lightSupportRanges, palette, "light"));
 
       const roseRanges = [
-        { h1: 345, h2: 8, s1: 10, s2: 24, l1: 54, l2: 76 },
-        { h1: 330, h2: 348, s1: 10, s2: 24, l1: 48, l2: 68 },
-        { h1: 12, h2: 26, s1: 10, s2: 24, l1: 52, l2: 72 },
-        { h1: 305, h2: 328, s1: 8, s2: 20, l1: 48, l2: 66 }
+        { h1: 345, h2: 8, s1: 14, s2: 28, l1: 52, l2: 72 },
+        { h1: 330, h2: 348, s1: 12, s2: 26, l1: 46, l2: 66 },
+        { h1: 12, h2: 26, s1: 14, s2: 28, l1: 50, l2: 70 }
       ];
-      palette.push(cozy10PickFromRanges(roseRanges, palette, "roseMauve"));
 
       const mediumSupportRanges = [
-        { h1: 28, h2: 48, s1: 8, s2: 22, l1: 46, l2: 66 },
-        { h1: 72, h2: 105, s1: 8, s2: 22, l1: 40, l2: 60 },
-        { h1: 195, h2: 225, s1: 8, s2: 22, l1: 40, l2: 62 },
-        { h1: 340, h2: 12, s1: 8, s2: 22, l1: 42, l2: 62 }
+        { h1: 28, h2: 48, s1: 12, s2: 26, l1: 42, l2: 64 },  // warm mushroom/camel
+        { h1: 72, h2: 105, s1: 12, s2: 26, l1: 36, l2: 58 }, // olive support
+        { h1: 195, h2: 225, s1: 10, s2: 24, l1: 36, l2: 58 },// blue-gray support
+        { h1: 340, h2: 12, s1: 12, s2: 26, l1: 40, l2: 60 }  // rose-brown support
       ];
-
-      let mediumSupport = copyColor(balance);
-      if (cozy10TooSimilar(mediumSupport, palette) || mediumSupport.l < 34 || mediumSupport.l > 74) {
-        mediumSupport = cozy10PickFromRanges(mediumSupportRanges, palette, "coolContrast");
-      }
-      palette.push(softenColor(mediumSupport, "cozy"));
-
-      const warmCount = palette.filter(c => ((c.h >= 12 && c.h <= 70) || c.h >= 340)).length;
-      const contrastAccent = warmCount >= 4
-        ? cozy10PickFromRanges(coolContrastRanges, palette, "coolContrast")
-        : cozy10PickFromRanges(warmAccentRanges, palette, "warmAccent");
-      palette.push(contrastAccent);
 
       const darkRanges = [
-        { h1: 18, h2: 38, s1: 18, s2: 34, l1: 10, l2: 26 },
-        { h1: 38, h2: 62, s1: 16, s2: 30, l1: 12, l2: 28 },
-        { h1: 75, h2: 115, s1: 16, s2: 30, l1: 10, l2: 26 },
-        { h1: 195, h2: 225, s1: 14, s2: 28, l1: 12, l2: 28 },
-        { h1: 320, h2: 350, s1: 14, s2: 28, l1: 12, l2: 28 }
+        { h1: 18, h2: 38, s1: 20, s2: 38, l1: 10, l2: 24 },  // espresso / bark
+        { h1: 38, h2: 62, s1: 18, s2: 34, l1: 12, l2: 28 },  // olive-brown / ochre bark
+        { h1: 75, h2: 115, s1: 18, s2: 34, l1: 10, l2: 26 }, // forest / olive anchor
+        { h1: 200, h2: 225, s1: 16, s2: 30, l1: 12, l2: 28 },// deep blue-gray
+        { h1: 325, h2: 350, s1: 16, s2: 30, l1: 12, l2: 28 } // plum-brown
       ];
 
-      let darkAnchor = copyColor(dark);
-      if (darkAnchor.l > 34 || cozy10TooSimilar(darkAnchor, palette)) {
-        darkAnchor = cozy10PickFromRanges(darkRanges, palette, "dark");
+      let best = null;
+      let bestScore = -999999;
+
+      // A small trial loop only for Cozy 10. This is lightweight and avoids yesterday's laggy engine.
+      for (let attempt = 0; attempt < 24; attempt++) {
+        const palette = [];
+
+        // 1 Light Relief
+        palette.push(light.l >= 82 ? copyColor(light) : pickBest(lightSupportRanges, palette, "light"));
+
+        // 2 Warm Neutral Bridge
+        palette.push(pickBest(warmNeutralRanges, palette, "warmNeutral"));
+
+        // 3 Base Vibe Color / obvious warm personality
+        palette.push(pickBest(warmPersonalityRanges, palette, "warmAccent"));
+
+        // 4 Cool Contrast
+        palette.push(pickBest(coolContrastRanges, palette, "coolContrast"));
+
+        // 5 Soft Light Tint
+        palette.push(pickBest(lightSupportRanges, palette, "light"));
+
+        // 6 Rose / Mauve Support
+        palette.push(pickBest(roseRanges, palette, "roseMauve"));
+
+        // 7 Medium Support
+        palette.push(pickBest(mediumSupportRanges, palette, "coolContrast"));
+
+        // 8 Contrast Accent: choose whichever temp is missing, but require visible contrast.
+        const warmCount = palette.filter(c => ((c.h >= 12 && c.h <= 70) || c.h >= 340)).length;
+        const coolCount = palette.filter(c => ((c.h >= 72 && c.h <= 135) || (c.h >= 190 && c.h <= 235))).length;
+        if (warmCount < 4) {
+          palette.push(pickBest(warmPersonalityRanges, palette, "warmAccent"));
+        } else if (coolCount < 2) {
+          palette.push(pickBest(coolContrastRanges, palette, "coolContrast"));
+        } else {
+          palette.push(pickBest(mediumSupportRanges, palette, "warmAccent"));
+        }
+
+        // 9 Dark Anchor
+        let darkAnchor = copyColor(dark);
+        if (darkAnchor.l > 32 || cozy10TooSimilar(darkAnchor, palette)) {
+          darkAnchor = pickBest(darkRanges, palette, "dark");
+        }
+        palette.push(softenColor(darkAnchor, "cozy"));
+
+        // 10 Second Anchor / grounding counterweight, must be different from first anchor.
+        palette.push(pickBest(darkRanges, palette, "dark"));
+
+        const score = cozy10ValueSpreadScore(palette);
+
+        if (score > bestScore) {
+          best = palette.map(copyColor);
+          bestScore = score;
+        }
       }
-      palette.push(softenColor(darkAnchor, "cozy"));
 
-      palette.push(cozy10PickFromRanges(darkRanges, palette, "dark"));
-
-      return palette.map(copyColor);
+      return (best || []).map(copyColor);
     }
 
     function buildCozy20FromCore(core) {
@@ -2125,7 +2201,7 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Cozy 10-color architecture is active.`);
+      setStatus(`Generated a ${label} palette. Cozy 10 contrast architecture is active.`);
     }
 
     function getRoleLabel(index, size) {
