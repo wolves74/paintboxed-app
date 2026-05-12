@@ -2077,64 +2077,54 @@
         { h1: 340, h2: 12, s1: 12, s2: 26, l1: 40, l2: 60 }  // rose-brown support
       ];
 
-      const darkRanges = [
+      const warmDarkRanges = [
         { h1: 18, h2: 38, s1: 20, s2: 38, l1: 10, l2: 24 },  // espresso / bark
         { h1: 38, h2: 62, s1: 18, s2: 34, l1: 12, l2: 28 },  // olive-brown / ochre bark
-        { h1: 75, h2: 115, s1: 18, s2: 34, l1: 10, l2: 26 }, // forest / olive anchor
-        { h1: 200, h2: 225, s1: 16, s2: 30, l1: 12, l2: 28 },// deep blue-gray
-        { h1: 325, h2: 350, s1: 16, s2: 30, l1: 12, l2: 28 } // plum-brown
+        { h1: 325, h2: 350, s1: 16, s2: 30, l1: 12, l2: 28 }, // plum-brown / raisin
+        { h1: 345, h2: 12, s1: 18, s2: 32, l1: 10, l2: 24 }   // aubergine-brown / oxblood-brown
       ];
 
-      let best = null;
-      let bestScore = -999999;
+      const coolDarkRanges = [
+        { h1: 75, h2: 115, s1: 18, s2: 34, l1: 10, l2: 26 },  // forest / olive-black
+        { h1: 185, h2: 215, s1: 16, s2: 30, l1: 12, l2: 28 }, // deep teal-gray
+        { h1: 205, h2: 235, s1: 16, s2: 30, l1: 12, l2: 28 }, // deep blue-gray / slate
+        { h1: 225, h2: 245, s1: 14, s2: 28, l1: 12, l2: 28 }  // smoky navy-gray
+      ];
 
-      // A small trial loop only for Cozy 10. This is lightweight and avoids yesterday's laggy engine.
-      for (let attempt = 0; attempt < 24; attempt++) {
-        const palette = [];
+      // 9 Dark Anchor = one dark WARM hue.
+      let warmDarkAnchor = copyColor(dark);
+      const warmDarkOkay =
+        ((warmDarkAnchor.h >= 18 && warmDarkAnchor.h <= 62) ||
+          warmDarkAnchor.h >= 325 ||
+          warmDarkAnchor.h <= 12) &&
+        warmDarkAnchor.l <= 32;
 
-        // 1 Light Relief
-        palette.push(light.l >= 82 ? copyColor(light) : pickBest(lightSupportRanges, palette, "light"));
+      if (!warmDarkOkay || cozy10TooSimilar(warmDarkAnchor, palette)) {
+        warmDarkAnchor = pickBest(warmDarkRanges, palette, "dark");
+      }
 
-        // 2 Warm Neutral Bridge
-        palette.push(pickBest(warmNeutralRanges, palette, "warmNeutral"));
+      palette.push(softenColor(warmDarkAnchor, "cozy"));
 
-        // 3 Base Vibe Color / obvious warm personality
-        palette.push(pickBest(warmPersonalityRanges, palette, "warmAccent"));
+      // 10 Second Anchor = one dark COOL hue.
+      // This prevents the two dark anchors from repeating the same family.
+      let coolDarkAnchor = pickBest(coolDarkRanges, palette, "dark");
 
-        // 4 Cool Contrast
-        palette.push(pickBest(coolContrastRanges, palette, "coolContrast"));
+      let darkTry = 0;
+      while (
+        darkTry < 8 &&
+        (
+          hueFamily(coolDarkAnchor.h) === hueFamily(warmDarkAnchor.h) ||
+          hueDistance(coolDarkAnchor.h, warmDarkAnchor.h) < 38 ||
+          (Math.abs(coolDarkAnchor.l - warmDarkAnchor.l) < 3 && Math.abs(coolDarkAnchor.s - warmDarkAnchor.s) < 8)
+        )
+      ) {
+        coolDarkAnchor = pickBest(coolDarkRanges, palette, "dark");
+        darkTry++;
+      }
 
-        // 5 Soft Light Tint
-        palette.push(pickBest(lightSupportRanges, palette, "light"));
+      palette.push(softenColor(coolDarkAnchor, "cozy"));
 
-        // 6 Rose / Mauve Support
-        palette.push(pickBest(roseRanges, palette, "roseMauve"));
-
-        // 7 Medium Support
-        palette.push(pickBest(mediumSupportRanges, palette, "coolContrast"));
-
-        // 8 Contrast Accent: choose whichever temp is missing, but require visible contrast.
-        const warmCount = palette.filter(c => ((c.h >= 12 && c.h <= 70) || c.h >= 340)).length;
-        const coolCount = palette.filter(c => ((c.h >= 72 && c.h <= 135) || (c.h >= 190 && c.h <= 235))).length;
-        if (warmCount < 4) {
-          palette.push(pickBest(warmPersonalityRanges, palette, "warmAccent"));
-        } else if (coolCount < 2) {
-          palette.push(pickBest(coolContrastRanges, palette, "coolContrast"));
-        } else {
-          palette.push(pickBest(mediumSupportRanges, palette, "warmAccent"));
-        }
-
-        // 9 Dark Anchor
-        let darkAnchor = copyColor(dark);
-        if (darkAnchor.l > 32 || cozy10TooSimilar(darkAnchor, palette)) {
-          darkAnchor = pickBest(darkRanges, palette, "dark");
-        }
-        palette.push(softenColor(darkAnchor, "cozy"));
-
-        // 10 Second Anchor / grounding counterweight, must be different from first anchor.
-        palette.push(pickBest(darkRanges, palette, "dark"));
-
-        const score = cozy10ValueSpreadScore(palette);
+      const score = cozy10ValueSpreadScore(palette);
 
         if (score > bestScore) {
           best = palette.map(copyColor);
@@ -2201,7 +2191,7 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Cozy 10 contrast architecture is active.`);
+      setStatus(`Generated a ${label} palette. Cozy 10 warm/cool dark anchors active.`);
     }
 
     function getRoleLabel(index, size) {
