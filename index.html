@@ -199,6 +199,15 @@
       font-size: .95rem;
     }
 
+    .role-label {
+      margin-top: 8px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      font-size: .78rem;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
     .heart {
       border: none;
       background: transparent;
@@ -444,6 +453,20 @@
         s: clamp(color.s + ds, 0, 100),
         l: clamp(color.l + dl, 0, 100)
       };
+    }
+
+    function tuneColor(color, vibe, dh = 0, ds = 0, dl = 0) {
+      return softenColor(shiftColor(color, dh, ds, dl), vibe);
+    }
+
+    function mixHsl(a, b, t) {
+      const radA = a.h * Math.PI / 180;
+      const radB = b.h * Math.PI / 180;
+      const x = (1 - t) * Math.cos(radA) + t * Math.cos(radB);
+      const y = (1 - t) * Math.sin(radA) + t * Math.sin(radB);
+      let h = Math.atan2(y, x) * 180 / Math.PI;
+      if (h < 0) h += 360;
+      return { h: wrapHue(h), s: (1 - t) * a.s + t * b.s, l: (1 - t) * a.l + t * b.l };
     }
 
     function normalizeHex(value) {
@@ -1833,48 +1856,243 @@
       return pick(candidates.slice(0, Math.min(12, candidates.length))).palette;
     }
 
-    function expandPalette(core, size, vibe) {
-      if (size === 5) return core.map(copyColor);
-
+    function simpleExpandedPalette(core, size, vibe) {
       const [light, support, accent, balance, dark] = core.map(copyColor);
 
-      if (size === 10) {
-        return softenPalette([
-          light,
-          shiftColor(light, 4, 3, -4),
-          support,
-          shiftColor(support, -8, 4, -6),
-          accent,
-          shiftColor(accent, 10, -6, 8),
-          balance,
-          shiftColor(balance, -10, -5, 8),
-          dark,
-          shiftColor(dark, 8, 4, 10)
-        ], vibe).map(copyColor);
+      const ten = [
+        light,
+        tuneColor(light, vibe, 12, 2, -7),
+        support,
+        tuneColor(support, vibe, -10, -5, 6),
+        accent,
+        tuneColor(accent, vibe, 18, -7, 6),
+        balance,
+        tuneColor(balance, vibe, -20, -5, 5),
+        dark,
+        tuneColor(dark, vibe, 16, -2, 10)
+      ].map(c => softenColor(c, vibe));
+
+      if (size === 10) return ten.map(copyColor);
+
+      return ten.concat([
+        tuneColor(light, vibe, -8, 2, -4),
+        tuneColor(support, vibe, 14, -4, -6),
+        tuneColor(accent, vibe, -18, -8, 10),
+        tuneColor(balance, vibe, 18, -6, -8),
+        tuneColor(dark, vibe, -16, 2, 12),
+        tuneColor(light, vibe, 20, -2, -10),
+        tuneColor(support, vibe, -20, -6, 4),
+        tuneColor(accent, vibe, 28, -10, -4),
+        tuneColor(balance, vibe, -28, -8, 8),
+        tuneColor(dark, vibe, 28, -4, 14)
+      ]).map(c => softenColor(c, vibe)).map(copyColor);
+    }
+
+    function cozy10ColorBucket(color) {
+      const h = wrapHue(color.h);
+      if (color.l >= 82) return "light";
+      if (color.l <= 34) return "dark";
+      if (color.s <= 14 && color.l >= 42 && color.l <= 80) return "neutral";
+      if (h >= 345 || h < 18) return "warm-blush";
+      if (h >= 18 && h < 38) return "clay-camel";
+      if (h >= 38 && h < 68) return "wheat-ochre";
+      if (h >= 68 && h < 128) return "olive-sage";
+      if (h >= 128 && h < 190) return "green-teal";
+      if (h >= 190 && h < 235) return "blue-gray";
+      if (h >= 235 && h < 285) return "periwinkle";
+      if (h >= 285 && h < 345) return "mauve-rose";
+      return "mixed";
+    }
+
+    function cozy10TooSimilar(candidate, colors) {
+      return colors.some(other => {
+        const hd = hueDistance(candidate.h, other.h);
+        const ld = Math.abs(candidate.l - other.l);
+        const sd = Math.abs(candidate.s - other.s);
+        return (
+          (hd < 18 && ld < 16) ||
+          (cozy10ColorBucket(candidate) === cozy10ColorBucket(other) && ld < 14 && sd < 16) ||
+          (hueFamily(candidate.h) === hueFamily(other.h) && ld < 14)
+        );
+      });
+    }
+
+    function cozy10PickFromRanges(ranges, existing, role) {
+      let best = null;
+      let bestScore = -99999;
+
+      for (let i = 0; i < 28; i++) {
+        const candidate = softenColor(makeColor(pick(ranges)), "cozy");
+        let score = 0;
+
+        existing.forEach(other => {
+          score += Math.min(hueDistance(candidate.h, other.h), 90) * 0.45;
+          score += Math.min(Math.abs(candidate.l - other.l), 42) * 1.1;
+          score += Math.min(Math.abs(candidate.s - other.s), 34) * 0.35;
+        });
+
+        if (cozy10TooSimilar(candidate, existing)) score -= 500;
+
+        const bucketCount = existing.filter(c => cozy10ColorBucket(c) === cozy10ColorBucket(candidate)).length;
+        score -= bucketCount * 85;
+
+        if (role === "light") {
+          if (candidate.l >= 84 && candidate.l <= 96) score += 120;
+          if (candidate.s <= 20) score += 40;
+          if (candidate.l < 80) score -= 180;
+        }
+
+        if (role === "warmNeutral") {
+          if ((candidate.h >= 14 && candidate.h <= 64) || candidate.h >= 345) score += 170;
+          if (candidate.s >= 10 && candidate.s <= 30) score += 95;
+          if (candidate.l >= 54 && candidate.l <= 78) score += 95;
+          if (candidate.h >= 190 && candidate.h <= 255) score -= 280;
+          if (candidate.h >= 285 && candidate.h <= 335) score -= 180;
+          if (candidate.h >= 80 && candidate.h <= 165) score -= 150;
+        }
+
+        if (role === "warmAccent") {
+          if ((candidate.h >= 12 && candidate.h <= 70) || candidate.h >= 340) score += 150;
+          if (candidate.s >= 16 && candidate.s <= 42) score += 70;
+          if (candidate.l >= 38 && candidate.l <= 68) score += 70;
+        }
+
+        if (role === "coolContrast") {
+          if ((candidate.h >= 72 && candidate.h <= 128) || (candidate.h >= 190 && candidate.h <= 232)) score += 150;
+          if (candidate.s >= 6 && candidate.s <= 28) score += 70;
+          if (candidate.l >= 42 && candidate.l <= 72) score += 70;
+        }
+
+        if (role === "roseMauve") {
+          if ((candidate.h >= 335 || candidate.h <= 12) || (candidate.h >= 305 && candidate.h <= 345)) score += 120;
+          if (candidate.s >= 8 && candidate.s <= 28) score += 65;
+          if (candidate.l >= 48 && candidate.l <= 76) score += 65;
+        }
+
+        if (role === "dark") {
+          if (candidate.l >= 10 && candidate.l <= 32) score += 120;
+          if (candidate.s >= 12 && candidate.s <= 36) score += 45;
+          if (candidate.l > 38) score -= 220;
+        }
+
+        if (score > bestScore) {
+          best = candidate;
+          bestScore = score;
+        }
       }
 
-      return softenPalette([
-        light,
-        shiftColor(light, 0, 2, -3),
-        shiftColor(light, 8, 5, -6),
-        support,
-        shiftColor(support, -8, 4, -5),
-        shiftColor(support, 10, 5, 5),
-        accent,
-        shiftColor(accent, -8, -8, 10),
-        shiftColor(accent, 10, -6, -5),
-        shiftColor(accent, 20, -10, 4),
-        balance,
-        shiftColor(balance, -10, -6, 10),
-        shiftColor(balance, 10, 4, -5),
-        shiftColor(balance, 22, -8, 5),
-        dark,
-        shiftColor(dark, 8, 4, 6),
-        shiftColor(dark, -8, 6, 10),
-        shiftColor(dark, 18, -4, 12),
-        shiftColor(accent, -18, -12, 8),
-        shiftColor(balance, -22, -10, 8)
-      ], vibe).map(copyColor);
+      return copyColor(best || softenColor(makeColor(pick(ranges)), "cozy"));
+    }
+
+    function buildCozy10FromCore(core) {
+      const [light, bridge, accent, balance, dark] = core.map(copyColor);
+      const palette = [];
+
+      palette.push(light);
+
+      const warmNeutralRanges = [
+        { h1: 20, h2: 34, s1: 14, s2: 28, l1: 62, l2: 78 },
+        { h1: 26, h2: 42, s1: 12, s2: 26, l1: 56, l2: 74 },
+        { h1: 34, h2: 54, s1: 14, s2: 30, l1: 58, l2: 76 },
+        { h1: 44, h2: 64, s1: 12, s2: 26, l1: 54, l2: 72 },
+        { h1: 345, h2: 8, s1: 10, s2: 22, l1: 58, l2: 76 }
+      ];
+      palette.push(cozy10PickFromRanges(warmNeutralRanges, palette, "warmNeutral"));
+
+      const warmAccentRanges = [
+        { h1: 14, h2: 30, s1: 20, s2: 38, l1: 42, l2: 64 },
+        { h1: 28, h2: 46, s1: 20, s2: 38, l1: 42, l2: 64 },
+        { h1: 38, h2: 60, s1: 18, s2: 34, l1: 42, l2: 64 },
+        { h1: 345, h2: 10, s1: 14, s2: 30, l1: 44, l2: 64 }
+      ];
+      palette.push(cozy10PickFromRanges(warmAccentRanges, palette, "warmAccent"));
+
+      const coolContrastRanges = [
+        { h1: 72, h2: 110, s1: 8, s2: 24, l1: 42, l2: 66 },
+        { h1: 105, h2: 135, s1: 6, s2: 20, l1: 40, l2: 62 },
+        { h1: 195, h2: 225, s1: 8, s2: 24, l1: 44, l2: 68 },
+        { h1: 225, h2: 245, s1: 6, s2: 18, l1: 42, l2: 62 }
+      ];
+      palette.push(cozy10PickFromRanges(coolContrastRanges, palette, "coolContrast"));
+
+      const lightSupportRanges = [
+        { h1: 35, h2: 52, s1: 5, s2: 16, l1: 88, l2: 96 },
+        { h1: 18, h2: 34, s1: 5, s2: 16, l1: 88, l2: 95 },
+        { h1: 200, h2: 222, s1: 4, s2: 13, l1: 86, l2: 94 },
+        { h1: 345, h2: 8, s1: 5, s2: 14, l1: 88, l2: 95 }
+      ];
+      palette.push(cozy10PickFromRanges(lightSupportRanges, palette, "light"));
+
+      const roseRanges = [
+        { h1: 345, h2: 8, s1: 10, s2: 24, l1: 54, l2: 76 },
+        { h1: 330, h2: 348, s1: 10, s2: 24, l1: 48, l2: 68 },
+        { h1: 12, h2: 26, s1: 10, s2: 24, l1: 52, l2: 72 },
+        { h1: 305, h2: 328, s1: 8, s2: 20, l1: 48, l2: 66 }
+      ];
+      palette.push(cozy10PickFromRanges(roseRanges, palette, "roseMauve"));
+
+      const mediumSupportRanges = [
+        { h1: 28, h2: 48, s1: 8, s2: 22, l1: 46, l2: 66 },
+        { h1: 72, h2: 105, s1: 8, s2: 22, l1: 40, l2: 60 },
+        { h1: 195, h2: 225, s1: 8, s2: 22, l1: 40, l2: 62 },
+        { h1: 340, h2: 12, s1: 8, s2: 22, l1: 42, l2: 62 }
+      ];
+
+      let mediumSupport = copyColor(balance);
+      if (cozy10TooSimilar(mediumSupport, palette) || mediumSupport.l < 34 || mediumSupport.l > 74) {
+        mediumSupport = cozy10PickFromRanges(mediumSupportRanges, palette, "coolContrast");
+      }
+      palette.push(softenColor(mediumSupport, "cozy"));
+
+      const warmCount = palette.filter(c => ((c.h >= 12 && c.h <= 70) || c.h >= 340)).length;
+      const contrastAccent = warmCount >= 4
+        ? cozy10PickFromRanges(coolContrastRanges, palette, "coolContrast")
+        : cozy10PickFromRanges(warmAccentRanges, palette, "warmAccent");
+      palette.push(contrastAccent);
+
+      const darkRanges = [
+        { h1: 18, h2: 38, s1: 18, s2: 34, l1: 10, l2: 26 },
+        { h1: 38, h2: 62, s1: 16, s2: 30, l1: 12, l2: 28 },
+        { h1: 75, h2: 115, s1: 16, s2: 30, l1: 10, l2: 26 },
+        { h1: 195, h2: 225, s1: 14, s2: 28, l1: 12, l2: 28 },
+        { h1: 320, h2: 350, s1: 14, s2: 28, l1: 12, l2: 28 }
+      ];
+
+      let darkAnchor = copyColor(dark);
+      if (darkAnchor.l > 34 || cozy10TooSimilar(darkAnchor, palette)) {
+        darkAnchor = cozy10PickFromRanges(darkRanges, palette, "dark");
+      }
+      palette.push(softenColor(darkAnchor, "cozy"));
+
+      palette.push(cozy10PickFromRanges(darkRanges, palette, "dark"));
+
+      return palette.map(copyColor);
+    }
+
+    function buildCozy20FromCore(core) {
+      const ten = buildCozy10FromCore(core);
+      const extras = [
+        tuneColor(ten[0], "cozy", 14, 2, -8),
+        tuneColor(ten[1], "cozy", -12, -4, -6),
+        tuneColor(ten[2], "cozy", 18, -6, 8),
+        tuneColor(ten[3], "cozy", -18, -4, 6),
+        tuneColor(ten[4], "cozy", 10, 0, -10),
+        tuneColor(ten[5], "cozy", -18, -4, -6),
+        tuneColor(ten[6], "cozy", 22, -6, 6),
+        tuneColor(ten[7], "cozy", -22, -6, -6),
+        tuneColor(ten[8], "cozy", 12, -2, 10),
+        tuneColor(ten[9], "cozy", -14, -2, 10)
+      ];
+      return ten.concat(extras).map(c => softenColor(c, "cozy")).map(copyColor);
+    }
+
+    function expandPalette(core, size, vibe) {
+      if (size === 5) return core.map(copyColor);
+      if (vibe === "cozy") {
+        if (size === 10) return buildCozy10FromCore(core);
+        return buildCozy20FromCore(core);
+      }
+      return simpleExpandedPalette(core, size, vibe);
     }
 
     function applyLocks(newPalette) {
@@ -1907,7 +2125,56 @@
       renderPattern();
 
       const label = state.vibe === "nature" ? "earthy / natural" : state.vibe;
-      setStatus(`Generated a ${label} palette. Strict Cozy warm-neutral bridge is active.`);
+      setStatus(`Generated a ${label} palette. Cozy 10-color architecture is active.`);
+    }
+
+    function getRoleLabel(index, size) {
+      const labels5 = [
+        "Light Relief",
+        "Neutral Bridge",
+        "Hero Accent",
+        "Balance Tone",
+        "Dark Anchor"
+      ];
+
+      const labels10 = [
+        "Light Relief",
+        "Warm Neutral Bridge",
+        "Base Vibe Color",
+        "Cool Contrast",
+        "Soft Light Tint",
+        "Rose/Mauve Support",
+        "Medium Support",
+        "Contrast Accent",
+        "Dark Anchor",
+        "Second Anchor"
+      ];
+
+      const labels20 = [
+        "Light Relief",
+        "Warm Neutral Bridge",
+        "Base Vibe Color",
+        "Cool Contrast",
+        "Soft Light Tint",
+        "Rose/Mauve Support",
+        "Medium Support",
+        "Contrast Accent",
+        "Dark Anchor",
+        "Second Anchor",
+        "Light Wash",
+        "Bridge Shift",
+        "Accent Tint",
+        "Cool Tint",
+        "Soft Wash",
+        "Rose Depth",
+        "Support Tint",
+        "Accent Depth",
+        "Anchor Lift",
+        "Anchor Echo"
+      ];
+
+      const set = size === 5 ? labels5 : size === 10 ? labels10 : labels20;
+      return set[index] || `Swatch ${index + 1}`;
     }
 
     function renderPalette() {
@@ -1924,6 +2191,10 @@
         swatch.style.background = hex;
         swatch.addEventListener("click", () => toggleLock(index));
 
+        const roleLabel = document.createElement("div");
+        roleLabel.className = "role-label";
+        roleLabel.textContent = getRoleLabel(index, state.size);
+
         const hexText = document.createElement("div");
         hexText.className = "hex";
         hexText.textContent = hex;
@@ -1934,6 +2205,7 @@
         heart.addEventListener("click", () => toggleLock(index));
 
         card.appendChild(swatch);
+        card.appendChild(roleLabel);
         card.appendChild(hexText);
         card.appendChild(heart);
         paletteGrid.appendChild(card);
