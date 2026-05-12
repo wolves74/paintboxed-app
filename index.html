@@ -2368,7 +2368,7 @@
 
     imageUpload.addEventListener("change", event => {
       const file = event.target.files && event.target.files[0];
-      if (!file) return;
+      if (!file) return; 
 
       const url = URL.createObjectURL(file);
       const img = new Image();
