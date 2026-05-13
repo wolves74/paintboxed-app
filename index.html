@@ -1841,7 +1841,7 @@
       if (size === 10) {
         return softenPalette([
           light,
-          shiftColor(light, 4, 3, -4),
+          makeColor({ h1: 22, h2: 42, s1: 35, s2: 55, l1: 68, l2: 82 }),
           support,
           shiftColor(support, -8, 4, -6),
           accent,
