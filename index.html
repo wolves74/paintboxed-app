@@ -1853,7 +1853,20 @@
       dark
     ], vibe).map(copyColor);
   }
-
+if (vibe === "cozy") {
+  return softenPalette([
+    light,
+    makeColor({ h1: 30, h2: 46, s1: 12, s2: 25, l1: 72, l2: 86 }), // oatmeal / linen
+    makeColor({ h1: 18, h2: 34, s1: 22, s2: 40, l1: 58, l2: 74 }), // clay beige / peach tan
+    makeColor({ h1: 42, h2: 62, s1: 24, s2: 44, l1: 54, l2: 70 }), // honey / wheat
+    makeColor({ h1: 78, h2: 112, s1: 14, s2: 32, l1: 48, l2: 66 }), // sage / moss
+    support,
+    makeColor({ h1: 345, h2: 20, s1: 12, s2: 28, l1: 54, l2: 72 }), // blush taupe
+    balance,
+    makeColor({ h1: 190, h2: 220, s1: 10, s2: 24, l1: 42, l2: 60 }), // smoky blue-gray
+    dark
+  ], vibe).map(copyColor);
+}
   return softenPalette([
     light,
     shiftColor(light, 4, 3, -4),
