@@ -1839,19 +1839,34 @@
       const [light, support, accent, balance, dark] = core.map(copyColor);
 
       if (size === 10) {
-        return softenPalette([
-          light,
-          makeColor({ h1: 22, h2: 42, s1: 35, s2: 55, l1: 68, l2: 82 }),
-          support,
-          shiftColor(support, -8, 4, -6),
-          accent,
-          shiftColor(accent, 10, -6, 8),
-          balance,
-          shiftColor(balance, -10, -5, 8),
-          dark,
-          shiftColor(dark, 8, 4, 10)
-        ], vibe).map(copyColor);
-      }
+  if (vibe === "playful") {
+    return softenPalette([
+      light,
+      makeColor({ h1: 22, h2: 42, s1: 35, s2: 55, l1: 68, l2: 82 }),
+      accent,
+      makeColor({ h1: 180, h2: 205, s1: 42, s2: 62, l1: 50, l2: 68 }),
+      makeColor({ h1: 45, h2: 62, s1: 42, s2: 62, l1: 52, l2: 70 }),
+      support,
+      makeColor({ h1: 255, h2: 285, s1: 38, s2: 58, l1: 50, l2: 68 }),
+      balance,
+      makeColor({ h1: 105, h2: 135, s1: 35, s2: 55, l1: 48, l2: 66 }),
+      dark
+    ], vibe).map(copyColor);
+  }
+
+  return softenPalette([
+    light,
+    shiftColor(light, 4, 3, -4),
+    support,
+    shiftColor(support, -8, 4, -6),
+    accent,
+    shiftColor(accent, 10, -6, 8),
+    balance,
+    shiftColor(balance, -10, -5, 8),
+    dark,
+    shiftColor(dark, 8, 4, 10)
+  ], vibe).map(copyColor);
+}
 
       return softenPalette([
         light,
